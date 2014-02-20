@@ -1,0 +1,23 @@
+{
+    "curly"    : true,
+    "eqeqeq"   : true,
+    "freeze"   : true,
+    "immed"    : true,
+    "latedef"  : "nofunc",
+    "newcap"   : true,
+    "noarg"    : true,
+    "nonew"    : true,
+    "undef"    : true,
+    "unused"   : true,
+    "trailing" : true,
+
+    "asi"      : true,
+    "eqnull"   : true,
+    "expr"     : true,
+    "laxbreak" : true,
+    "multistr" : true,
+    "sub"      : true,
+
+    "browser"  : true,
+    "predef"   : ["jQuery"]
+}
