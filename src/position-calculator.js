@@ -80,13 +80,11 @@
      * @return {boolean}          true, if values are equal
      */
     function __isEqualNormPos(normPos1, normPos2) {
-        if(normPos1 === normPos2) {
+        if (normPos1 === normPos2) {
             return true;
         }
-        return (normPos1.top === normPos2.top
-        && normPos1.left === normPos2.left
-        && normPos1.height === normPos2.height
-        && normPos1.width === normPos2.width);
+        return (normPos1.top === normPos2.top && normPos1.left === normPos2.left &&
+            normPos1.height === normPos2.height && normPos1.width === normPos2.width);
     }
 
     /**
@@ -292,7 +290,7 @@
      * @param  {NormPos} item_Pos   NormPos of item
      * @return {Distance}           Object with
      *                              { top:number, left:number, bottom:number, right:number,
-     *                                overflow:{Array|null} }
+     *                                overflow:{Array.<string>|null} }
      */
     function __calulateDistance(bou_Pos, item_Pos) {
         var result = {};
@@ -579,13 +577,13 @@
         var tar_pos = __nomrmalizePosition(this.$target);
         this.bou_pos = this.$boundary.length ? __normalizeBounding(this.$boundary) : null;
 
-        if( ! __isEqualNormPos(item_pos, this.item_pos) ) {
+        if (!__isEqualNormPos(item_pos, this.item_pos)) {
             this.item_pos = item_pos;
             var item_extraOffset = __normalizeExtraOffset(o.itemOffset, item_pos);
             this.item_offset = __calculateRefpointOffsets(item_pos, item_extraOffset,
                 this.item_initialAt);
         }
-        if( ! __isEqualNormPos(tar_pos, this.tar_pos) ) {
+        if (!__isEqualNormPos(tar_pos, this.tar_pos)) {
             this.tar_pos = tar_pos;
             var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, tar_pos);
             this.tar_offset = __calculateRefpointOffsets(tar_pos, tar_extraOffset,
@@ -619,24 +617,29 @@
     };
 
     /**
-     * [calculate description]
+     * Calculate the distance between reference point of item and reference point of target and
+     * handle overflow in the specified matter.
      *
-     * @return {Object}   with {
-     *     moveBy: { y: {number}, x: {number} },
-     *     distance: {null | Object }
-     *         Object with
-     *             {Array|null} overflow - Array with edges with overflow of item,
-     *                                     null for no collision detected
-     *             {number} top         - distance/overflow between item and boundary in px
-     *             {number} right       - distance/overflow between item and boundary
-     *             {number} bottom      - distance/overflow between item and boundary
-     *             {number} left        - distance/overflow between item and boundary
+     * @return {Object}   with:
+     *     moveBy: {y:number, x:number} - distance between target and item as pixel values
+     *     distance: {null|Distance}    - distance between item and boundary
+     *                                  null, if boundary was not given
+     *                                  Distance is Object with: {
+     *                                      top:number, left:number,
+     *                                      bottom:number, right:number,
+     *                                      overflow:{Array.<string>|null}
+     *                                  }
+     *                                  - top, left, buttom, right - distance/overflow for this edge
+     *                                  - overflow - Array with edges has overflow
+     *                                             - null for no collision detected
      *     itemAt: {string}             - used placement of reference point at item
      *                                   syntax: <vertical> + " " + <horizontal>
      *                                   vertical: "top" | "middle" | "bottom"
      *                                   horizontal: "left" | "center" | "right"
      *     targetAt: {string}           - used placement of reference point at target
-     * }
+     *                                   syntax: <vertical> + " " + <horizontal>
+     *                                   vertical: "top" | "middle" | "bottom"
+     *                                   horizontal: "left" | "center" | "right"
      */
     PositionCalculator.prototype.calculate = function() {
         if (this.item_pos === null) {
@@ -661,7 +664,8 @@
         // collision handling: flip
         if (o.flip && o.flip !== "none") {
             var newResult;
-            var flipedPlacement = __flipPlacement(o.flip, this.item_initialAt, this.tar_initialAt, result.distance);
+            var flipedPlacement = __flipPlacement(o.flip, this.item_initialAt, this.tar_initialAt,
+                result.distance);
 
             if (flipedPlacement) {
                 newResult = this._calcVariant(flipedPlacement.item_at, flipedPlacement.tar_at);
@@ -698,7 +702,6 @@
             }
         }
 
-
         // ////////////////////
         // collision handling: stick
         if (o.stick && o.stick !== "none") {
@@ -729,8 +732,6 @@
         stick: "none"
     };
 
-
-
-    //export
+    // export
     return PositionCalculator;
 }));
