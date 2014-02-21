@@ -581,6 +581,11 @@
         if (!this.itmPos || !__isEqualNormPos(item_pos, this.itmPos)) {
             this.itmPos = item_pos;
             var item_extraOffset = __normalizeExtraOffset(o.itemOffset, item_pos);
+            // negate values, because it shall be defined relative to the item reference point
+            // and not relative to the corner.
+            item_extraOffset.x = item_extraOffset.x * -1;
+            item_extraOffset.y = item_extraOffset.y * -1;
+
             this.itmOffset = __calculateRefpointOffsets(item_pos, item_extraOffset,
                 this.itmAt);
         }
