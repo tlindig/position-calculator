@@ -649,7 +649,7 @@
         // only update the position off elements and scroll offsets, but not the width or height
         __refreshPosition(this.$item, this.item_pos);
         __refreshPosition(this.$target, this.tar_pos);
-        __refreshBounding(this.$boundary, this.bou_pos);
+        this.bou_pos && __refreshBounding(this.$boundary, this.bou_pos);
 
         var result = this._calcVariant(this.item_initialAt, this.tar_initialAt);
         if (!result.distance || !result.distance.overflow) {
