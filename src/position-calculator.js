@@ -21,8 +21,9 @@
 
     // //////////
     // private
-    var __document = document;
     var __window = window;
+    var __document = document;
+    var __docElement = __document.documentElement;
 
     var __rgx_vertical = /top|middle|bottom/;
     var __rgx_horizontal = /left|center|right/;
@@ -169,13 +170,13 @@
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
-            domElm = __document.documentElement;
+            domElm = __docElement;
             offset = {
                 top: 0,
                 left: 0
             };
         } else if ($.isWindow(domElm)) {
-            domElm = __document.documentElement;
+            domElm = __docElement;
             offset = {
                 top: $el.scrollTop(),
                 left: $el.scrollLeft()
@@ -197,13 +198,13 @@
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
-            domElm = __document.documentElement;
+            domElm = __docElement;
             offset = {
                 top: 0,
                 left: 0
             };
         } else if ($.isWindow(domElm)) {
-            domElm = __document.documentElement;
+            domElm = __docElement;
             offset = {
                 top: $el.scrollTop(),
                 left: $el.scrollLeft()
@@ -529,16 +530,16 @@
         }
 
         this.options =
-            this.$item =
-            this.$target =
-            this.$boundary =
-            this.item_initialAt =
-            this.tar_initialAt =
-            this.item_pos =
-            this.tar_pos =
-            this.bou_pos =
-            this.item_offset =
-            this.tar_offset = null;
+            this.$itm =
+            this.$trg =
+            this.$bnd =
+            this.itmAt =
+            this.trgAt =
+            this.itmPos =
+            this.trgPos =
+            this.bndPos =
+            this.itmOffset =
+            this.trgOffset = null;
 
         this.init(options);
     }
@@ -549,16 +550,16 @@
             return null;
         }
 
-        this.$item = o.item.jquery ? o.item : $(o.item);
-        this.$target = o.target.jquery ? o.target : $(__normalizeSlector(o.target));
+        this.$itm = o.item.jquery ? o.item : $(o.item);
+        this.$trg = o.target.jquery ? o.target : $(__normalizeSlector(o.target));
 
-        if (this.$item.length === 0 || this.$target.length === 0) {
+        if (this.$itm.length === 0 || this.$trg.length === 0) {
             return null;
         }
-        this.$boundary = o.boundary && o.boundary.jquery ? o.boundary : $(__normalizeSlector(o.boundary));
+        this.$bnd = o.boundary && o.boundary.jquery ? o.boundary : $(__normalizeSlector(o.boundary));
 
-        this.item_initialAt = __normalizeAt(o.itemAt);
-        this.tar_initialAt = __normalizeAt(o.targetAt);
+        this.itmAt = __normalizeAt(o.itmAt);
+        this.trgAt = __normalizeAt(o.targetAt);
 
         this.resize();
 
@@ -573,44 +574,44 @@
     PositionCalculator.prototype.resize = function() {
         var o = this.options;
 
-        var item_pos = __nomrmalizePosition(this.$item);
-        var tar_pos = __nomrmalizePosition(this.$target);
-        this.bou_pos = this.$boundary.length ? __normalizeBounding(this.$boundary) : null;
+        var item_pos = __nomrmalizePosition(this.$itm);
+        var targ_pos = __nomrmalizePosition(this.$trg);
+        this.bndPos = this.$bnd.length ? __normalizeBounding(this.$bnd) : null;
 
-        if (!__isEqualNormPos(item_pos, this.item_pos)) {
-            this.item_pos = item_pos;
+        if (!__isEqualNormPos(item_pos, this.itmPos)) {
+            this.itmPos = item_pos;
             var item_extraOffset = __normalizeExtraOffset(o.itemOffset, item_pos);
-            this.item_offset = __calculateRefpointOffsets(item_pos, item_extraOffset,
-                this.item_initialAt);
+            this.itmOffset = __calculateRefpointOffsets(item_pos, item_extraOffset,
+                this.itmAt);
         }
-        if (!__isEqualNormPos(tar_pos, this.tar_pos)) {
-            this.tar_pos = tar_pos;
-            var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, tar_pos);
-            this.tar_offset = __calculateRefpointOffsets(tar_pos, tar_extraOffset,
-                this.tar_initialAt);
+        if (!__isEqualNormPos(targ_pos, this.trgPos)) {
+            this.trgPos = targ_pos;
+            var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, targ_pos);
+            this.trgOffset = __calculateRefpointOffsets(targ_pos, tar_extraOffset,
+                this.trgAt);
         }
 
         return this; // to allow chaining
     };
 
-    PositionCalculator.prototype._calcVariant = function(item_at, tar_at) {
+    PositionCalculator.prototype.calcVariant = function(item_at, tar_at) {
         var tar_refpoint = {
-            top: this.tar_pos.top + this.tar_offset[tar_at.y],
-            left: this.tar_pos.left + this.tar_offset[tar_at.x]
+            top: this.trgPos.top + this.trgOffset[tar_at.y],
+            left: this.trgPos.left + this.trgOffset[tar_at.x]
         };
         var item_newPos = {
-            top: tar_refpoint.top - this.item_offset[item_at.y],
-            left: tar_refpoint.left - this.item_offset[item_at.x],
-            height: this.item_pos.height,
-            width: this.item_pos.width
+            top: tar_refpoint.top - this.itmOffset[item_at.y],
+            left: tar_refpoint.left - this.itmOffset[item_at.x],
+            height: this.itmPos.height,
+            width: this.itmPos.width
         };
 
         return {
             moveBy: {
-                y: item_newPos.top - this.item_pos.top,
-                x: item_newPos.left - this.item_pos.left
+                y: item_newPos.top - this.itmPos.top,
+                x: item_newPos.left - this.itmPos.left
             },
-            distance: this.bou_pos ? __calulateDistance(this.bou_pos, item_newPos) : null,
+            distance: this.bndPos ? __calulateDistance(this.bndPos, item_newPos) : null,
             itemAt: item_at.y + " " + item_at.x,
             targetAt: tar_at.y + " " + tar_at.x
         };
@@ -642,7 +643,7 @@
      *                                   horizontal: "left" | "center" | "right"
      */
     PositionCalculator.prototype.calculate = function() {
-        if (this.item_pos === null) {
+        if (this.itmPos === null) {
             return null; // init failed
         }
 
@@ -650,11 +651,11 @@
 
         // refresh
         // only update the position off elements and scroll offsets, but not the width or height
-        __refreshPosition(this.$item, this.item_pos);
-        __refreshPosition(this.$target, this.tar_pos);
-        this.bou_pos && __refreshBounding(this.$boundary, this.bou_pos);
+        __refreshPosition(this.$itm, this.itmPos);
+        __refreshPosition(this.$trg, this.trgPos);
+        this.bndPos && __refreshBounding(this.$bnd, this.bndPos);
 
-        var result = this._calcVariant(this.item_initialAt, this.tar_initialAt);
+        var result = this.calcVariant(this.itmAt, this.trgAt);
         if (!result.distance || !result.distance.overflow) {
             //finish, because no collision
             return result;
@@ -664,11 +665,11 @@
         // collision handling: flip
         if (o.flip && o.flip !== "none") {
             var newResult;
-            var flipedPlacement = __flipPlacement(o.flip, this.item_initialAt, this.tar_initialAt,
+            var flipedPlacement = __flipPlacement(o.flip, this.itmAt, this.trgAt,
                 result.distance);
 
             if (flipedPlacement) {
-                newResult = this._calcVariant(flipedPlacement.item_at, flipedPlacement.tar_at);
+                newResult = this.calcVariant(flipedPlacement.item_at, flipedPlacement.tar_at);
 
                 if (!newResult.distance.overflow) {
                     //finish, because found placement without collision
@@ -685,12 +686,12 @@
 
                 if (useNew.y !== useNew.x) {
                     //need new distance calculation
-                    result = this._calcVariant({
-                        y: useNew.y ? flipedPlacement.item_at.y : this.item_initialAt.y,
-                        x: useNew.x ? flipedPlacement.item_at.x : this.item_initialAt.x
+                    result = this.calcVariant({
+                        y: useNew.y ? flipedPlacement.item_at.y : this.itmAt.y,
+                        x: useNew.x ? flipedPlacement.item_at.x : this.itmAt.x
                     }, {
-                        y: useNew.y ? flipedPlacement.tar_at.y : this.tar_initialAt.y,
-                        x: useNew.x ? flipedPlacement.tar_at.x : this.tar_initialAt.x
+                        y: useNew.y ? flipedPlacement.tar_at.y : this.trgAt.y,
+                        x: useNew.x ? flipedPlacement.tar_at.x : this.trgAt.x
                     });
                     if (!result.distance.overflow) {
                         //finish, because found position without collision
