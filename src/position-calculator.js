@@ -56,12 +56,13 @@
     }
 
     /**
-     * Normalize the given "at" specification
+     * Normalize the given "at" specification.
+     * Use default value, if syntax is not correct.
      *
-     * @param  {string} ref syntax: "<vertical> <horizontal>"
-     *                               vertical: {top | middle | bottom}
-     *                               horizontal: {left | center | right}
-     * @return {Object}             { y:{string}, x:{string} }
+     * @param  {string} ref     syntax: <vertical> + " " + <horizontal>
+     *                          vertical: "top" | "middle" | "bottom"
+     *                          horizontal: "left" | "center" | "right"
+     * @return {NormAt}         Object with {y:string, x:string}
      */
     function __normalizeAt(ref) {
         var values = ref.split(" ");
@@ -72,12 +73,29 @@
     }
 
     /**
+     * compare to NormPos with {top:number, left:number, height:number, width:number}
+     *
+     * @param  {NormPos} normPos1
+     * @param  {NormPos} normPos2
+     * @return {boolean}          true, if values are equal
+     */
+    function __isEqualNormPos(normPos1, normPos2) {
+        if(normPos1 === normPos2) {
+            return true;
+        }
+        return (normPos1.top === normPos2.top
+        && normPos1.left === normPos2.left
+        && normPos1.height === normPos2.height
+        && normPos1.width === normPos2.width);
+    }
+
+    /**
      * read the correct value for top, left, width and height from the given $el.
      * Can handle "window", "document", "event" and "DOM node"
      * resulting "top" and "left" are relative to document top-left corner
      *
-     * @param  {jQuery Object} $el input to calculate the position
-     * @return {Object}    with properties "width", "height", "top" and "left"
+     * @param  {jQuery} $el     input to calculate the position
+     * @return {NormPos}        Object with {top:number, left:number, height:number, width:number}
      *
      **/
     function __nomrmalizePosition($el) {
@@ -146,7 +164,7 @@
      * resulting "top" and "left" are relative to document top-left corner
      *
      * @param  {jQuery} $el [description]
-     * @return @return {Object}    with properties "width", "height", "top" and "left"
+     * @return {NormPos}    Object with {top:number, left:number, height:number, width:number}
      */
     function __normalizeBounding($el) {
         var domElm = $el[0];
@@ -219,12 +237,14 @@
     }
 
     /**
-     * [__calculateRefpointOffsets description]
+     * Calculate the relative offset from top-left corner to the reference points
      *
-     * @param  {object} pos             normalized position with top, left, height, width
-     * @param  {[type]} extraOffsets    [description]
-     * @param  {[type]} initialRefpoint [description]
-     * @return {[type]}                 [description]
+     * @param  {NormPos} pos          Object with normalized position
+     * @param  {{x:number, y:number}} extraOffsets    [description]
+     * @param  {{x:string, y:string}} initialRefpoint [description]
+     * @return {RefPoints}            Object with offset for reference points
+     *                                { top:number, left:number, middle:number,
+     *                                  center:number, bottom:number, right:number }
      */
     function __calculateRefpointOffsets(pos, extraOffsets, initialRefpoint) {
         var result = {
@@ -266,12 +286,13 @@
     }
 
     /**
-     * calculate distance between boundary and item or the overflow.
+     * calculate distance / overflow between boundary and item.
      *
-     * @param  {[type]} bou_Pos [description]
-     * @param  {[type]} item_Pos [description]
-     * @return {Object}         Object with {number} top, {number} left,
-     *                          {number} bottom, {number} right and {Array} overflow
+     * @param  {NormPos} bou_Pos    NormPos of boundary
+     * @param  {NormPos} item_Pos   NormPos of item
+     * @return {Distance}           Object with
+     *                              { top:number, left:number, bottom:number, right:number,
+     *                                overflow:{Array|null} }
      */
     function __calulateDistance(bou_Pos, item_Pos) {
         var result = {};
@@ -301,11 +322,18 @@
     /**
      * calculate the new fliped placement.
      *
-     * @param  {string} flip   flip option, "item", "target", "both", "none"
-     * @param  {object} itemAt
-     * @param  {object} tarAt
-     * @param  {object} distance
-     * @return {object|null}
+     * {NormAt} is Object with {x:string, y:string}
+     *
+     * @param  {string} flip    - flip option, "item", "target", "both", "none"
+     * @param  {NormAt} itemAt  - NormAt of item
+     * @param  {NormAt} tarAt   - NormAt of target
+     * @param  {Distance}       - current calculated distance, needed to find out, which edge have overflow
+     * @return {Object|null}    - Object with placement
+     *                          {
+     *                              item_at:NormAt,
+     *                              tar_at:NormAt
+     *                          }
+     *                          - null, if no overflow or if overflow on all edges
      */
     function __flipPlacement(flip, itemAt, tarAt, distance) {
         var y_overflowEdge, x_overflowEdge, flipBits;
@@ -378,10 +406,10 @@
     /**
      * compare overflow in distancaA with overflow in distanceB.
      *
-     * @param  {object}  distanceA  distance object, with top, right, bottom, left
-     * @param  {object}  distanceB  distance object, with top, right, bottom, left
-     * @param  {Boolean} isY        axis
-     * @return {Boolean}            return true, if overflow of a is less than overflow of b,
+     * @param  {Distance}  distanceA  distance object, with top, right, bottom, left
+     * @param  {Distance}  distanceB  distance object, with top, right, bottom, left
+     * @param  {boolean} isY        axis
+     * @return {boolean}            return true, if overflow of A is less than overflow of B,
      *                                         otherwise false
      */
     function __overflowLT(distanceA, distanceB, isY) {
@@ -452,60 +480,49 @@
     /**
      * Class PositionCalculator
      *
-     * @param {object} options
+     * @param {Object} options
      *
      * {selector|DOM|jQuery} item       -required- the element being positioned
      * {selector|DOM|jQuery} target     -required- the element align the positioned item against
-     * {selector|DOM|jQuery|null} boundary -optional- constraints the position of item, default: window
+     * {selector|DOM|jQuery|null} boundary -optional- constraints the position of item
+     *                                      default: window
      *
-     * {string} itemAt         -optional- placement of reference point on the item
-     *                                     syntax: "<vertical> <horizontal>"
-     *                                     vertical: {top | middle | bottom}
-     *                                     horizontal: {left | center | right}
-     *                                     default: "top left"
-     * {string} targetAt          -optional- placement of reference point on the target
+     * {string} itemAt          -optional- placement of reference point on the item
+     *                                   syntax: <vertical> + " " + <horizontal>
+     *                                   vertical: "top" | "middle" | "bottom"
+     *                                   horizontal: "left" | "center" | "right"
+     *                          default: "top left"
+     * {string} targetAt        -optional- placement of reference point on the target
      *                                     same as for "itemAt"
-     * {Object} itemOffset           -optional- {
-     *                                         y:{number},      // vertical offset
-     *                                         x:{number},      // horizontal offset
-     *                                         mirror:{boolean} // if offset should mirror for flip
+     *                          default: "top left"
+     * {Object} itemOffset      -optional- Object with {
+     *                                         y:number,      // vertical offset
+     *                                         x:number,      // horizontal offset
+     *                                         mirror:boolean // if offset should mirror for flip
      *                                    }
-     *                                    default: { y:0, x:0, mirror:true }
+     *                          default: { y:0, x:0, mirror:true }
      *
-     * {Object} targetOffset            -optional- same as for "itemOffset"
+     * {Object} targetOffset    -optional- same as for "itemOffset"
+     *                          default: { y:0, x:0, mirror:true }
      *
-     * {string} flip                -optional- specify the strategy to prevent that "item"
-     *                               overflows the boundary.
-     *                                  "item": Only change the itemAt
-     *                                  "target": Only change the targetAt
-     *                                  "both": Change both the itemAt and targetAt at the same time
+     * {string} flip            -optional- specify the strategy to prevent that "item"
+     *                                    overflows the boundary.
+     *                                    "item": Only change the itemAt
+     *                                    "target": Only change the targetAt
+     *                                    "both": Change both the itemAt and targetAt at the same time
      *                                          (to 'flip' the item to the other side of the target)
-     *                                  "none": Don't change placement of reference point
-     *                               default: "none"
+     *                                    "none": Don't change placement of reference point
+     *                          default: "none"
      *
-     * {string} stick               will keep the item within it's boundary by sticking it to the edges
-     *                               if it normally would overflow.
-     *                               Specify the sides you'd like to control (space separated) or "none" or "all".
-     *                               default: "none"
+     * {string} stick           -optional- will keep the item within it's boundary by sticking it to
+     *                                     the edges if it normally would overflow.
+     *                                     Specify sides you'd like to control (space separated) or
+     *                                     "none" or "all".
+     *                          default: "none"
      *
-     *  Main method calc() will return Object with
      *
-     * {
-     *     moveBy: { y: {number}, x: {number} },
-     *     distance: {null | Object }
-     *         Object with
-     *             {Array|null} overflow - Array with edges with overflow of item,
-     *                                     null for no collision detected
-     *             {number} top         - distance/overflow between item and boundary
-     *             {number} right       - distance/overflow between item and boundary
-     *             {number} bottom      - distance/overflow between item and boundary
-     *             {number} left        - distance/overflow between item and boundary
-     *     itemAt: {string}             - used placement of reference point at item
-     *                                   syntax: "<vertical> <horizontal>"
-     *                                   vertical: {top | middle | bottom}
-     *                                   horizontal: {left | center | right}
-     *     targetAt: {string}           - used placement of reference point at target
-     * }
+     *  Main method is calculate()
+     *
      */
     function PositionCalculator(options) {
         //ensure it called with 'new'
@@ -550,22 +567,30 @@
         return this; // to allow chaining
     };
 
+    /**
+     * Update position and size of all elements. (item, target, boundary)
+     *
+     * @return {[type]} [description]
+     */
     PositionCalculator.prototype.resize = function() {
         var o = this.options;
 
-        this.item_pos = __nomrmalizePosition(this.$item);
-        this.tar_pos = __nomrmalizePosition(this.$target);
+        var item_pos = __nomrmalizePosition(this.$item);
+        var tar_pos = __nomrmalizePosition(this.$target);
         this.bou_pos = this.$boundary.length ? __normalizeBounding(this.$boundary) : null;
 
-        // ////////
-        // calculate the relative offset from top-left corner to the reference points
-        var item_extraOffset = __normalizeExtraOffset(o.itemOffset, this.item_pos);
-        var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, this.tar_pos);
-
-        this.item_offset = __calculateRefpointOffsets(this.item_pos, item_extraOffset,
-            this.item_initialAt);
-        this.tar_offset = __calculateRefpointOffsets(this.tar_pos, tar_extraOffset,
-            this.tar_initialAt);
+        if( ! __isEqualNormPos(item_pos, this.item_pos) ) {
+            this.item_pos = item_pos;
+            var item_extraOffset = __normalizeExtraOffset(o.itemOffset, item_pos);
+            this.item_offset = __calculateRefpointOffsets(item_pos, item_extraOffset,
+                this.item_initialAt);
+        }
+        if( ! __isEqualNormPos(tar_pos, this.tar_pos) ) {
+            this.tar_pos = tar_pos;
+            var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, tar_pos);
+            this.tar_offset = __calculateRefpointOffsets(tar_pos, tar_extraOffset,
+                this.tar_initialAt);
+        }
 
         return this; // to allow chaining
     };
@@ -593,6 +618,26 @@
         };
     };
 
+    /**
+     * [calculate description]
+     *
+     * @return {Object}   with {
+     *     moveBy: { y: {number}, x: {number} },
+     *     distance: {null | Object }
+     *         Object with
+     *             {Array|null} overflow - Array with edges with overflow of item,
+     *                                     null for no collision detected
+     *             {number} top         - distance/overflow between item and boundary in px
+     *             {number} right       - distance/overflow between item and boundary
+     *             {number} bottom      - distance/overflow between item and boundary
+     *             {number} left        - distance/overflow between item and boundary
+     *     itemAt: {string}             - used placement of reference point at item
+     *                                   syntax: <vertical> + " " + <horizontal>
+     *                                   vertical: "top" | "middle" | "bottom"
+     *                                   horizontal: "left" | "center" | "right"
+     *     targetAt: {string}           - used placement of reference point at target
+     * }
+     */
     PositionCalculator.prototype.calculate = function() {
         if (this.item_pos === null) {
             return null; // init failed
