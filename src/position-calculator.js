@@ -578,13 +578,13 @@
         var targ_pos = __nomrmalizePosition(this.$trg);
         this.bndPos = this.$bnd.length ? __normalizeBounding(this.$bnd) : null;
 
-        if (!__isEqualNormPos(item_pos, this.itmPos)) {
+        if (!this.itmPos || !__isEqualNormPos(item_pos, this.itmPos)) {
             this.itmPos = item_pos;
             var item_extraOffset = __normalizeExtraOffset(o.itemOffset, item_pos);
             this.itmOffset = __calculateRefpointOffsets(item_pos, item_extraOffset,
                 this.itmAt);
         }
-        if (!__isEqualNormPos(targ_pos, this.trgPos)) {
+        if (!this.trgPos || !__isEqualNormPos(targ_pos, this.trgPos)) {
             this.trgPos = targ_pos;
             var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, targ_pos);
             this.trgOffset = __calculateRefpointOffsets(targ_pos, tar_extraOffset,
