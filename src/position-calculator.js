@@ -373,6 +373,7 @@
             return null;
         }
 
+        flip = (flip === true) ? "both" : flip;
         flipBits = 0;
         switch (flip) {
             case "item":
@@ -504,19 +505,19 @@
      * {Object} targetOffset    -optional- same as for "itemOffset"
      *                          default: { y:0, x:0, mirror:true }
      *
-     * {string} flip            -optional- specify the strategy to prevent that "item"
+     * {string|boolean} flip    -optional- specify the strategy to prevent that "item"
      *                                    overflows the boundary.
      *                                    "item": Only change the itemAt
      *                                    "target": Only change the targetAt
-     *                                    "both": Change both the itemAt and targetAt at the same time
+     *                                    "both"|true: Change both the itemAt and targetAt at the same time
      *                                          (to 'flip' the item to the other side of the target)
-     *                                    "none": Don't change placement of reference point
+     *                                    "none"|false: Don't change placement of reference point
      *                          default: "none"
      *
-     * {string} stick           -optional- will keep the item within it's boundary by sticking it to
+     * {string|boolean} stick   -optional- will keep the item within it's boundary by sticking it to
      *                                     the edges if it normally would overflow.
      *                                     Specify sides you'd like to control (space separated) or
-     *                                     "none" or "all".
+     *                                     "none"|false or "all"|true.
      *                          default: "none"
      *
      *
