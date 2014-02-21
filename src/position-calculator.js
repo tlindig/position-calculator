@@ -558,7 +558,7 @@
         }
         this.$bnd = o.boundary && o.boundary.jquery ? o.boundary : $(__normalizeSlector(o.boundary));
 
-        this.itmAt = __normalizeAt(o.itmAt);
+        this.itmAt = __normalizeAt(o.itemAt);
         this.trgAt = __normalizeAt(o.targetAt);
 
         this.resize();
