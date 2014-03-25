@@ -134,7 +134,7 @@
     function ta_onMouseDown(e) {
         e.preventDefault();
 
-        var ta_startOffset = $target.offset();
+        var ta_startOffset = $draggable.offset();
         var ta_mouse_offset = {
             x: e.pageX - ta_startOffset.left,
             y: e.pageY - ta_startOffset.top
@@ -150,7 +150,7 @@
             showValues(data);
         });
 
-        $draggable.on("mouseup.tl.drag mouseout.tl.drag", function() {
+        $draggable.on("mouseup.tl.drag mouseleave.tl.drag", function() {
             //remove all listeners
             $draggable.off(".tl.drag");
             //add down handler
