@@ -1,89 +1,567 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="utf-8">
+  <title>Position Calculator</title>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Position-calculator : jQuery plugin, to calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container." />
+  <meta name="description" content="Position-calculator : jQuery plugin, to calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container." />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/tl-demo.css">
+</head>
+<body>
+  <div class="container">
 
-    <title>Position-calculator</title>
-  </head>
+    <div class="jumbotron">
+      <h1>PositionCalculator</h1>
+      <p>The slim highly flexible plug-in to calculate element's position.</p>
+      <div class="promo">
+        <a id="forkme_banner" href="https://github.com/tlindig/position-calculator">View on GitHub</a> *
+        <a class="zip_download_link" href="https://github.com/tlindig/position-calculator/zipball/master">Download this project as a .zip file</a> *
+        <a class="tar_download_link" href="https://github.com/tlindig/position-calculator/tarball/master">Download this project as a tar.gz file</a>
+      </div>
 
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/tlindig/position-calculator">View on GitHub</a>
-
-          <h1 id="project_title">Position-calculator</h1>
-          <h2 id="project_tagline">jQuery plugin, to calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/tlindig/position-calculator/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/tlindig/position-calculator/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+    <div class="section">
+      <h2>Overview</h2>
+      <p class="lead">
+        Calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container.
+      </p>
+      <p>
+        This plug will not manipulate any CSS settings or DOM-trees, it only calculate the difference of current position and target position. Thus you are all paths open to implement the positioning according to your requirements.
+      </p>
+      <p>
+        You can apply the new position by using <code>top</code> and <code>left</code> or using the css3 <code>transform</code> function or by setting <code>margin</code>. It is up to you.
+      </p>
+      <p>
+        It is also possible to use the result of <b>PositionCalculator</b> as input for additional calculation. It is up to you.
+      </p>
+      <p>
+        <b>PositionCalculator</b> takes away the complicated calculation taking account of preferred orientation, reference points and boundary.
+      </p>
+    </div> <!-- /section -->
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+    <div class="section">
+      <h2>Live Demo</h2>
+      <p class="lead">
+        Try out all the options check the result.
+      </p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+      <h3>Configuration</h3>
+      <div class="row" id="options_t1">
+        <div class="col-sm-4">
+          <h4>Elements</h4>
+          <div class="form-inline clearfix">
+            <span class="tl-label">idem:</span>
+            <span class="tl-value">
+              yellow box (100x100)
+            </span>
+          </div>
+          <div class="form-inline clearfix">
+            <span class="tl-label">target:</span>
+            <span class="tl-value">
+              <select id="sel_target" title="uncheck checkbox 'item follow me' to enable.">
+                <option value="#t1 > .tl-green-box" selected>green box</option>
+                <option value="#t1">container</option>
+                <option value="window">window</option>
+                <option value="document">document (=html)</option>
+                <option value="body">body</option>
+                <option value="">none</option>
+              </select>
+            </span>
+          </div>
+          <div class="form-inline clearfix">
+            <span class="tl-label">boundary:</span>
+            <span class="tl-value">
+              <select id="sel_boundary">
+                <option value="#t1" selected>container</option>
+                <option value="window">window</option>
+                <option value="document">document (=html)</option>
+                <option value="body">body</option>
+                <option value="">none</option>
+              </select>
+            </span>
+          </div>
+        </div><!-- /col-sm-4 -->
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+        <div class="col-sm-4">
+          <h4>Placement</h4>
+          <p>
+            Initial placement of reference point.<br>
+            The colored triangle shows your decision.
+          </p>
+          <div class="form-inline clearfix">
+            <span class="tl-label">itemAt (-> red):</span>
+            <span class="tl-value">
+              <select id="sel_item_at_y">
+                <option value="top">top</option>
+                <option value="middle">middle</option>
+                <option value="bottom" selected>bottom</option>
+              </select>
+              <select id="sel_item_at_x">
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right" selected>right</option>
+              </select>
+            </span>
+          </div>
+          <div class="form-inline clearfix">
+            <span class="tl-label">itemOffset (px|%):</span>
+            <span class="tl-value">
+              <input type="text" id="tx_itemAt_offset_y" size="4" value="0"/>
+              <input type="text" id="tx_itemAt_offset_x" size="4" value="0"/>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="cb_itemAt_offset_m"/> mirror
+                </label>
+              </div>
+            </span>
+          </div>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+          <div class="form-inline clearfix">
+            <span class="tl-label">targetAt (-> blue):</span>
+            <span class="tl-value">
+              <select id="sel_tar_at_y">
+                <option value="top" selected>top</option>
+                <option value="middle">middle</option>
+                <option value="bottom">bottom</option>
+              </select>
+              <select id="sel_tar_at_x">
+                <option value="left" selected>left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+              </select>
+            </span>
+          </div>
+          <div class="form-inline clearfix">
+            <span class="tl-label">targetOffset (px|%):</span>
+            <span class="tl-value">
+              <input type="text" id="tx_tarAt_offset_y" size="4" value="0"/>
+              <input type="text" id="tx_tarAt_offset_x" size="4" value="0"/>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" id="cb_tarAt_offset_m" checked/> mirror
+                </label>
+              </div>
+            </span>
+          </div>
+        </div><!-- /col-sm-4 -->
+        <div class="col-sm-4">
+          <h4>Behavior</h4>
+          <div class="form-inline clearfix">
+            <span class="tl-label">stick:</span>
+            <span class="tl-value">
+              <select id="sel_stick">
+                <option value="none">none</option>
+                <option value="all" selected>all</option>
+                <option value="top">top</option>
+                <option value="right">right</option>
+                <option value="bottom">bottom</option>
+                <option value="left">left</option>
+                <option value="top left">top left</option>
+                <option value="top bottom">top bottom</option>
+                <option value="top left bottom">top left bottom</option>
+              </select>
+            </span>
+          </div>
+          <div class="form-inline clearfix">
+            <span class="tl-label">flip:</span>
+            <span class="tl-value">
+              <select id="sel_flip">
+                <option value="none">none</option>
+                <option value="item">item</option>
+                <option value="target">target</option>
+                <option value="both" selected>both</option>
+              </select>
+            </span>
+          </div>
+        </div><!-- /col-sm-4 -->
+      </div><!-- /row -->
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+      <div class="row">
+        <div class="col-sm-6">
+          <h3>Showcase</h3>
+          <div class="panel panel-default">
+            <div class="panel-heading">Container</div>
+            <div id="t1" class="panel-body" style="height:290px;overflow:auto">
+              <label><input id="cm_scrollbar" type="checkbox"/> add scrollbars</label><br>
+              <label><input id="cm_scrollhandler" type="checkbox"/> add handler for scroll event</label>
+              <div class="tl-item tl-marker">
+                <b>item</b><br>
+                being positioned
+              </div>
+              <div class="tl-green-box tl-marker">
+                <b>target, drag me!</b><br>
+                <input type="checkbox" id="cb_follow_green"/> item follow me<br>
+                (option 'target' -> "green box")
+              </div>
+              <div id="tolarge" style="display:none;height:500px;width:500px;">
+              </div>
+            </div>
+          </div>
+        </div><!-- /col-sm-6 -->
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+        <div class="col-sm-6">
+          <h3>Live Results</h3>
+          <div class="row">
+            <div class="col-sm-6">
+              Return value of
+              <code>.calculate()</code>:
+              <div class="line">
+                <span class="tl-label">moveBy.x: </span><span class="tl-value" id="moveByX"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">moveBy.y: </span><span class="tl-value" id="moveByY"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">distance {</span>
+              </div>
+              <div class="line">
+                <span class="tl-label sub">overflow: </span><span class="tl-value" id="overflow"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label sub">top: </span><span class="tl-value" id="distanceTop"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label sub">left: </span><span class="tl-value" id="distanceLeft"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label sub">bottom: </span><span class="tl-value" id="distanceBottom"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label sub">right: </span><span class="tl-value" id="distanceRight"></span>
+              </div>
+              <div class="line">
+                <span>}</span>
+              </div>
+            </div><!-- /col-sm-6 -->
+            <div class="col-sm-6">
+              Properties, read form DOM:
+              <div class="line">
+                <span class="tl-label">item top: </span><span class="tl-value" id="itemTop"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">target top: </span><span class="tl-value" id="targetTop"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">difference y: </span><span class="tl-value" id="difY"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">item left: </span><span class="tl-value" id="itemLeft"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">target left: </span><span class="tl-value" id="targetLeft"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">difference x: </span><span class="tl-value" id="difX"></span>
+              </div>
+            </div><!-- /col-sm-6 -->
+          </div><!-- /row -->
+        </div><!-- /col-sm-6 -->
+      </div><!-- /row -->
+    </div> <!-- /section -->
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+    <div class="section">
+      <h2>Options</h2>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Name</th>
+            <th style="width: 100px;">type</th>
+            <th>default</th>
+            <th>description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>item</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node</td>
+            <td><code>null</code></td>
+            <td>
+              <p>Required. Given value will be called with <code>jQuery(item)</code> and should match a element.</p>
+              <p><code>item</code> reference the element being positioned.  </p>
+            </td>
+          </tr>
+          <tr>
+            <td>target</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node</td>
+            <td><code>null</code></td>
+            <td>
+              <p><code>target</code> reference the element align the positioned item against.
+              </p>
+              <p>Required. "selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>boundary</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node |&nbsp;null</td>
+            <td><code>window</code></td>
+            <td>
+              <p><code>boundary</code> reference the element that constraints the position of item. It is used to detect overflow. See option "flip" and "stick".
+              </p>
+              <p>"selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
+              <p>If no element match, overflow will not calculated.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Placement of reference point on the item</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Placement of reference point on the target</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemOffset</td>
+            <td>Object</td>
+            <td><code>{ y:0, x:0, mirror:true }</code></td>
+            <td>
+              <p>Additional offset for position of specified reference point from item.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>string</i> or <i>number</i> with vertical offset in pixel or percent. Can be negative.</br>
+                  <b>x:</b> <i>string</i> or <i>number</i> with horizontal offset in pixel or percent. Can be negative.</br>
+                  <b>mirror:</b> <i>boolean</i> specify, if the x and y values shall be negated in case of flipping.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetOffset</td>
+            <td>Object</td>
+            <td><code>{ y:0, x:0, mirror:true }</code></td>
+            <td>
+              <p>Additional offset for position of specified reference point from target.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>string</i> or <i>number</i> with vertical offset in pixel or percent. Can be negative.</br>
+                  <b>x:</b> <i>string</i> or <i>number</i> with horizontal offset in pixel or percent. Can be negative.</br>
+                  <b>mirror:</b> <i>boolean</i> specify, if the x and y values shall be negated in case of flipping.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>flip</td>
+            <td>string |&nbsp;boolean</td>
+            <td><code>'both'</code></td>
+            <td>
+              <p>
+                Specify the strategy to prevent that item overflows the boundary.
+              </p>
+              <p>
+                Allowed as value is:<br>
+                <code>"item"</code> - Only change the itemAt<br>
+                <code>"target"</code> - Only change the targetAt<br>
+                <code>"both"</code>|<code>true</code> - Change both the itemAt and targetAt at the same time (to 'flip' the item to the other side of the target).<br>
+                <code>"none"</code>|<code>false</code> - Don't flip
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>stick</td>
+            <td>string |&nbsp;boolean</td>
+            <td><code>'all'</code></td>
+            <td>
+              <p>
+                Will keep the item within it's boundary by sticking
+              it to the edges that normally would overflow.
+            </p>
+            <p>
+              Specify sides you'd like to control (space separated <code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>) or <code>"none"</code>|<code>false</code> or <code>"all"</code>|<code>true</code>.
+          </tr>
+        </tbody>
+      </table>
+    </div> <!-- /section -->
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+    <div class="section">
+      <h2>API</h2>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
+      <p><b>PositionCalculator</b> is a JavaScript class added to the <code>jQuery</code> object. It can be instantiated by calling the constructor.</p>
+
+      <h3>Constructor</h3>
+
+      <h4>PositionCalculator(options)</h4>
+      <p>Create and initializes a new instance of <b>PositionCalculator</b>. Options are described in section "Options".</p>
+<pre class="prettyprint">
+var myCalculator = new jQuery.PositionCalculator({ item: '#idItem', target:'#idTarget' });
+</pre>
+
+      <h3>Methods</h3>
+      <p>
+        All methods of <b>PositionCalculator</b> return the instance itself to allow chaining,
+        except the method shall explicit return special value.
+      </p>
+
+      <h4>.calculate()</h4>
+      <p>
+        Calculate the distance between reference point of item and reference point of target and handle overflow in the specified matter.
+      </p>
+      <p>
+        Current position of elements (item, target, boundary) will be read from DOM.
+      </p>
+      <p>
+        Return a <code>CalculationResult</code> object.
+      </p>
+<pre class="prettyprint">
+var result = myCalculator.calculate();
+</pre>
+
+      <h4>.calcVairant(item_at, target_at)</h4>
+      <p>
+        Exported helper method. Calculate the resulting position only for the given placement.
+        That will not handle flip and fit.
+        Current position of elements (item, target, boundary) will be read from DOM.
+      </p>
+      <p>Arguments <code>item_at</code> and <code>target_at</code> have to be an object with
+        string property <code>x</code> and <code>y</code>.
+        Allowed values for <code>x</code> are <code>"left"</code>, <code>"center"</code> or <code>"right"</code>.
+        Allowed values for <code>y</code> are <code>"top"</code>, <code>"middle"</code> or <code>"bottom"</code>.
+      </p>
+      <p>Return a <code>CalculationResult</code> object.</p>
+<pre class="prettyprint">
+var result = myCalculator.calcVariant();
+</pre>
+
+      <h4>.resize()</h4>
+      <p>
+        Update intern stored values depending on size and position of elements (item, target, boundary).
+        Should be called if dimensions of an element changed.
+      </p>
+      <p>Return <code>this</code> instance itself to allow chaining.</p>
+<pre class="prettyprint">
+myCalculator.resize();
+</pre>
+
+      <h3>Result Object: <code>CalculationResult</code></h3>
+
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Name</th>
+            <th style="width: 100px;">type</th>
+            <th>example</th>
+            <th>description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>moveBy</td>
+            <td>Object</td>
+            <td><code>{ y:10, x:-20 }</code></td>
+            <td>
+              <p>Calculated distance between resulting reference points of target and item as pixel values.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>number</i> with vertical distance. Can be negative.</br>
+                  <b>x:</b> <i>number</i> with horizontal distance. Can be negative.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Resulting placement of reference point on the item</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Resulting placement of reference point on the target</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>distance</td>
+            <td>{null|Object}</td>
+            <td>
+<pre>
+{
+  top:51,
+  left:22,
+  bottom:171,
+  right:375,
+  overflow: ["top", "left"]
+}</pre>
+            </td>
+            <td>
+              <p>Calculated distance of item to the viewport of boundary.</p>
+              <p>Properties:<br>
+                <b>top:</b> <i>number</i> pixel value with distance to top edge of boundary. Overflow is positive value.<br>
+                <b>left:</b> <i>number</i> pixel value with distance to left edge of boundary. Overflow is positive value.<br>
+                <b>bottom:</b> <i>number</i> pixel value with distance to bottom edge of boundary. Overflow is negative value.<br>
+                <b>right:</b> <i>number</i> pixel value with distance to right edge of boundary. Overflow is negative value.<br>
+                <b>overflow:</b> <i>string Array</i> with edges that has overflow (<code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>) or null for no collision.
+              </p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
+      <h3>Events</h3>
+      <p><b>PositionCalculator</b> do not trigger events.</p>
+
+    </div><!-- /section -->
+
+    <div class="section">
+      <h2>Examples</h2>
+    </div> <!-- /section -->
 
     <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
+    <div class="footer">
       <footer class="inner">
         <p class="copyright">Position-calculator maintained by <a href="https://github.com/tlindig">tlindig</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
 
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-49427729-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
+
+  </div><!-- /container -->
 
 
-  </body>
+  <!-- Load jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <!-- Load my lib -->
+  <script src="https://raw.githubusercontent.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
+  <!-- Load and init live demos -->
+  <script type="text/javascript" src="./js/tl-demo.js"></script>
+
+  <!-- BEGIN Google Analytics -->
+  <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-49427729-1");
+      pageTracker._trackPageview();
+      } catch(err) {}
+  </script>
+  <!-- END Google Analytics -->
+
+</body>
 </html>

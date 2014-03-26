@@ -1,0 +1,79 @@
+    .tl-green-box {
+      padding: 10px;
+      background-color: #44EE99;
+      margin-left: 100px;
+      margin-top: 20px;
+      width: 220px;
+    }
+    .tl-item {
+      padding: 20px;
+      background-color: #FFFF00;
+      height: 100px;
+      width: 100px;
+    }
+
+    /* colored triangle corner */
+    .tl-marker {
+      position: relative;
+    }
+    .tl-marker:after {
+      content: "";
+      position: absolute;;
+      height: 0;
+      width: 0;
+    }
+    .right.top.tl-marker:after {
+      border-left: 15px solid rgba(0, 0, 0, 0);
+      border-top: 15px solid #0000FF;
+      top: 0;
+      right: 0;
+    }
+    .left.top.tl-marker:after {
+      border-right: 15px solid rgba(0, 0, 0, 0);
+      border-top: 15px solid #0000FF;
+      top: 0;
+      left: 0;
+    }
+    .tl-item.top.tl-marker:after {
+      border-top-color: #F00;
+    }
+    .right.bottom.tl-marker:after {
+      border-left: 15px solid rgba(0, 0, 0, 0);
+      border-bottom: 15px solid #0000FF;
+      bottom: 0;
+      right: 0;
+    }
+    .left.bottom.tl-marker:after {
+      border-right: 15px solid rgba(0, 0, 0, 0);
+      border-bottom: 15px solid #0000FF;
+      bottom: 0;
+      left: 0;
+    }
+    .tl-item.bottom.tl-marker:after {
+      border-bottom-color: #F00;
+    }
+
+    .form-inline {
+      margin-bottom: 10px;
+    }
+    .tl-label {
+      font-weight: bold;
+    }
+    .tl-label.sub {
+      margin-left: 20px;
+    }
+    .tl-value {
+      display: inline-block;
+      white-space: nowrap;
+      width: 50%;
+      float: right;
+    }
+    .tl-draggable {
+      cursor: move;
+      position: absolute;
+      z-index: 5;
+    }
+
+    input, select {
+      text-align: right;
+    }
