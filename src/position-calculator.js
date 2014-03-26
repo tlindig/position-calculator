@@ -58,7 +58,7 @@
 
     /**
      * Normalize the given "at" specification.
-     * Use default value, if syntax is not correct.
+     * Use default value ('top left'), if syntax is not correct.
      *
      * @param  {string} ref     syntax: <vertical> + " " + <horizontal>
      *                          vertical: "top" | "middle" | "bottom"
@@ -68,7 +68,7 @@
     function __normalizeAt(ref) {
         var values = ref.split(" ");
         return {
-            y: __rgx_vertical.test(values[0]) ? values[0] : "top", //may be we should read here the defaults value
+            y: __rgx_vertical.test(values[0]) ? values[0] : "top",
             x: __rgx_horizontal.test(values[1]) ? values[1] : "left"
         }
     }
@@ -542,9 +542,9 @@
             this.itmOffset =
             this.trgOffset = null;
 
-        this.init(options);
+        this._init(options);
     }
-    PositionCalculator.prototype.init = function(options) {
+    PositionCalculator.prototype._init = function(options) {
         var o = this.options = $.extend({}, PositionCalculator.defaults, options);
 
         if (!o.item || !o.target) {
@@ -568,9 +568,10 @@
     };
 
     /**
-     * Update position and size of all elements. (item, target, boundary)
+     * Update intern stored values depending on size and position of elements (item, target, boundary).
+     * Should be called if dimensions of an element changed.
      *
-     * @return {[type]} [description]
+     * @return {this} allow chaining
      */
     PositionCalculator.prototype.resize = function() {
         var o = this.options;
@@ -600,6 +601,15 @@
         return this; // to allow chaining
     };
 
+    /**
+     * Calculate the resulting position only for the given placement. That will not handle flip
+     * and fit.
+     * Current position of elements (item, target, boundary) will be read from DOM.
+     *
+     * @param  {{x:string, y:string}} item_at Placement for reference point on target
+     * @param  {{x:string, y:string}} tar_at  Placement for reference point on target
+     * @return {Object}         CalculationResult, see method calculate()
+     */
     PositionCalculator.prototype.calcVariant = function(item_at, tar_at) {
         var tar_refpoint = {
             top: this.trgPos.top + this.trgOffset[tar_at.y],

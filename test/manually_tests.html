@@ -118,7 +118,7 @@
       <p>
         <b>PositionCalculator</b> takes away the complicated calculation taking account of preferred orientation, reference points and boundary.
       </p>
-    <div> <!-- /section -->
+    </div> <!-- /section -->
 
     <div class="section">
       <h2>Live Demo</h2>
@@ -133,7 +133,7 @@
           <div class="form-inline clearfix">
             <span class="tl-label">idem:</span>
             <span class="tl-value">
-              yellow box
+              yellow box (100x100)
             </span>
           </div>
           <div class="form-inline clearfix">
@@ -166,7 +166,8 @@
         <div class="col-sm-4">
           <h4>Placement</h4>
           <p>
-            Initial placement of reference point. (The colored triangle shows your decision)
+            Initial placement of reference point.<br>
+            The colored triangle shows your decision.
           </p>
           <div class="form-inline clearfix">
             <span class="tl-label">itemAt (-> red):</span>
@@ -261,7 +262,9 @@
           <h3>Showcase</h3>
           <div class="panel panel-default">
             <div class="panel-heading">Container</div>
-            <div id="t1" class="panel-body" style="height:220px">
+            <div id="t1" class="panel-body" style="height:290px;overflow:auto">
+              <label><input id="cm_scrollbar" type="checkbox"/> add scrollbars</label><br>
+              <label><input id="cm_scrollhandler" type="checkbox"/> add handler for scroll event</label>
               <div class="tl-item tl-marker">
                 <b>item</b><br>
                 being positioned
@@ -271,16 +274,18 @@
                 <input type="checkbox" id="cb_follow_green"/> item follow me<br>
                 (option 'target' -> "green box")
               </div>
+              <div id="tolarge" style="display:none;height:500px;width:500px;">
+              </div>
             </div>
           </div>
         </div><!-- /col-sm-6 -->
 
         <div class="col-sm-6">
           <h3>Live Results</h3>
-          <row>
+          <div class="row">
             <div class="col-sm-6">
               Return value of
-              <code>PositionCalculator.calculate():</code>
+              <code>.calculate()</code>:
               <div class="line">
                 <span class="tl-label">moveBy.x: </span><span class="tl-value" id="moveByX"></span>
               </div>
@@ -310,15 +315,18 @@
               </div>
             </div><!-- /col-sm-6 -->
             <div class="col-sm-6">
-              Properties, read direct form DOM:
+              Properties, read form DOM:
               <div class="line">
                 <span class="tl-label">item top: </span><span class="tl-value" id="itemTop"></span>
               </div>
               <div class="line">
-                <span class="tl-label">item left: </span><span class="tl-value" id="itemLeft"></span>
+                <span class="tl-label">target top: </span><span class="tl-value" id="targetTop"></span>
               </div>
               <div class="line">
-                <span class="tl-label">target top: </span><span class="tl-value" id="targetTop"></span>
+                <span class="tl-label">difference y: </span><span class="tl-value" id="difY"></span>
+              </div>
+              <div class="line">
+                <span class="tl-label">item left: </span><span class="tl-value" id="itemLeft"></span>
               </div>
               <div class="line">
                 <span class="tl-label">target left: </span><span class="tl-value" id="targetLeft"></span>
@@ -326,18 +334,280 @@
               <div class="line">
                 <span class="tl-label">difference x: </span><span class="tl-value" id="difX"></span>
               </div>
-              <div class="line">
-                <span class="tl-label">difference y: </span><span class="tl-value" id="difY"></span>
-              </div>
             </div><!-- /col-sm-6 -->
           </div><!-- /row -->
-        </div>
+        </div><!-- /col-sm-6 -->
       </div><!-- /row -->
-    <div> <!-- /section -->
+    </div> <!-- /section -->
+
+    <div class="section">
+      <h2>Options</h2>
+
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Name</th>
+            <th style="width: 100px;">type</th>
+            <th>default</th>
+            <th>description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>item</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node</td>
+            <td><code>null</code></td>
+            <td>
+              <p>Required. Given value will be called with <code>jQuery(item)</code> and should match a element.</p>
+              <p><code>item</code> reference the element being positioned.  </p>
+            </td>
+          </tr>
+          <tr>
+            <td>target</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node</td>
+            <td><code>null</code></td>
+            <td>
+              <p><code>target</code> reference the element align the positioned item against.
+              </p>
+              <p>Required. "selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
+
+            </td>
+          </tr>
+          <tr>
+            <td>boundary</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node |&nbsp;null</td>
+            <td><code>window</code></td>
+            <td>
+              <p><code>boundary</code> reference the element that constraints the position of item. It is used to detect overflow. See option "flip" and "stick".
+              </p>
+              <p>"selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
+              <p>If no element match, overflow will not calculated.</p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Placement of reference point on the item</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Placement of reference point on the target</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemOffset</td>
+            <td>Object</td>
+            <td><code>{ y:0, x:0, mirror:true }</code></td>
+            <td>
+              <p>Additional offset for position of specified reference point from item.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>string</i> or <i>number</i> with vertical offset in pixel or percent. Can be negative.</br>
+                  <b>x:</b> <i>string</i> or <i>number</i> with horizontal offset in pixel or percent. Can be negative.</br>
+                  <b>mirror:</b> <i>boolean</i> specify, if the x and y values shall be negated in case of flipping.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetOffset</td>
+            <td>Object</td>
+            <td><code>{ y:0, x:0, mirror:true }</code></td>
+            <td>
+              <p>Additional offset for position of specified reference point from target.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>string</i> or <i>number</i> with vertical offset in pixel or percent. Can be negative.</br>
+                  <b>x:</b> <i>string</i> or <i>number</i> with horizontal offset in pixel or percent. Can be negative.</br>
+                  <b>mirror:</b> <i>boolean</i> specify, if the x and y values shall be negated in case of flipping.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>flip</td>
+            <td>string |&nbsp;boolean</td>
+            <td><code>'both'</code></td>
+            <td>
+              <p>
+                Specify the strategy to prevent that item overflows the boundary.
+              </p>
+              <p>
+                Allowed as value is:<br>
+                <code>"item"</code> - Only change the itemAt<br>
+                <code>"target"</code> - Only change the targetAt<br>
+                <code>"both"</code>|<code>true</code> - Change both the itemAt and targetAt at the same time (to 'flip' the item to the other side of the target).<br>
+                <code>"none"</code>|<code>false</code> - Don't flip
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>stick</td>
+            <td>string |&nbsp;boolean</td>
+            <td><code>'all'</code></td>
+            <td>
+              <p>
+                Will keep the item within it's boundary by sticking
+              it to the edges that normally would overflow.
+            </p>
+            <p>
+              Specify sides you'd like to control (space separated <code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>) or <code>"none"</code>|<code>false</code> or <code>"all"</code>|<code>true</code>.
+          </tr>
+        </tbody>
+      </table>
+    </div> <!-- /section -->
 
     <div class="section">
       <h2>API</h2>
-    <div> <!-- /section -->
+
+      <p><b>PositionCalculator</b> is a JavaScript class added to the <code>jQuery</code> object. It can be instantiated by calling the constructor.</p>
+
+      <h3>Constructor</h3>
+
+      <h4>PositionCalculator(options)</h4>
+      <p>Create and initializes a new instance of <b>PositionCalculator</b>. Options are described in section "Options".</p>
+<pre class="prettyprint">
+var myCalculator = new jQuery.PositionCalculator({ item: '#idItem', target:'#idTarget' });
+</pre>
+
+      <h3>Methods</h3>
+      <p>
+        All methods of <b>PositionCalculator</b> return the instance itself to allow chaining,
+        except the method shall explicit return special value.
+      </p>
+
+      <h4>.calculate()</h4>
+      <p>
+        Calculate the distance between reference point of item and reference point of target and handle overflow in the specified matter.
+      </p>
+      <p>
+        Current position of elements (item, target, boundary) will be read from DOM.
+      </p>
+      <p>
+        Return a <code>CalculationResult</code> object.
+      </p>
+<pre class="prettyprint">
+var result = myCalculator.calculate();
+</pre>
+
+      <h4>.calcVairant(item_at, target_at)</h4>
+      <p>
+        Exported helper method. Calculate the resulting position only for the given placement.
+        That will not handle flip and fit.
+        Current position of elements (item, target, boundary) will be read from DOM.
+      </p>
+      <p>Arguments <code>item_at</code> and <code>target_at</code> have to be an object with
+        string property <code>x</code> and <code>y</code>.
+        Allowed values for <code>x</code> are <code>"left"</code>, <code>"center"</code> or <code>"right"</code>.
+        Allowed values for <code>y</code> are <code>"top"</code>, <code>"middle"</code> or <code>"bottom"</code>.
+      </p>
+      <p>Return a <code>CalculationResult</code> object.</p>
+<pre class="prettyprint">
+var result = myCalculator.calcVariant();
+</pre>
+
+      <h4>.resize()</h4>
+      <p>
+        Update intern stored values depending on size and position of elements (item, target, boundary).
+        Should be called if dimensions of an element changed.
+      </p>
+      <p>Return <code>this</code> instance itself to allow chaining.</p>
+<pre class="prettyprint">
+myCalculator.resize();
+</pre>
+
+      <h3>Result Object: <code>CalculationResult</code></h3>
+
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Name</th>
+            <th style="width: 100px;">type</th>
+            <th>example</th>
+            <th>description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>moveBy</td>
+            <td>Object</td>
+            <td><code>{ y:10, x:-20 }</code></td>
+            <td>
+              <p>Calculated distance between resulting reference points of target and item as pixel values.</p>
+              <p>Properties:<br>
+                  <b>y:</b> <i>number</i> with vertical distance. Can be negative.</br>
+                  <b>x:</b> <i>number</i> with horizontal distance. Can be negative.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>itemAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Resulting placement of reference point on the item</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>targetAt</td>
+            <td>string</td>
+            <td><code>"top left"</code></td>
+            <td>
+              <p>Resulting placement of reference point on the target</p>
+              <p>
+                Space separated combination of <code>top</code> | <code>middle</code> | <code>bottom</code> and <code>left</code> | <code>center</code> | <code>right</code>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>distance</td>
+            <td>{null|Object}</td>
+            <td>
+<pre>
+{
+  top:51,
+  left:22,
+  bottom:171,
+  right:375,
+  overflow: ["top", "left"]
+}</pre>
+            </td>
+            <td>
+              <p>Calculated distance of item to the viewport of boundary.</p>
+              <p>Properties:<br>
+                <b>top:</b> <i>number</i> pixel value with distance to top edge of boundary. Overflow is positive value.<br>
+                <b>left:</b> <i>number</i> pixel value with distance to left edge of boundary. Overflow is positive value.<br>
+                <b>bottom:</b> <i>number</i> pixel value with distance to bottom edge of boundary. Overflow is negative value.<br>
+                <b>right:</b> <i>number</i> pixel value with distance to right edge of boundary. Overflow is negative value.<br>
+                <b>overflow:</b> <i>string Array</i> with edges that has overflow (<code>top</code>, <code>bottom</code>, <code>left</code> and <code>right</code>) or null for no collision.
+              </p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
+      <h3>Events</h3>
+      <p><b>PositionCalculator</b> do not trigger events.</p>
+
+    </div><!-- /section -->
+
+    <div class="section">
+      <h2>Examples</h2>
+    </div> <!-- /section -->
 
   </div><!-- /container -->
 
