@@ -21,10 +21,9 @@ jQuery(function($) {
 ```
 
 ## Documentation
-_(Coming soon)_
 
-## Examples
-_(Coming soon)_
+Visit demonstration and documentation page: <a href="http://tlindig.github.io/position-calculator/">Position Calculator</a>
+
 
 ## Release History
 _(Nothing yet)_
