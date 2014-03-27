@@ -26,16 +26,19 @@
     <div class="section">
       <h2>Overview</h2>
       <p class="lead">
-        Calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container.
+        Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container.
       </p>
       <p>
-        This plug will not manipulate any CSS settings or DOM-trees, it only calculate the difference of current position and target position. Thus you are all paths open to implement the positioning according to your requirements.
+        This plug will not manipulate any CSS settings or DOM-trees, it only calculate values, the difference of current position to target position and the overflow. Thus you are all paths open to implement the positioning according to your requirements.
       </p>
       <p>
         You can apply the new position by using <code>top</code> and <code>left</code> or using the css3 <code>transform</code> function or by setting <code>margin</code>. It is up to you.
       </p>
       <p>
         It is also possible to use the result of <b>PositionCalculator</b> as input for additional calculation. It is up to you.
+      </p>
+      <p>
+        With <b>PositionCalculator</b> it is absolute easy to implements an "inView" functionality. Take a look to the "Examples" section below.
       </p>
       <p>
         <b>PositionCalculator</b> takes away the complicated calculation taking account of preferred orientation, reference points and boundary.
@@ -49,7 +52,7 @@
       </p>
 
       <h3>Configuration</h3>
-      <div class="row" id="options_t1">
+      <div class="row" id="options1">
         <div class="col-sm-4">
           <h4>Elements</h4>
           <div class="form-inline clearfix">
@@ -62,8 +65,8 @@
             <span class="tl-label">target:</span>
             <span class="tl-value">
               <select id="sel_target" title="uncheck checkbox 'item follow me' to enable.">
-                <option value="#t1 > .tl-green-box" selected>green box</option>
-                <option value="#t1">container</option>
+                <option value="#container1 > .tl-green-box" selected>green box</option>
+                <option value="#container1">container</option>
                 <option value="window">window</option>
                 <option value="document">document (=html)</option>
                 <option value="body">body</option>
@@ -75,7 +78,7 @@
             <span class="tl-label">boundary:</span>
             <span class="tl-value">
               <select id="sel_boundary">
-                <option value="#t1" selected>container</option>
+                <option value="#container1" selected>container</option>
                 <option value="window">window</option>
                 <option value="document">document (=html)</option>
                 <option value="body">body</option>
@@ -184,9 +187,9 @@
           <h3>Showcase</h3>
           <div class="panel panel-default">
             <div class="panel-heading">Container</div>
-            <div id="t1" class="panel-body" style="height:290px;overflow:auto">
-              <label><input id="cm_scrollbar" type="checkbox"/> add scrollbars</label><br>
-              <label><input id="cm_scrollhandler" type="checkbox"/> add handler for scroll event</label>
+            <div id="container1" class="panel-body" style="height:290px;">
+              <label><input id="cb_addScrollbar" type="checkbox"/> add scrollbars</label><br>
+              <label><input id="cb_addScrollhandler" type="checkbox"/> add handler for scroll event</label>
               <div class="tl-item tl-marker">
                 <b>item</b><br>
                 being positioned
@@ -197,6 +200,7 @@
                 (option 'target' -> "green box")
               </div>
               <div id="tolarge" style="display:none;height:500px;width:500px;">
+                <!-- this div is only to require scrollbars on container -->
               </div>
             </div>
           </div>
@@ -206,35 +210,8 @@
           <h3>Live Results</h3>
           <div class="row">
             <div class="col-sm-6">
-              Return value of
-              <code>.calculate()</code>:
-              <div class="line">
-                <span class="tl-label">moveBy.x: </span><span class="tl-value" id="moveByX"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">moveBy.y: </span><span class="tl-value" id="moveByY"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">distance {</span>
-              </div>
-              <div class="line">
-                <span class="tl-label sub">overflow: </span><span class="tl-value" id="overflow"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label sub">top: </span><span class="tl-value" id="distanceTop"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label sub">left: </span><span class="tl-value" id="distanceLeft"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label sub">bottom: </span><span class="tl-value" id="distanceBottom"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label sub">right: </span><span class="tl-value" id="distanceRight"></span>
-              </div>
-              <div class="line">
-                <span>}</span>
-              </div>
+              Return value of <code>.calculate()</code>:
+              <pre id="preRsesult"></pre>
             </div><!-- /col-sm-6 -->
             <div class="col-sm-6">
               Properties, read form DOM:
@@ -529,6 +506,10 @@ myCalculator.resize();
 
     <div class="section">
       <h2>Examples</h2>
+
+      <h3>inView</h3>
+
+
     </div> <!-- /section -->
 
     <!-- FOOTER  -->

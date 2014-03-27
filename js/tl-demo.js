@@ -1,11 +1,14 @@
 (function($) {
-    var $item = $('#t1 > .tl-item');
-    var $target = $('#t1 > .tl-green-box');
-    var $draggable = $("#t1 > .tl-green-box");
+    var $container = $('#container1');
+    var $item = $('#container1 > .tl-item');
+    var $target = $('#container1 > .tl-green-box');
+    var $draggable = $("#container1 > .tl-green-box");
+    var $tolarge = $('#tolarge');
+
     var calculatorOptions = {
         item: $item,
         target: $target,
-        boundary: "#t1",
+        boundary: $container,
         itemAt: "top right",
         itemOffset: { y: 0, x: 0, mirror: false },
         targetAt: "top left",
@@ -22,13 +25,7 @@
     var $difX           = $('#difX');
     var $difY           = $('#difY');
 
-    var $moveByX        = $('#moveByX');
-    var $moveByY        = $('#moveByY');
-    var $overflow       = $('#overflow');
-    var $distanceTop    = $('#distanceTop');
-    var $distanceLeft   = $('#distanceLeft');
-    var $distanceBottom = $('#distanceBottom');
-    var $distanceRight  = $('#distanceRight');
+    var $preResult        = $('#preRsesult');
 
     function showValues(data) {
 
@@ -37,8 +34,8 @@
 
         $itemTop.text(item_offset.top);
         $itemLeft.text(item_offset.left);
+        //window and document have no offset
         if(ta_offset) {
-            //window and document have no offset
             $targetTop.text(ta_offset.top);
             $targetLeft.text(ta_offset.left);
             $difX.text(item_offset.left - ta_offset.left);
@@ -51,25 +48,11 @@
         }
 
         data = data || calculator.calculate();
-        $moveByX.text(data.moveBy.x);
-        $moveByY.text(data.moveBy.y);
-        if(data.distance) {
-            $overflow.text(data.distance.overflow || "null");
-            $distanceTop.text(data.distance.top);
-            $distanceLeft.text(data.distance.left);
-            $distanceBottom.text(data.distance.bottom);
-            $distanceRight.text(data.distance.right);
-        } else {
-            $overflow.text("-");
-            $distanceTop.text("-");
-            $distanceLeft.text("-");
-            $distanceBottom.text("-");
-            $distanceRight.text("-");
-        }
+        $preResult.text(JSON.stringify(data, null, "  "));
     }
 
 
-    function onUpdateOptions(e) {
+    function onUpdateOptions() {
         calculatorOptions.target = $('#sel_target').val();
 
         $target.removeClass("tl-marker");
@@ -99,10 +82,10 @@
 
         calculator = new $.PositionCalculator(calculatorOptions);
 
-        updateElement(e);
+        updateElement();
     }
 
-    function updateElement(e, data) {
+    function updateElement(data) {
 
         data = data || calculator.calculate();
 
@@ -126,24 +109,22 @@
             + (data.moveBy.x + currentX ) + "px,"
             + (data.moveBy.y + currentY ) + "px)"
         );
-
-        //set reference point cornder
     }
 
     //event listener
-    function ta_onMouseDown(e) {
-        e.preventDefault();
+    function ta_onMouseDown(event) {
+        event.preventDefault();
 
         var ta_startOffset = $draggable.offset();
         var ta_mouse_offset = {
-            x: e.pageX - ta_startOffset.left,
-            y: e.pageY - ta_startOffset.top
+            x: event.pageX - ta_startOffset.left,
+            y: event.pageY - ta_startOffset.top
         };
 
-        $draggable.on("mousemove.tl.drag", function(e) {
+        $draggable.on("mousemove.tl.drag", function(event) {
             $draggable.offset( {
-                left: e.pageX - ta_mouse_offset.x,
-                top: e.pageY - ta_mouse_offset.y
+                left: event.pageX - ta_mouse_offset.x,
+                top: event.pageY - ta_mouse_offset.y
             });
             var data = calculator.calculate();
             $draggable.trigger("tl_drag", data);
@@ -158,26 +139,52 @@
         });
     }
 
+    function addScrollbars(show) {
+        if(show) {
+            $tolarge.show();
+            $container.css('overflow', 'auto');
+        } else {
+            $tolarge.hide();
+            $container.css('overflow', 'visible');
+        }
+
+        calculator.resize();
+        var data = calculator.calculate();
+        showValues(data);
+        updateElement(data);
+    }
+    function onContainerScroll() {
+        var data = calculator.calculate();
+        showValues(data);
+        updateElement(data);
+    }
+
+
     $('#cb_follow_green').on('change.tl.test', function() {
         if(this.checked) {
             // item follows "green box"
-            $('#sel_target').val("#t1 > .tl-green-box").prop("disabled", true);
+            $('#sel_target').val("#container1 > .tl-green-box").prop("disabled", true);
             onUpdateOptions();
-            $draggable.on("tl_drag.tl.follow", updateElement);
+            $draggable.on("tl_drag.tl.follow", function(event, data) { updateElement(data); });
         } else {
             $draggable.off("tl_drag.tl.follow");
             $('#sel_target').prop("disabled", false);
         }
     });
-    $('#options_t1').on('change.tl.test', onUpdateOptions);
+    $('#options1').on('change.tl.test', onUpdateOptions);
 
     $(document).on( "tl_updateOptions.tl.test", onUpdateOptions);
 
+    //add scrollbar hide/show
+    $('#cb_addScrollbar').on('change.tl.test', function() { addScrollbars(this.checked); } );
+    $('#cb_addScrollhandler').on('change.tl.test', function() {
+        if(this.checked) {
+            $container.on('scroll.tl.test', onContainerScroll);
+        } else {
+            $container.off('scroll.tl.test', onContainerScroll);
+        }
+    });
 
-    //export
-    window.tl = {
-        showValues : showValues
-    };
 
     // /////////////////
     // init
@@ -185,9 +192,12 @@
     //to synchronice with cached browser settings
     onUpdateOptions();
     $('#cb_follow_green').change();
+    $('#cb_addScrollbar').change();
+    $('#cb_addScrollhandler').change();
     showValues();
 
     //add down handler
     $draggable.on("mousedown.tl.drag", ta_onMouseDown);
     $draggable.addClass("tl-draggable");
+
 })(jQuery);
