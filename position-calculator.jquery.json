@@ -2,7 +2,7 @@
     "name": "position-calculator",
     "title": "jQuery.PositionCalculator",
     "description": "Calculate the position of an element relative to another element or event. Tries to find a collision free position within the boundary of a given container.",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "homepage": "https://github.com/tlindig/position-calculator",
     "author": {
         "name": "Tobias Lindig",
@@ -20,7 +20,7 @@
         "url": "https://raw.github.com/tlindig/position-calculator/master/LICENSE-MIT"
     }],
     "dependencies": {
-        "jquery": "1.7"
+        "jquery": "1.7+"
     },
     "keywords": [
         "position",

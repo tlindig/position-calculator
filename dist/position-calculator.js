@@ -2,7 +2,7 @@
  * jQuery.PositionCalculator
  * https://github.com/tlindig/position-calculator
  *
- * v0.1.0 - 2014-03-26
+ * v1.0.0 - 2014-03-27
  *
  * Copyright (c) 2014 Tobias Lindig
  * http://tlindig.de
@@ -298,6 +298,30 @@
     }
 
     /**
+     * collect all edges that have overflow between boundary and item.
+     *
+     * @param  {Distance} distance  Distance Object
+     * @return {Distance}           Object with
+     *                              { top:number, left:number, bottom:number, right:number,
+     *                                overflow:{Array.<string>|null} }
+     */
+    function __updateOverflow(distance) {
+        var overflow = [];
+        distance.top > 0 && overflow.push("top");
+        distance.left > 0 && overflow.push("left");
+        distance.bottom < 0 && overflow.push("bottom");
+        distance.right < 0 && overflow.push("right");
+
+        if (overflow.length) {
+            distance.overflow = overflow;
+        } else {
+            distance.overflow = null;
+        }
+
+        return distance;
+    }
+
+    /**
      * calculate distance / overflow between boundary and item.
      *
      * @param  {NormPos} bou_Pos    NormPos of boundary
@@ -307,28 +331,15 @@
      *                                overflow:{Array.<string>|null} }
      */
     function __calulateDistance(bou_Pos, item_Pos) {
-        var result = {};
-        var overflow = [];
+        var result = {
+            top: bou_Pos.top - item_Pos.top,
+            left: bou_Pos.left - item_Pos.left,
+            bottom: (bou_Pos.top + bou_Pos.height) - (item_Pos.top + item_Pos.height),
+            right: (bou_Pos.left + bou_Pos.width) - (item_Pos.left + item_Pos.width),
+            overflow: []
+        };
 
-        result.top = bou_Pos.top - item_Pos.top;
-        result.top > 0 && overflow.push("top");
-
-        result.left = bou_Pos.left - item_Pos.left;
-        result.left > 0 && overflow.push("left");
-
-        result.bottom = (bou_Pos.top + bou_Pos.height) - (item_Pos.top + item_Pos.height);
-        result.bottom < 0 && overflow.push("bottom");
-
-        result.right = (bou_Pos.left + bou_Pos.width) - (item_Pos.left + item_Pos.width);
-        result.right < 0 && overflow.push("right");
-
-        if (overflow.length) {
-            result.overflow = overflow;
-        } else {
-            result.overflow = null;
-        }
-
-        return result;
+        return __updateOverflow(result);
     }
 
     /**
@@ -463,17 +474,25 @@
         }
         var overflow = data.distance.overflow;
 
+        if(!overflow.length) {
+            return data;
+        }
+
         //to prevent handling overflow in both directions of on axis
         var skipX = false;
         var skipY = false;
 
+        var edge, diff;
         for (var i = overflow.length - 1; i >= 0; i--) {
-            var edge = overflow[i];
+            edge = overflow[i];
             switch (edge) {
                 case "top":
                 case "bottom":
                     if (!skipY && edges === true || edges.indexOf(edge) !== -1) {
-                        data.moveBy.y += data.distance[edge];
+                        diff = data.distance[edge];
+                        data.moveBy.y += diff;
+                        data.distance.top -= diff;
+                        data.distance.bottom -= diff;
                         skipY = true;
                     }
                     break;
@@ -481,12 +500,18 @@
                 case "left":
                 case "right":
                     if (!skipX && edges === true || edges.indexOf(edge) !== -1) {
-                        data.moveBy.x += data.distance[edge];
+                        diff = data.distance[edge];
+                        data.moveBy.x += diff;
+                        data.distance.left -= diff;
+                        data.distance.right -= diff;
                         skipX = true;
                     }
                     break;
             }
         }
+
+        __updateOverflow(data.distance);
+
         return data;
     }
 
