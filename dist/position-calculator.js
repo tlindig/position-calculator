@@ -2,7 +2,7 @@
  * jQuery.PositionCalculator
  * https://github.com/tlindig/position-calculator
  *
- * v1.0.0 - 2014-03-27
+ * v1.0.1 - 2014-03-28
  *
  * Copyright (c) 2014 Tobias Lindig
  * http://tlindig.de
