@@ -263,13 +263,15 @@
           </tr>
           <tr>
             <td>target</td>
-            <td>selector |&nbsp;jQuery |&nbsp;DOM node</td>
+            <td>selector |&nbsp;jQuery |&nbsp;DOM node |&nbsp;null</td>
             <td><code>null</code></td>
             <td>
               <p><code>target</code> reference the element align the positioned item against.
               </p>
-              <p>Required. "selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
-
+              <p>"selector" means a <code>string</code> with a CSS selector. The value can also be a DOM element or a jQuery wrapped DOM element.</p>
+              <p>
+                If no element match or <code>null</code> is given, option "flip", "itemAt" and "targetAt" will be ignored.
+                But option "stick" still work and overflow will be calculated for a given "boundary".</p>
             </td>
           </tr>
           <tr>
@@ -506,6 +508,50 @@ myCalculator.resize();
 
     <div class="section">
       <h2>Examples</h2>
+
+      <h3>Tooltip, popup, popover</h3>
+      <p>All this components want show an additional element (item) at a special target position. And may
+        be you want also ensure that the new item is shown without clipping by the viewport.
+      </p>
+      <p>
+        The new position will be given to you by the <b>PositionCalculator</b>, you have only to set the css properties.
+      </p>
+
+<pre>
+&lt;script>
+  jQuery(function($) {
+
+    var $tooltip = $('&lt;div style="display:none;position:absolute;padding:10px;background:rgba(0,0,0,0.8);color:#ffffff">&lt;/div>').appendTo(document.body);
+
+    function showTooltip(event) {
+      $tooltip.text($(this).data('tooltip'));
+      $tooltip.show().css({top:0, left:0});
+
+      var calculator = new $.PositionCalculator({
+        item: $tooltip,
+        itemAt: "bottom left",
+        target: this,
+        targetAt: "top right",
+        flip: "both"
+      });
+      var posResult = calculator.calculate();
+
+      $tooltip.css({
+        top: posResult.moveBy.y + "px",
+        left: posResult.moveBy.x + "px"
+      })
+    }
+
+    $('.has_tooltip').on('mouseenter', showTooltip);
+    $('.has_tooltip').on('mouseout', function(){$tooltip.hide()});
+  });
+&lt;/script>
+&lt;input type="text" class="has_tooltip" data-tooltip="this is tooltip 1" value="hover me 1"/>&lt;br>&lt;br>
+&lt;input type="text" class="has_tooltip" data-tooltip="this is tooltip 2" value="hover me 2"/>&lt;br>&lt;br>
+&lt;input type="text" class="has_tooltip" data-tooltip="this is tooltip 3" value="hover me 3"/>
+</pre>
+
+      Try this example at <a href="http://jsbin.com/sifec/5/edit">JS Bin</a>.
 
       <h3>inView</h3>
 
