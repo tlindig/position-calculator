@@ -85,9 +85,9 @@
         updateElement();
     }
 
-    function updateElement(data) {
+    function updateElement() {
 
-        data = data || calculator.calculate();
+        var data = calculator.calculate();
 
         //set corner marker
         $item.removeClass("top").removeClass("right").removeClass("bottom").removeClass("left");
@@ -109,6 +109,8 @@
             + (data.moveBy.x + currentX ) + "px,"
             + (data.moveBy.y + currentY ) + "px)"
         );
+
+        showValues(data);
     }
 
     //event listener
@@ -126,9 +128,7 @@
                 left: event.pageX - ta_mouse_offset.x,
                 top: event.pageY - ta_mouse_offset.y
             });
-            var data = calculator.calculate();
-            $draggable.trigger("tl_drag", data);
-            showValues(data);
+            $draggable.trigger("tl_drag");
         });
 
         $draggable.on("mouseup.tl.drag mouseleave.tl.drag", function() {
@@ -149,23 +149,15 @@
         }
 
         calculator.resize();
-        var data = calculator.calculate();
-        showValues(data);
-        updateElement(data);
+        updateElement();
     }
-    function onContainerScroll() {
-        var data = calculator.calculate();
-        showValues(data);
-        updateElement(data);
-    }
-
 
     $('#cb_follow_green').on('change.tl.test', function() {
         if(this.checked) {
             // item follows "green box"
             $('#sel_target').val("#container1 > .tl-green-box").prop("disabled", true);
             onUpdateOptions();
-            $draggable.on("tl_drag.tl.follow", function(event, data) { updateElement(data); });
+            $draggable.on("tl_drag.tl.follow", updateElement);
         } else {
             $draggable.off("tl_drag.tl.follow");
             $('#sel_target').prop("disabled", false);
@@ -173,15 +165,13 @@
     });
     $('#options1').on('change.tl.test', onUpdateOptions);
 
-    $(document).on( "tl_updateOptions.tl.test", onUpdateOptions);
-
     //add scrollbar hide/show
     $('#cb_addScrollbar').on('change.tl.test', function() { addScrollbars(this.checked); } );
     $('#cb_addScrollhandler').on('change.tl.test', function() {
         if(this.checked) {
-            $container.on('scroll.tl.test', onContainerScroll);
+            $container.on('scroll.tl.test', updateElement);
         } else {
-            $container.off('scroll.tl.test', onContainerScroll);
+            $container.off('scroll.tl.test', updateElement);
         }
     });
 
@@ -194,7 +184,6 @@
     $('#cb_follow_green').change();
     $('#cb_addScrollbar').change();
     $('#cb_addScrollhandler').change();
-    showValues();
 
     //add down handler
     $draggable.on("mousedown.tl.drag", ta_onMouseDown);
