@@ -554,7 +554,47 @@ myCalculator.resize();
       Try this example at <a href="http://jsbin.com/sifec/5/edit">JS Bin</a>.
 
       <h3>inView</h3>
+      <p>
+        In this example, <b>PositionCalculator</b> is used to figure out if an element is shown in
+        viewport. If so, a special class will be added.
+      </p>
 
+<pre>
+&lt;div class="filler">&lt;/div>
+&lt;div class="filler">&lt;/div>
+&lt;div class="filler">&lt;/div>
+
+&lt;script>
+  jQuery(function($) {
+
+    function addInviewSupport(index) {
+      var $elem = $(this);
+      var calculator = new $.PositionCalculator({
+        item: $elem,
+        boundary: window,
+        stick:false
+      });
+
+      function processInview(event) {
+        var result = calculator.calculate();
+        if(!result.distance.overflow) {
+          $elem.addClass('inview');
+        } else {
+          $elem.removeClass('inview');
+        }
+      }
+      $(window).on('scroll.tl', processInview);
+    }
+
+    $('.filler').each(addInviewSupport);
+
+    //inital call
+    $(window).trigger('scroll.tl');
+
+  });
+&lt;/script>
+</pre>
+      Try this example at <a href="http://jsbin.com/secuw/1/edit">JS Bin</a>.
 
     </div> <!-- /section -->
 
