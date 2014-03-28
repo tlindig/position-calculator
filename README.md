@@ -57,16 +57,16 @@ Download the [production version][min] or the [development version][max].
 Try this example at [jsBin](http://jsbin.com/sifec/1/edit)
 
 
-## Bugs and feature requests
-
-Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/tlindig/position-calculator/issues/new).
-
-
 ## Documentation
 
 Visit demonstration and documentation page: <a href="http://tlindig.github.io/position-calculator/">Position Calculator</a>
 
-Ready to use version of this lib can be cound in folder: "dist"
+Ready to use version of this lib can be found in folder: "dist"
+
+
+## Bugs and feature requests
+
+Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/tlindig/position-calculator/issues/new).
 
 
 ## Build
@@ -92,3 +92,18 @@ Releases will be numbered with the following format:
 
 Code and documentation copyright 2014 Tobias Lindig
 Code released under [the MIT license](LICENSE).
+
+## Changelog
+
+### 1.1.0
+
+* add support for calculation without parameter "target" to calculate only overflow of item and boundary
+
+### 1.0.1
+
+* update jQuery manifest, add link to demo page
+
+
+### 1.0.0
+
+* Initial commit

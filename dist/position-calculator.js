@@ -2,7 +2,7 @@
  * jQuery.PositionCalculator
  * https://github.com/tlindig/position-calculator
  *
- * v1.0.1 - 2014-03-28
+ * v1.1.0 - 2014-03-28
  *
  * Copyright (c) 2014 Tobias Lindig
  * http://tlindig.de
@@ -96,6 +96,9 @@
     function __isEqualNormPos(normPos1, normPos2) {
         if (normPos1 === normPos2) {
             return true;
+        }
+        if(!normPos1 || !normPos2) {
+            return false;
         }
         return (normPos1.top === normPos2.top && normPos1.left === normPos2.left &&
             normPos1.height === normPos2.height && normPos1.width === normPos2.width);
@@ -585,16 +588,15 @@
     PositionCalculator.prototype._init = function(options) {
         var o = this.options = $.extend({}, PositionCalculator.defaults, options);
 
-        if (!o.item || !o.target) {
+        if (!o.item) {
             return null;
         }
-
         this.$itm = o.item.jquery ? o.item : $(o.item);
-        this.$trg = o.target.jquery ? o.target : $(__normalizeSlector(o.target));
-
-        if (this.$itm.length === 0 || this.$trg.length === 0) {
+        if (this.$itm.length === 0) {
             return null;
         }
+
+        this.$trg = o.target && o.target.jquery ? o.target : $(__normalizeSlector(o.target));
         this.$bnd = o.boundary && o.boundary.jquery ? o.boundary : $(__normalizeSlector(o.boundary));
 
         this.itmAt = __normalizeAt(o.itemAt);
@@ -615,7 +617,7 @@
         var o = this.options;
 
         var item_pos = __nomrmalizePosition(this.$itm);
-        var targ_pos = __nomrmalizePosition(this.$trg);
+        var targ_pos = this.$trg.length ? __nomrmalizePosition(this.$trg) : null;
         this.bndPos = this.$bnd.length ? __normalizeBounding(this.$bnd) : null;
 
         if (!this.itmPos || !__isEqualNormPos(item_pos, this.itmPos)) {
@@ -631,44 +633,65 @@
         }
         if (!this.trgPos || !__isEqualNormPos(targ_pos, this.trgPos)) {
             this.trgPos = targ_pos;
-            var tar_extraOffset = __normalizeExtraOffset(o.targetOffset, targ_pos);
-            this.trgOffset = __calculateRefpointOffsets(targ_pos, tar_extraOffset,
-                this.trgAt);
+            if(targ_pos) {
+                this.trgOffset = __calculateRefpointOffsets(
+                    targ_pos,
+                    __normalizeExtraOffset(o.targetOffset, targ_pos),
+                    this.trgAt
+                );
+            }
         }
 
         return this; // to allow chaining
     };
 
     /**
-     * Calculate the resulting position only for the given placement. That will not handle flip
-     * and fit.
+     * Calculate the resulting position and boundary distance for the given placement.
+     * That will not handle flip and fit.
+     *
+     * If target was not specified, only boundary distance will be calculated.
+     * If not "item_at" or "tar_at", only boundary distance will be calculated.
+     * If boundary was set to null, only new position will be calculated.
+     *
      * Current position of elements (item, target, boundary) will be read from DOM.
      *
-     * @param  {{x:string, y:string}} item_at Placement for reference point on target
-     * @param  {{x:string, y:string}} tar_at  Placement for reference point on target
+     * @param  {{x:string, y:string}|null} item_at Placement for reference point on item
+     * @param  {{x:string, y:string}|null} tar_at  Placement for reference point on target
      * @return {Object}         CalculationResult, see method calculate()
      */
     PositionCalculator.prototype.calcVariant = function(item_at, tar_at) {
-        var tar_refpoint = {
-            top: this.trgPos.top + this.trgOffset[tar_at.y],
-            left: this.trgPos.left + this.trgOffset[tar_at.x]
-        };
-        var item_newPos = {
-            top: tar_refpoint.top - this.itmOffset[item_at.y],
-            left: tar_refpoint.left - this.itmOffset[item_at.x],
-            height: this.itmPos.height,
-            width: this.itmPos.width
+        var result = {
+            moveBy: null,
+            distance: null,
+            itemAt: null,
+            targetAt: null
         };
 
-        return {
-            moveBy: {
+        if(this.trgPos && item_at && tar_at) {
+            var tar_refpoint = {
+                top: this.trgPos.top + this.trgOffset[tar_at.y],
+                left: this.trgPos.left + this.trgOffset[tar_at.x]
+            };
+            var item_newPos = {
+                top: tar_refpoint.top - this.itmOffset[item_at.y],
+                left: tar_refpoint.left - this.itmOffset[item_at.x],
+                height: this.itmPos.height,
+                width: this.itmPos.width
+            };
+
+            result.moveBy = {
                 y: item_newPos.top - this.itmPos.top,
                 x: item_newPos.left - this.itmPos.left
-            },
-            distance: this.bndPos ? __calulateDistance(this.bndPos, item_newPos) : null,
-            itemAt: item_at.y + " " + item_at.x,
-            targetAt: tar_at.y + " " + tar_at.x
-        };
+            };
+            result.distance = this.bndPos ? __calulateDistance(this.bndPos, item_newPos) : null;
+            result.itemAt = item_at.y + " " + item_at.x;
+            result.targetAt = tar_at.y + " " + tar_at.x;
+        } else {
+            result.moveBy = { y:0, x:0 };
+            result.distance = this.bndPos ? __calulateDistance(this.bndPos, this.itmPos) : null;
+        }
+
+        return result;
     };
 
     /**
@@ -676,9 +699,9 @@
      * handle overflow in the specified matter.
      *
      * @return {Object}   with:
-     *     moveBy: {y:number, x:number} - distance between target and item as pixel values
-     *     distance: {null|Distance}    - distance between item and boundary
-     *                                  null, if boundary was not given
+     *     moveBy: {{y:number, x:number}} - distance between target and item as pixel values
+     *     distance: {Distance|null}    - distance between item and boundary
+     *                                      null, if boundary was not given
      *                                  Distance is Object with: {
      *                                      top:number, left:number,
      *                                      bottom:number, right:number,
@@ -687,14 +710,16 @@
      *                                  - top, left, buttom, right - distance/overflow for this edge
      *                                  - overflow - Array with edges has overflow
      *                                             - null for no collision detected
-     *     itemAt: {string}             - used placement of reference point at item
-     *                                   syntax: <vertical> + " " + <horizontal>
-     *                                   vertical: "top" | "middle" | "bottom"
-     *                                   horizontal: "left" | "center" | "right"
-     *     targetAt: {string}           - used placement of reference point at target
-     *                                   syntax: <vertical> + " " + <horizontal>
-     *                                   vertical: "top" | "middle" | "bottom"
-     *                                   horizontal: "left" | "center" | "right"
+     *     itemAt: {string|null}        - used placement of reference point at item
+     *                                    syntax: <vertical> + " " + <horizontal>
+     *                                    vertical: "top" | "middle" | "bottom"
+     *                                    horizontal: "left" | "center" | "right"
+     *                                  - null, if target was not given
+     *     targetAt: {string|null}      - used placement of reference point at target
+     *                                    syntax: <vertical> + " " + <horizontal>
+     *                                    vertical: "top" | "middle" | "bottom"
+     *                                    horizontal: "left" | "center" | "right"
+     *                                  - null, if target was not given
      */
     PositionCalculator.prototype.calculate = function() {
         if (this.itmPos === null) {
@@ -706,7 +731,7 @@
         // refresh
         // only update the position off elements and scroll offsets, but not the width or height
         __refreshPosition(this.$itm, this.itmPos);
-        __refreshPosition(this.$trg, this.trgPos);
+        this.trgPos && __refreshPosition(this.$trg, this.trgPos);
         this.bndPos && __refreshBounding(this.$bnd, this.bndPos);
 
         var result = this.calcVariant(this.itmAt, this.trgAt);
@@ -717,7 +742,7 @@
 
         // ////////////////////
         // collision handling: flip
-        if (o.flip && o.flip !== "none") {
+        if (o.flip && o.flip !== "none" && this.trgPos) {
             var newResult;
             var flipedPlacement = __flipPlacement(o.flip, this.itmAt, this.trgAt,
                 result.distance);
