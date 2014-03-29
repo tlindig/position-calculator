@@ -15,7 +15,7 @@
   <div class="jumbotron">
     <div class="container">
       <h1>PositionCalculator</h1>
-      <p>The slim highly flexible jQuery plug-in to calculate element's position and overflow.</p>
+      <p>The slim highly flexible jQuery plugin to calculate element's position and overflow.</p>
       by Tobias Lindig
     </div>
   </div>
@@ -30,22 +30,22 @@
     <div class="section">
       <h2>Overview</h2>
       <p class="lead">
-        Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container.
+        <b>PositionCalculator</b> calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container.
       </p>
       <p>
-        This plug will not manipulate any CSS settings or DOM-trees, it only calculate values, the difference of current position to target position and the overflow. Thus you are all paths open to implement the positioning according to your requirements.
+        This plugin will not manipulate any CSS settings or DOM-trees, it only calculate values. To be more exact, it calculates the difference of current position to target position and the overflow over boundary. Thus you are all paths open to implement the positioning according to your requirements. You can apply the new position by using <code>top</code> and <code>left</code> or using the css3 <code>transform</code> function or by setting <code>margin</code>. It is up to you.
       </p>
       <p>
-        You can apply the new position by using <code>top</code> and <code>left</code> or using the css3 <code>transform</code> function or by setting <code>margin</code>. It is up to you.
-      </p>
-      <p>
-        It is also possible to use the result of <b>PositionCalculator</b> as input for additional calculation. It is up to you.
+        It is also possible to use the result of <b>PositionCalculator</b> as input for additional calculation.
       </p>
       <p>
         With <b>PositionCalculator</b> it is absolute easy to implements an "inView" functionality. Take a look to the "Examples" section below.
       </p>
       <p>
         <b>PositionCalculator</b> takes away the complicated calculation taking account of preferred orientation, reference points and boundary.
+      </p>
+      <p>
+        With <b>PositionCalculator</b> it is more easy to implement components like tooltip, popover, popup, sticky navigation, and so on. You don't need wast you time with implementing calculation for positioning a item near by a target element and for collision handling. Just use the <b>PositionCalculator</b>.
       </p>
     </div> <!-- /section -->
 
