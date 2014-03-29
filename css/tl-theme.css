@@ -1,0 +1,183 @@
+/**
+ * theme for bootstrap
+ *
+ * Author: Tobias Lindig
+ */
+
+/**
+ * Colors:                  invers
+ *              #3C3C62     #E6E6E6
+ *              #4E4E7E     #E6E6E6     *
+ *              #535388     #E6E6E6
+ *              #595991     #E6E6E6
+ *              #61619E     #FFFFFF
+ *              #6A6AA4     #FFFFFF
+ *              #7474AA     #FFFFFF
+ *              #8D8DB9     #000000
+ *              #8787B5     #000000
+ *              #9797BF     #000000
+ *              #9A9AC1     #000000
+ *              #A3A3C7     #000000
+ *              #AAAACB     #000000
+ *              #B0B0CF     #000000
+ *              #B9B9D4     #000000
+ *              #BDBDD6     #000000
+ *              #D6D6E6     #000000
+ *              #DCDCEA     #000000
+ *              #E9E9F1     #000000
+ */
+.jumbotron,
+.tl-footer {
+    color: #E6E6E6;
+    background: #4E4E7E;
+    background: -moz-repeating-radial-gradient(
+        bottom left,
+        circle farthest-corner,
+        rgba(78,78,126,0.7) 0,
+        rgba(78,78,126,0.7) 20%,
+        rgba(78,78,126,.4) 20%,
+        rgba(78,78,126,.4) 40%
+      ),
+      -moz-repeating-radial-gradient(
+        bottom right,
+        circle farthest-corner,
+        rgba(97,97,158,0.8) 0,
+        rgba(97,97,158,0.8) 10%,
+        rgba(78,78,126,.4) 10%,
+        rgba(78,78,126,.4) 20%
+      ),
+        -moz-repeating-radial-gradient(
+        top right,
+        circle farthest-corner,
+        rgba(116,116,170,0.8) 0,
+        rgba(116,116,170,0.8) 5%,
+        rgba(78,78,126,.4) 5%,
+        rgba(78,78,126,.4) 23%
+      );
+    background: -webkit-repeating-radial-gradient(
+        bottom left,
+        circle farthest-corner,
+        rgba(78,78,126,0.7) 0,
+        rgba(78,78,126,0.7) 20%,
+        rgba(78,78,126,.4) 20%,
+        rgba(78,78,126,.4) 40%
+      ),
+      -webkit-repeating-radial-gradient(
+        bottom right,
+        circle farthest-corner,
+        rgba(97,97,158,0.8) 0,
+        rgba(97,97,158,0.8) 10%,
+        rgba(78,78,126,.4) 10%,
+        rgba(78,78,126,.4) 20%
+      ),
+        -webkit-repeating-radial-gradient(
+        top right,
+        circle farthest-corner,
+        rgba(116,116,170,0.8) 0,
+        rgba(116,116,170,0.8) 5%,
+        rgba(78,78,126,.4) 5%,
+        rgba(78,78,126,.4) 23%
+      );
+    background: -ms-repeating-radial-gradient(
+        bottom left,
+        circle farthest-corner,
+        rgba(78,78,126,0.7) 0,
+        rgba(78,78,126,0.7) 20%,
+        rgba(78,78,126,.4) 20%,
+        rgba(78,78,126,.4) 40%
+      ),
+      -ms-repeating-radial-gradient(
+        bottom right,
+        circle farthest-corner,
+        rgba(97,97,158,0.8) 0,
+        rgba(97,97,158,0.8) 10%,
+        rgba(78,78,126,.4) 10%,
+        rgba(78,78,126,.4) 20%
+      ),
+        -ms-repeating-radial-gradient(
+        top right,
+        circle farthest-corner,
+        rgba(116,116,170,0.8) 0,
+        rgba(116,116,170,0.8) 5%,
+        rgba(78,78,126,.4) 5%,
+        rgba(78,78,126,.4) 23%
+      );
+    background: repeating-radial-gradient(
+        bottom left,
+        circle farthest-corner,
+        rgba(78,78,126,0.7) 0,
+        rgba(78,78,126,0.7) 20%,
+        rgba(78,78,126,.4) 20%,
+        rgba(78,78,126,.4) 40%
+      ),
+      repeating-radial-gradient(
+        bottom right,
+        circle farthest-corner,
+        rgba(97,97,158,0.8) 0,
+        rgba(97,97,158,0.8) 10%,
+        rgba(78,78,126,.4) 10%,
+        rgba(78,78,126,.4) 20%
+      ),
+        repeating-radial-gradient(
+        top right,
+        circle farthest-corner,
+        rgba(116,116,170,0.8) 0,
+        rgba(116,116,170,0.8) 5%,
+        rgba(78,78,126,.4) 5%,
+        rgba(78,78,126,.4) 23%
+      );
+}
+.tl-footer {
+    padding: 1em;
+}
+
+/* *****
+ * Link Color
+ */
+a {
+    color: #4E4E7E;
+}
+a:visited {
+    color: #3C3C62;
+}
+a:hover {
+    color: #595991;
+}
+
+.tl-footer a {
+    color: #B0B0CF;
+}
+.tl-footer a:visited {
+    color: #A3A3C7;
+}
+.tl-footer a:hover {
+    color: #D6D6E6;
+}
+
+
+.section {
+    margin-bottom: 3em;
+}
+
+h2, h3, h4 {
+    border-left: 2px solid #AAAACB;
+    margin-bottom: 1em;
+    margin-left: -10px;
+    margin-top: 2em;
+    padding-left: 10px;
+}
+
+h2 {
+    border-left: 2px solid #AAAACB;
+    border-top: 1px double #AAAACB;
+    padding-top: 10px;
+    position: relative;
+}
+h2:after {
+    border-left: 2px dotted #AAAACB;
+    bottom: -12px;
+    content: "";
+    height: 10px;
+    left: -2px;
+    position: absolute;
+}
