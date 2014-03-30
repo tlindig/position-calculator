@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="./css/tl-theme.css">
   <link rel="stylesheet" href="./css/tl-demo.css">
+
+  <!-- Load jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <!-- Load my lib -->
+  <script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
+
 </head>
 <body>
 
@@ -52,7 +58,13 @@
     <div class="section">
       <h2>Live Demo</h2>
       <p class="lead">
-        Try out all the options check the result.
+        Try out all the options and see the result instantly. All options are described in a table at next section.
+      </p>
+      <p>
+        Below you can see a yellow square. That is the item that will be positioned.
+      </p>
+      <p>
+        To see the collision handling (flip and stick) live you can check the checkbox in the green rectangle and move it with the mouse. The colored triangle shows the initial chosen reference point from item and target (itemAt, targetAt).
       </p>
 
       <h3>Configuration</h3>
@@ -156,6 +168,12 @@
         </div><!-- /col-sm-4 -->
         <div class="col-sm-4">
           <h4>Behavior</h4>
+          <p>
+            Collision handling strategy.
+          </p>
+          <p>
+            Prevent overflow of boundary. Select the edge where item shall stick on.
+          </p>
           <div class="form-inline clearfix">
             <span class="tl-label">stick:</span>
             <span class="tl-value">
@@ -172,6 +190,9 @@
               </select>
             </span>
           </div>
+          <p>
+            Flip reference point from target, from item or from both.
+          </p>
           <div class="form-inline clearfix">
             <span class="tl-label">flip:</span>
             <span class="tl-value">
@@ -241,6 +262,8 @@
           </div><!-- /row -->
         </div><!-- /col-sm-6 -->
       </div><!-- /row -->
+      <!-- Load and init live demos -->
+      <script type="text/javascript" src="./js/tl-demo.js"></script>
     </div> <!-- /section -->
 
     <div class="section">
@@ -521,6 +544,42 @@ myCalculator.resize();
         The new position will be given to you by the <b>PositionCalculator</b>, you have only to set the css properties.
       </p>
 
+      <div class="panel panel-default tl-example">
+        <p>
+          Move mouse over textinputs to see the effect.
+        </p>
+        <input type="text" class="has_tooltip" data-tooltip="this is tooltip 1" value="hover me 1"/><br><br>
+        <input type="text" class="has_tooltip" data-tooltip="this is tooltip 2" value="hover me 2"/><br><br>
+        <input type="text" class="has_tooltip" data-tooltip="this is tooltip 3" value="hover me 3"/>
+        <script>
+          jQuery(function($) {
+
+            var $tooltip = $('<div style="display:none;position:absolute;padding:10px;background:rgba(0,0,0,0.8);color:#ffffff"></div>').appendTo(document.body);
+
+            function showTooltip(event) {
+              $tooltip.text($(this).data('tooltip'));
+              $tooltip.show().css({top:0, left:0});
+
+              var calculator = new $.PositionCalculator({
+                item: $tooltip,
+                itemAt: "bottom left",
+                target: this,
+                targetAt: "top right",
+                flip: "both"
+              });
+              var posResult = calculator.calculate();
+
+              $tooltip.css({
+                top: posResult.moveBy.y + "px",
+                left: posResult.moveBy.x + "px"
+              })
+            }
+
+            $('.has_tooltip').on('mouseenter', showTooltip);
+            $('.has_tooltip').on('mouseout', function(){$tooltip.hide()});
+          });
+        </script>
+      </div><!-- /tl-example -->
 <pre>
 &lt;script>
   jQuery(function($) {
@@ -563,6 +622,70 @@ myCalculator.resize();
         viewport. If so, a special class will be added.
       </p>
 
+      <div class="panel panel-default tl-example">
+        <style>
+          .filler {
+            border: 1px solid grey;
+            padding: 2em;
+            background: lightgray;
+            margin: 10px;
+          }
+          .filler:before {
+            content: "dummy content, to get scrollbar"
+          }
+          .inview {
+            background: yellow;
+            font-size: larger;
+          }
+          .inview:before {
+            content: "I am in view without overflow."
+          }
+        </style>
+        <div id="container_scroll" style="height: 300px; overflow:auto">
+          <p>
+            Scroll to see the effect.
+          </p>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+          <div class="filler"></div>
+        </div>
+        <script>
+          jQuery(function($) {
+
+            var $boundary = $('#container_scroll');
+            function addInviewSupport(index) {
+              var $elem = $(this);
+              var calculator = new $.PositionCalculator({
+                item: $elem,
+                boundary: $boundary,
+                stick:false
+              });
+
+              function processInview(event) {
+                var result = calculator.calculate();
+                if(!result.distance.overflow) {
+                  $elem.addClass('inview');
+                } else {
+                  $elem.removeClass('inview');
+                }
+              }
+              $boundary.on('scroll.tl', processInview);
+            }
+
+            $('.filler').each(addInviewSupport);
+
+            //inital call
+            $boundary.trigger('scroll.tl');
+
+          });
+        </script>
+      </div><!-- /tl-example -->
 <pre>
 &lt;div class="filler">&lt;/div>
 &lt;div class="filler">&lt;/div>
@@ -571,11 +694,12 @@ myCalculator.resize();
 &lt;script>
   jQuery(function($) {
 
+    var $boundary = $('#container_scroll');
     function addInviewSupport(index) {
       var $elem = $(this);
       var calculator = new $.PositionCalculator({
         item: $elem,
-        boundary: window,
+        boundary: $boundary,
         stick:false
       });
 
@@ -587,13 +711,13 @@ myCalculator.resize();
           $elem.removeClass('inview');
         }
       }
-      $(window).on('scroll.tl', processInview);
+      $boundary.on('scroll.tl', processInview);
     }
 
     $('.filler').each(addInviewSupport);
 
     //inital call
-    $(window).trigger('scroll.tl');
+    $boundary.trigger('scroll.tl');
 
   });
 &lt;/script>
@@ -611,14 +735,6 @@ myCalculator.resize();
       </footer>
     </div>
   </div>
-
-
-  <!-- Load jQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <!-- Load my lib -->
-  <script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
-  <!-- Load and init live demos -->
-  <script type="text/javascript" src="./js/tl-demo.js"></script>
 
   <!-- BEGIN Google Analytics -->
   <script type="text/javascript">

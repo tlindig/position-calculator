@@ -77,3 +77,16 @@
     input, select {
       text-align: right;
     }
+
+    .tl-example {
+      padding: 3em 1em 1em;
+      position: relative;;
+    }
+    .tl-example:before {
+      color: #AAAAAA;
+      content: "Example";
+      font-weight: bold;
+      left: 1em;
+      position: absolute;
+      top: 0.5em;
+    }
