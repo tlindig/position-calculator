@@ -9,6 +9,10 @@ Download the [production version][min] or the [development version][max].
 [min]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.min.js
 [max]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.js
 
+or for quick tests, add this tag to load it direct from github:
+
+```<script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>```
+
 
 ### Usage example:
 
@@ -17,7 +21,7 @@ Download the [production version][min] or the [development version][max].
 <html>
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <script src="/dist/position-calculator.min.js"></script>
+  <script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
   <meta charset="utf-8">
   <script>
     jQuery(function($) {
