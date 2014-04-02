@@ -14,6 +14,11 @@ or for quick tests, add this tag to load it direct from github:
 ```<script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>```
 
 
+I will deploy it on CDN "cdnJS.com" if this requirement is met:
+
+> Libraries must have notable popularity: 100 stars or watchers on GitHub is a good example, but
+> as long as reasonable popularity can be demonstrated the library will be added."
+
 ### Usage example:
 
 ```html
