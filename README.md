@@ -11,7 +11,7 @@ Download the [production version][min] or the [development version][max].
 
 or for quick tests, add this tag to load it direct from github:
 
-```<script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>```
+`<script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>`
 
 
 I will deploy it on CDN "cdnJS.com" if this requirement is met:
