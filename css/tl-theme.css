@@ -135,13 +135,13 @@
  * Link Color
  */
 a {
-    color: #4E4E7E;
+    color: #595991;
 }
 a:visited {
-    color: #3C3C62;
+    color: #535388;
 }
 a:hover {
-    color: #595991;
+    color: #6A6AA4;
 }
 
 .tl-footer a {

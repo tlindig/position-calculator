@@ -58,13 +58,13 @@
     <div class="section">
       <h2>Live Demo</h2>
       <p class="lead">
-        Try out all the options and see the result instantly. All options are described in a table at next section.
+        Try out all the options and see the result instantly. All options are described in a table in section below.
       </p>
       <p>
         Below you can see a yellow square. That is the item that will be positioned.
       </p>
       <p>
-        To see the collision handling (flip and stick) live you can check the checkbox in the green rectangle and move it with the mouse. The colored triangle shows the initial chosen reference point from item and target (itemAt, targetAt).
+        To see the collision handling live (flip and stick) you can check the checkbox in the green rectangle and move it with the mouse. The colored triangle shows the initial chosen reference point from item and target (itemAt, targetAt).
       </p>
 
       <h3>Configuration</h3>
@@ -235,11 +235,15 @@
           <h3>Live Results</h3>
           <div class="row">
             <div class="col-sm-6">
-              Return value of <code>.calculate()</code>:
+              <p>
+                Return value of <code>.calculate()</code>:
+              </p>
               <pre id="preRsesult"></pre>
             </div><!-- /col-sm-6 -->
             <div class="col-sm-6">
-              Properties, read form DOM:
+              <p>
+                Properties, read form DOM:
+              </p>
               <div class="line">
                 <span class="tl-label">item top: </span><span class="tl-value" id="itemTop"></span>
               </div>
@@ -426,7 +430,7 @@ var myCalculator = new jQuery.PositionCalculator({ item: '#idItem', target:'#idT
 var result = myCalculator.calculate();
 </pre>
 
-      <h4>.calcVairant(item_at, target_at)</h4>
+      <h4>.calcVariant(item_at, target_at)</h4>
       <p>
         Exported helper method. Calculate the resulting position only for the given placement.
         That will not handle flip and fit.
@@ -543,6 +547,9 @@ myCalculator.resize();
       <p>
         The new position will be given to you by the <b>PositionCalculator</b>, you have only to set the css properties.
       </p>
+      <p>
+        Try it on JSBin: <a href="http://jsbin.com/sifec/5/edit?html,output">PositionCalculator - Tooltip</a>.
+      </p>
 
       <div class="panel panel-default tl-example">
         <p>
@@ -614,12 +621,14 @@ myCalculator.resize();
 &lt;input type="text" class="has_tooltip" data-tooltip="this is tooltip 3" value="hover me 3"/>
 </pre>
 
-      Try this example at <a href="http://jsbin.com/sifec/5/edit">JS Bin</a>.
 
       <h3>inView</h3>
       <p>
         In this example, <b>PositionCalculator</b> is used to figure out if an element is shown in
         viewport. If so, a special class will be added.
+      </p>
+      <p>
+        Try it on JSBin: <a href="http://jsbin.com/secuw/2/edit?html,output">PositionCalculator - inView</a>.
       </p>
 
       <div class="panel panel-default tl-example">
@@ -629,21 +638,23 @@ myCalculator.resize();
             padding: 2em;
             background: lightgray;
             margin: 10px;
+            height: 60%;
+            transition-duration: .7s;
           }
           .filler:before {
-            content: "dummy content, to get scrollbar"
+            content: "Box has overflow."
           }
           .inview {
             background: yellow;
             font-size: larger;
           }
           .inview:before {
-            content: "I am in view without overflow."
+            content: "Box is complete in view without overflow."
           }
         </style>
         <div id="container_scroll" style="height: 300px; overflow:auto">
           <p>
-            Scroll to see the effect.
+            Scroll down to see the effect.<br><br>
           </p>
           <div class="filler"></div>
           <div class="filler"></div>
@@ -654,6 +665,9 @@ myCalculator.resize();
           <div class="filler"></div>
           <div class="filler"></div>
           <div class="filler"></div>
+          <p>
+            End of page.
+          </p>
         </div>
         <script>
           jQuery(function($) {
@@ -680,7 +694,7 @@ myCalculator.resize();
 
             $('.filler').each(addInviewSupport);
 
-            //inital call
+            //initial call
             $boundary.trigger('scroll.tl');
 
           });
@@ -716,13 +730,12 @@ myCalculator.resize();
 
     $('.filler').each(addInviewSupport);
 
-    //inital call
+    //initial call
     $boundary.trigger('scroll.tl');
 
   });
 &lt;/script>
 </pre>
-      Try this example at <a href="http://jsbin.com/secuw/1/edit">JS Bin</a>.
 
     </div> <!-- /section -->
   </div><!-- /container -->
