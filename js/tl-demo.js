@@ -148,6 +148,8 @@
             $container.css('overflow', 'visible');
         }
 
+        $item.css("transform", "translate(0,0)"); //prefent "ghost" scrollbars
+
         calculator.resize();
         updateElement();
     }
