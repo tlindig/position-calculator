@@ -4,10 +4,11 @@ Calculate the position of an element relative to another element or event. Tries
 
 
 ## Getting Started
-Download the [production version][min] or the [development version][max].
+Download the [production version][min] or the [development version][max] or istall it via [Bower][bower].
 
 [min]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.min.js
 [max]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.js
+[bower]: http://http://bower.io/
 
 or for quick tests, add this tag to load it direct from github:
 
@@ -18,6 +19,13 @@ I will deploy it on CDN "cdnJS.com" if this requirement is met:
 
 > Libraries must have notable popularity: 100 stars or watchers on GitHub is a good example, but
 > as long as reasonable popularity can be demonstrated the library will be added."
+
+## Documentation and Demo
+
+Visit demonstration and documentation page: <a href="http://tlindig.github.io/position-calculator/">Position Calculator</a>
+
+Ready to use version of this lib can be found in folder: "dist"
+
 
 ### Usage example:
 
@@ -63,14 +71,7 @@ I will deploy it on CDN "cdnJS.com" if this requirement is met:
 </html>
 ```
 
-Try this example at [jsBin](http://jsbin.com/sifec/1/edit)
-
-
-## Documentation
-
-Visit demonstration and documentation page: <a href="http://tlindig.github.io/position-calculator/">Position Calculator</a>
-
-Ready to use version of this lib can be found in folder: "dist"
+<b>Try this example at [jsBin](http://jsbin.com/sifec/1/edit)</b>
 
 
 ## Bugs and feature requests
@@ -104,15 +105,23 @@ Code released under [the MIT license](LICENSE).
 
 ## Changelog
 
-### 1.1.0
+### 1.1.1 (April 17, 2014)
+
+* add support for source map file
+* add support for [Bower][bower]
+
+### 1.1.0 (March 28, 2014)
 
 * add support for calculation without parameter "target" to calculate only overflow of item and boundary
 
-### 1.0.1
+### 1.0.1 (March 28, 2014)
 
 * update jQuery manifest, add link to demo page
 
+### 1.0.0 (March 28, 2014)
 
-### 1.0.0
+* first public release
 
-* Initial commit
+### 0.0.0 (February 21, 2014)
+
+Initial commit
