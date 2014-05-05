@@ -8,7 +8,7 @@ Download the [production version][min] or the [development version][max] or inst
 
 [min]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.min.js
 [max]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.js
-[bower]: http://http://bower.io/
+[bower]: http://bower.io
 
 or for quick tests, add this tag to load it direct from github:
 
