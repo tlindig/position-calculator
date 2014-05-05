@@ -4,7 +4,7 @@ Calculate the position of an element relative to another element or event. Tries
 
 
 ## Getting Started
-Download the [production version][min] or the [development version][max] or istall it via [Bower][bower].
+Download the [production version][min] or the [development version][max] or install it via [Bower][bower].
 
 [min]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.min.js
 [max]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.js
@@ -12,7 +12,7 @@ Download the [production version][min] or the [development version][max] or ista
 
 or for quick tests, add this tag to load it direct from github:
 
-`<script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>`
+`<script src="http://tlindig.github.io/position-calculator/dist/position-calculator.min.js"></script>`
 
 
 I will deploy it on CDN "cdnJS.com" if this requirement is met:
