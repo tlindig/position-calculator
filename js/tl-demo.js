@@ -191,4 +191,9 @@
     $draggable.on("mousedown.tl.drag", ta_onMouseDown);
     $draggable.addClass("tl-draggable");
 
+    // window resize handler
+    $(window).on('resize.tl', function(event) {
+        calculator.resize();
+        updateElement();
+    });
 })(jQuery);
