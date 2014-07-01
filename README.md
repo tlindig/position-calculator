@@ -105,6 +105,10 @@ Code released under [the MIT license](LICENSE).
 
 ## Changelog
 
+### 1.1.2 (July 1, 2014)
+
+* set minimum required version of jQuery to >1.8. jQuery 1.7 has a bug together with css property "box-sizing: border-box" that is fixed with 1.8. ( [#10413](http://bugs.jquery.com/ticket/10413), [#11004](http://bugs.jquery.com/ticket/11004) )
+
 ### 1.1.1 (April 17, 2014)
 
 * add support for source map file

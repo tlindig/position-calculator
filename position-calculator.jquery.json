@@ -1,8 +1,8 @@
 {
     "name": "position-calculator",
     "title": "jQuery.PositionCalculator",
-    "description": "Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container. It does not manipulate CSS or DOM, it only calculates values. It is a basic technology to support implementation of tooltips, popups, popovers, scrollspies and many more.",
-    "version": "1.1.1",
+    "description": "Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container. It does not manipulate CSS or DOM, it only calculates values. It is a basic technology to support implementation of tooltips, popups, popovers, scrollspies, sticky navi and many more.",
+    "version": "1.1.2",
     "homepage": "https://github.com/tlindig/position-calculator",
     "author": {
         "name": "Tobias Lindig",
@@ -21,7 +21,7 @@
         "url": "https://raw.github.com/tlindig/position-calculator/master/LICENSE-MIT"
     }],
     "dependencies": {
-        "jquery": ">=1.7"
+        "jquery": ">=1.8"
     },
     "keywords": [
         "position",
