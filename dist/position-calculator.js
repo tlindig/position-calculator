@@ -2,9 +2,9 @@
  * jQuery.PositionCalculator
  * https://github.com/tlindig/position-calculator
  *
- * v1.1.2 - 2014-07-01
+ * v1.1.2 - 2015-10-15
  *
- * Copyright (c) 2014 Tobias Lindig
+ * Copyright (c) 2015 Tobias Lindig
  * http://tlindig.de
  *
  * License: MIT
@@ -19,12 +19,14 @@
  * Licensed under the MIT license.
  */
 
-/*global define:false*/
+/*global define:false, module:false*/
 (function(factory) {
     // make it public
     if (typeof define === 'function' && define.amd) {
         // as __named__ AMD module
         define("position-calculator", ["jquery"], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
     } else {
         // as Browser globals
         jQuery.PositionCalculator = factory(jQuery);

@@ -6,12 +6,14 @@
  * Licensed under the MIT license.
  */
 
-/*global define:false*/
+/*global define:false, module:false*/
 (function(factory) {
     // make it public
     if (typeof define === 'function' && define.amd) {
         // as __named__ AMD module
         define("position-calculator", ["jquery"], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
     } else {
         // as Browser globals
         jQuery.PositionCalculator = factory(jQuery);
