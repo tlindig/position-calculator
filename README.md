@@ -34,7 +34,7 @@ Ready to use version of this lib can be found in folder: "dist"
 <html>
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <script src="http://rawgithub.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
+  <script src="http://rawgit.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
   <meta charset="utf-8">
   <script>
     jQuery(function($) {
@@ -71,7 +71,7 @@ Ready to use version of this lib can be found in folder: "dist"
 </html>
 ```
 
-<b>Try this example at [jsBin](http://jsbin.com/sifec/1/edit)</b>
+<b>Try this example at [jsBin](http://jsbin.com/balobomomu/2/edit?html,output)</b>
 
 
 ## Bugs and feature requests
