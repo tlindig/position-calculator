@@ -1,10 +1,13 @@
 {
   "name": "position-calculator",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container. It does not manipulate CSS or DOM, it only calculates values. It is a basic technology to support implementation of tooltips, popups, popovers, scrollspies and many more.",
   "main": "dist/position-calculator.js",
   "scripts": {
-    "test": "grunt qunit"
+    "lint": "eslint src/*.js",
+    "build:dev": "esbuild src/position-calculator.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=dist/position-calculator.js",
+    "build:min": "esbuild src/position-calculator.js --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=dist/position-calculator.min.js",
+    "build": "npm run build:dev; npm run build:min"
   },
   "repository": {
     "type": "git",
@@ -33,14 +36,15 @@
     "url": "https://github.com/tlindig/position-calculator/issues"
   },
   "homepage": "https://github.com/tlindig/position-calculator#readme",
+  "dependencies": {
+  },
   "devDependencies": {
-    "load-grunt-tasks": "~0.2.0",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-qunit": "~0.2.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.3.2",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt": "~0.4.2"
+    "esbuild": "^0.15.9",
+    "eslint": "^8.24.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1"
   }
 }

@@ -1,3 +1,6 @@
+import $ from '../libs/jquery-loader.js';
+import PositionCalculator from '../src/position-calculator.js';
+
 (function($) {
     var $container = $('#container1');
     var $item = $('#container1 > .tl-item');
@@ -80,7 +83,7 @@
         calculatorOptions.stick = $('#sel_stick').val();
         calculatorOptions.flip = $('#sel_flip').val();
 
-        calculator = new $.PositionCalculator(calculatorOptions);
+        calculator = new PositionCalculator(calculatorOptions);
 
         updateElement();
     }
