@@ -5,7 +5,11 @@
   var jqversion = location.search.match(/[?&]jquery=(.*?)(?=&|$)/);
   // If a version was specified, use that version from code.jquery.com.
   if (jqversion) {
-    path = 'http://code.jquery.com/jquery-' + jqversion[1] + '.js';
+    var version = jqversion[1];
+    // Validate the version format to prevent XSS
+    if (/^\d+\.\d+\.\d+$/.test(version)) {
+      path = 'https://code.jquery.com/jquery-' + version + '.js';
+    }
   }
   // This is the only time I'll ever use document.write, I promise!
   document.write('<script src="' + path + '"></script>');
