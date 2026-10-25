@@ -79,9 +79,9 @@ Ready to use version of this lib can be found in folder: "dist"
 Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/tlindig/position-calculator/issues/new).
 
 
-## Build
+## Build and test
 
-To build run [Grunt](http://gruntjs.com/).
+`npm run build` writes `dist/`. `npm test` runs the tests in headless Chrome (Node 24 or newer, Chrome). See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 
 ## Versioning
