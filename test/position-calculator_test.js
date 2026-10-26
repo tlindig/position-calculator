@@ -520,6 +520,13 @@
         strictEqual(result.targetAt, "top left", "swapped order");
     });
 
+    test("flip and stick are off by default: an overflow is reported, not resolved", function() {
+        size(I, 100, 80);
+        var t = s.box({ left: 420, top: 300, width: 60, height: 40 });
+        same(calc({ target: t, targetAt: "bottom right" }).calculate(),
+            res(320, 470, "top left", "bottom right", d(-240, -380, -20, -80, ["bottom", "right"])));
+    });
+
     test("calculate() does not change the DOM or the options", function() {
         var options = {
             item: I, target: T, boundary: B, itemAt: "bottom right", flip: "both", stick: "all",
@@ -571,12 +578,5 @@
         throws(function() {
             calc({ itemAt: "middle center", targetAt: "middle center", stick: "all" }).calculate();
         }, "vertical axis");
-    });
-
-    test("flip and stick default to 'none', the documentation says 'both' and 'all'", function() {
-        size(I, 100, 80);
-        var t = s.box({ left: 420, top: 300, width: 60, height: 40 });
-        same(calc({ target: t, targetAt: "bottom right" }).calculate(),
-            res(320, 470, "top left", "bottom right", d(-240, -380, -20, -80, ["bottom", "right"])));
     });
 }());
