@@ -1,6 +1,6 @@
 {
   "name": "position-calculator",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container. It does not manipulate CSS or DOM, it only calculates values. It is a basic technology to support implementation of tooltips, popups, popovers, scrollspies and many more.",
   "main": "dist/position-calculator.js",
   "engines": {
