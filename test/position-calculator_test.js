@@ -11,7 +11,7 @@
  * moveBy = (target reference point) - (item reference offset) - (current item position)
  * distance: top = B.top - item.top, left likewise, bottom = B.bottom - item.bottom, right likewise.
  */
-/*global Adapter, Scene, module, test, ok, strictEqual, deepEqual, throws*/
+/*global Adapter, Scene, module, test, ok, strictEqual, deepEqual*/
 (function() {
     "use strict";
 
@@ -388,6 +388,15 @@
             res(185, 90, "middle center", "middle center", d(-105, 0, 155, -200, ["right"])));
     });
 
+    test("stick on both edges of an axis: the item ends at the left or top edge", function() {
+        size(I, 600, 40);
+        same(stickMiddle("left right"),
+            res(185, 90, "middle center", "middle center", d(-105, 0, 155, -200, ["right"])), "wider than the boundary");
+        size(I, 60, 400);
+        same(stickMiddle("top bottom"),
+            res(80, 210, "middle center", "middle center", d(0, -120, -100, 220, ["bottom"])), "higher than the boundary");
+    });
+
     // ////////////////////////////////////////////////////////////////
     module("kinds of elements", env);
 
@@ -527,6 +536,38 @@
             res(320, 470, "top left", "bottom right", d(-240, -380, -20, -80, ["bottom", "right"])));
     });
 
+    test("PositionCalculator.defaults holds the default options", function() {
+        deepEqual(Adapter.ctor().defaults, {
+            item: null,
+            target: null,
+            boundary: window,
+            itemAt: "top left",
+            targetAt: "top left",
+            itemOffset: { y: 0, x: 0, mirror: true },
+            targetOffset: { y: 0, x: 0, mirror: true },
+            flip: "none",
+            stick: "none"
+        });
+    });
+
+    test("changing PositionCalculator.defaults changes new instances", function() {
+        var defaults = Adapter.ctor().defaults;
+        var original = defaults.itemAt;
+        defaults.itemAt = "bottom right";
+        try {
+            strictEqual(Adapter.create({ item: I, target: T, boundary: B }).calculate().itemAt, "bottom right");
+        } finally {
+            defaults.itemAt = original;
+        }
+    });
+
+    test("the constructor can be called without new", function() {
+        var Ctor = Adapter.ctor();
+        var calculator = Ctor({ item: I, target: T, boundary: B });
+        ok(calculator instanceof Ctor, "returns an instance");
+        same(calculator.calculate(), res(180, 190, "top left", "top left", d(-100, -100, 160, 240)));
+    });
+
     test("calculate() does not change the DOM or the options", function() {
         var options = {
             item: I, target: T, boundary: B, itemAt: "bottom right", flip: "both", stick: "all",
@@ -547,36 +588,47 @@
     });
 
     // ////////////////////////////////////////////////////////////////
-    // Not part of the behavior contract. Listed so that a decision can be made per case.
-    // These tests never fail the run (see test/run.js).
-    module("[info] legacy API", env);
+    // Decided behavior that the jQuery implementation does not have. These modules are reported as todo
+    // (see test/run.js). The new implementation has to provide it, then the "[target]" prefix is removed.
+    function stickMiddle(stick) {
+        return calc({ itemAt: "middle center", targetAt: "middle center", stick: stick }).calculate();
+    }
 
-    test("PositionCalculator.defaults is an object", function() {
-        strictEqual(typeof Adapter.ctor().defaults, "object");
+    module("[target] window as target", env);
+
+    test("window is the visible area, reference points are measured on it", function() {
+        var vp = Scene.viewport();
+        same(calc({ target: window, boundary: null, itemAt: "middle center", targetAt: "middle center" }).calculate(),
+            res(vp.top + vp.height / 2 - 40, vp.left + vp.width / 2 - 40, "middle center", "middle center", null));
     });
 
-    test("constructor works without 'new'", function() {
-        var Ctor = Adapter.ctor();
-        var calculator = Ctor({ item: I, target: T, boundary: B });
-        strictEqual(typeof calculator.calculate, "function");
+    test("'window' as string, item in the bottom right corner of the visible area", function() {
+        var vp = Scene.viewport();
+        same(calc({ target: "window", boundary: null, itemAt: "bottom right", targetAt: "bottom right" }).calculate(),
+            res(vp.top + vp.height - 60, vp.left + vp.width - 70, "bottom right", "bottom right", null));
     });
 
-    module("[info] known issues", env);
-
-    test("window as target throws", function() {
-        throws(function() {
-            calc({ target: window }).calculate();
-        }, "calculate() with target window");
+    test("window as target follows the scroll position", function() {
+        var calculator = calc({ target: window, boundary: null });
+        window.scrollTo(50, 200);
+        var vp = Scene.viewport();
+        same({ top: vp.top, left: vp.left }, { top: 200, left: 50 }, "precondition: window is scrolled");
+        same(calculator.calculate(), res(vp.top - 20, vp.left - 10, "top left", "top left", null));
     });
 
-    test("stick 'all' throws when the item is larger than the boundary on an axis", function() {
+    module("[target] stick all with an oversized item", env);
+
+    test("item wider than the boundary: it ends at the left edge, like listing all edges", function() {
         size(I, 600, 40);
-        throws(function() {
-            calc({ itemAt: "middle center", targetAt: "middle center", stick: "all" }).calculate();
-        });
+        var expected = res(185, 90, "middle center", "middle center", d(-105, 0, 155, -200, ["right"]));
+        same(stickMiddle("all"), expected, "'all'");
+        same(stickMiddle(true), expected, "true");
+    });
+
+    test("item higher than the boundary: it ends at the top edge, like listing all edges", function() {
         size(I, 60, 400);
-        throws(function() {
-            calc({ itemAt: "middle center", targetAt: "middle center", stick: "all" }).calculate();
-        }, "vertical axis");
+        var expected = res(80, 210, "middle center", "middle center", d(0, -120, -100, 220, ["bottom"]));
+        same(stickMiddle("all"), expected, "'all'");
+        same(stickMiddle(true), expected, "true");
     });
 }());

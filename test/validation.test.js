@@ -9,7 +9,7 @@
  *  2. properties that must hold for any correct result, measured in the real DOM
  *     (applying moveBy puts the item on the target, distance matches the rects, flip and stick rules).
  *
- * Scenes in which the reference build itself throws (see "known issues" in the dev set) are skipped.
+ * Scenes in which the reference build itself throws (see the "[target]" modules in the dev set) are skipped.
  */
 /*global Adapter, Scene, Report, TestParams, module, test, ok, deepEqual */
 (function() {

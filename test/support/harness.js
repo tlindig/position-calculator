@@ -5,8 +5,8 @@
  * `this`, shared by setup, test body and teardown.
  *
  * Results are published as window.TestResult, window.TestDone and a "testdone" event for test/run.js.
- * A test without any assertion fails. Modules whose name starts with "[info]" are reported by run.js
- * but never fail the run.
+ * A test without any assertion fails. Modules whose name starts with "[target]" hold behavior that is
+ * decided but not implemented yet. run.js reports them as todo.
  */
 (function(root) {
     "use strict";

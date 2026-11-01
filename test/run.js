@@ -6,7 +6,7 @@
  *   node test/run.js [dev|validation|all] [--seed=N] [--n=COUNT] [--impl=FILE] [--jquery=0|1]
  *                    [--chrome=PATH] [--no-sandbox] [--timeout=SECONDS]
  *
- * Exit code 0: no failure outside "[info]" modules (reported as todo). Otherwise 1.
+ * Exit code 0: no failure outside "[target]" modules (reported as todo). Otherwise 1.
  * Validation scenes are random. The seed is printed, pass --seed=N to reproduce a run.
  */
 "use strict";
@@ -226,8 +226,8 @@ for (const name of targets) {
             t.diagnostic("validation seed: " + options.seed);
         }
         for (const entry of result.tests) {
-            const informational = entry.module.startsWith("[info]");
-            await t.test(`${entry.module} :: ${entry.name}`, informational ? { todo: "informational" } : {}, () => {
+            const target = entry.module.startsWith("[target]");
+            await t.test(`${entry.module} :: ${entry.name}`, target ? { todo: "target behavior, not implemented yet" } : {}, () => {
                 if (entry.failed) {
                     throw new Error(describeFailures(entry.failures));
                 }
