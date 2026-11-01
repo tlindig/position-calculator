@@ -588,13 +588,11 @@
     });
 
     // ////////////////////////////////////////////////////////////////
-    // Decided behavior that the jQuery implementation does not have. These modules are reported as todo
-    // (see test/run.js). The new implementation has to provide it, then the "[target]" prefix is removed.
     function stickMiddle(stick) {
         return calc({ itemAt: "middle center", targetAt: "middle center", stick: stick }).calculate();
     }
 
-    module("[target] window as target", env);
+    module("window as target", env);
 
     test("window is the visible area, reference points are measured on it", function() {
         var vp = Scene.viewport();
@@ -616,7 +614,7 @@
         same(calculator.calculate(), res(vp.top - 20, vp.left - 10, "top left", "top left", null));
     });
 
-    module("[target] stick all with an oversized item", env);
+    module("stick all with an oversized item", env);
 
     test("item wider than the boundary: it ends at the left edge, like listing all edges", function() {
         size(I, 600, 40);
