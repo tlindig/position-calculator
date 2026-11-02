@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Load jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <!-- Load jQuery plugin: PositionCalculator -->
+    <script src="../dist/position-calculator.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Example: Dynamic popup with PositionCalculator</title>
+    <style>
+      p {
+        padding: 25px;
+      }
+      #popup p {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>... some content ...</p>
+    <input type="text" class="has_popup" value="click me" />
+    <p>... some content ...</p>
+    <input type="text" class="has_popup" value="click me" />
+    <p>... some content ...</p>
+
+    <div
+      id="popup"
+      style="
+        display: none;
+        position: absolute;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #ffffff;
+      "
+    >
+      I am the popup. <b>Click me to close</b>
+    </div>
+
+    <script>
+      jQuery(function ($) {
+        var count = 1;
+        var $popup = $("#popup");
+
+        function showPopup(event) {
+          // set content
+          $popup.append("<p>input clicked " + count++ + " times</p>");
+
+          // reset position
+          $popup.show().css({ top: 0, left: 0 });
+
+          // calculate new position
+          var calculator = new $.PositionCalculator({
+            item: $popup,
+            itemAt: "bottom left",
+            target: this,
+            targetAt: "top right",
+            flip: "both",
+          });
+          var posResult = calculator.calculate();
+
+          // set new position
+          $popup.css({
+            top: posResult.moveBy.y + "px",
+            left: posResult.moveBy.x + "px",
+          });
+        }
+        $(".has_popup").on("click", showPopup);
+        $popup.on("click", function () {
+          $popup.hide();
+        });
+      });
+    </script>
+  </body>
+</html>

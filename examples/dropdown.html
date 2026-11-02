@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="description" content="Boostrap dropdown auto position" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@3.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.1.1/dist/js/bootstrap.min.js"></script>
+    <!-- Load jQuery plugin: PositionCalculator -->
+    <script src="../dist/position-calculator.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Example: Bootstrap dropdown with PositionCalculator</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="btn-group-vertical" style="position: absolute; bottom: 0">
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-default dropdown-toggle"
+            data-toggle="dropdown"
+          >
+            Default dorpdown <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </div>
+        <!-- /btn-group -->
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-default dropdown-toggle"
+            data-toggle="dropdown"
+          >
+            dorpdown with auto position (flip) <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu" data-placement="auto">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </div>
+        <!-- /btn-group -->
+      </div>
+      <!-- /btn-group-vertical -->
+    </div>
+    <!-- /container -->
+
+    <script>
+      jQuery(function ($) {
+        $(document).on(
+          "shown.bs.dropdown.position-calculator",
+          function (event, data) {
+            var $item = $(".dropdown-menu", event.target);
+
+            if (!$item.data("placement")) {
+              return;
+            }
+
+            var target = data.relatedTarget;
+
+            // reset position
+            $item.css({ top: 0, left: 0 });
+
+            // calculate new position
+            var calculator = new $.PositionCalculator({
+              item: $item,
+              target: target,
+              itemAt: "top left",
+              itemOffset: { y: 3, x: 0, mirror: true },
+              targetAt: "bottom left",
+              flip: "both",
+            });
+            var posResult = calculator.calculate();
+
+            // set new position
+            $item.css({
+              top: posResult.moveBy.y + "px",
+              left: posResult.moveBy.x + "px",
+            });
+          },
+        );
+      });
+    </script>
+  </body>
+</html>

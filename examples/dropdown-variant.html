@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example: Bootstrap dropdown (variant with transform)</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@3.1.1/dist/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.1.1/dist/js/bootstrap.min.js"></script>
+    <script src="../dist/position-calculator.min.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        padding: 10px;
+      }
+      .dropdowns {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      The window ends right below the buttons. The first dropdown has the
+      default behavior of Bootstrap and is cut off. The second one flips upwards
+      with the help of the PositionCalculator.
+    </p>
+
+    <div class="dropdowns row">
+      <div class="col-xs-6">
+        <div class="dropdown">
+          <button
+            class="btn btn-default dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+          >
+            Default <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action 1</a></li>
+            <li><a href="#">Action 2</a></li>
+            <li><a href="#">Action 3</a></li>
+            <li><a href="#">Action 4</a></li>
+            <li><a href="#">Action 5</a></li>
+            <li><a href="#">Action 6</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="dropdown dropdown-auto">
+          <button
+            class="btn btn-default dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+          >
+            Auto position <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action 1</a></li>
+            <li><a href="#">Action 2</a></li>
+            <li><a href="#">Action 3</a></li>
+            <li><a href="#">Action 4</a></li>
+            <li><a href="#">Action 5</a></li>
+            <li><a href="#">Action 6</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      jQuery(function ($) {
+        $(".dropdown-auto")
+          .on("shown.bs.dropdown", function () {
+            var $menu = $(this).find(".dropdown-menu");
+            var result = new $.PositionCalculator({
+              item: $menu,
+              itemAt: "top left",
+              target: $(this).find(".dropdown-toggle"),
+              targetAt: "bottom left",
+              flip: "both",
+              stick: "all",
+            }).calculate();
+            $menu.css(
+              "transform",
+              "translate(" + result.moveBy.x + "px," + result.moveBy.y + "px)",
+            );
+          })
+          .on("hide.bs.dropdown", function () {
+            $(this).find(".dropdown-menu").css("transform", "");
+          });
+      });
+    </script>
+  </body>
+</html>

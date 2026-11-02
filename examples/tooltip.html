@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Load jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <!-- Load jQuery plugin: PositionCalculator -->
+    <script src="../dist/position-calculator.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Example: Simple tooltip with PositionCalculator</title>
+  </head>
+  <body>
+    <input
+      type="text"
+      class="has_tooltip"
+      data-tooltip="this is tooltip 1"
+      value="hover me 1"
+    /><br /><br />
+    <input
+      type="text"
+      class="has_tooltip"
+      data-tooltip="this is tooltip 2"
+      value="hover me 2"
+    /><br /><br />
+    <input
+      type="text"
+      class="has_tooltip"
+      data-tooltip="this is tooltip 3"
+      value="hover me 3"
+    />
+
+    <script>
+      jQuery(function ($) {
+        var $tooltip = $(
+          '<div style="display:none;position:absolute;padding:10px;background:rgba(0,0,0,0.8);color:#ffffff"></div>',
+        ).appendTo(document.body);
+
+        function showTooltip(event) {
+          $tooltip.text($(this).data("tooltip"));
+
+          // reset position
+          $tooltip.show().css({ top: 0, left: 0 });
+
+          // calculate new position
+          var calculator = new $.PositionCalculator({
+            item: $tooltip,
+            itemAt: "bottom left",
+            target: this,
+            targetAt: "top right",
+            flip: "both",
+          });
+          var posResult = calculator.calculate();
+
+          // set new position
+          $tooltip.css({
+            top: posResult.moveBy.y + "px",
+            left: posResult.moveBy.x + "px",
+          });
+        }
+
+        $(".has_tooltip").on("mouseenter", showTooltip);
+        $(".has_tooltip").on("mouseout", function () {
+          $tooltip.hide();
+        });
+      });
+    </script>
+  </body>
+</html>

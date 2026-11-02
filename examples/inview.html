@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <meta
+      name="description"
+      content="Example: Using PositionCalculator for 'inview'"
+    />
+    <!-- Load jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <!-- Load jQuery plugin: PositionCalculator -->
+    <script src="../dist/position-calculator.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Example: inView with PositionCalculator</title>
+    <style>
+      #container_scroll {
+        overflow: auto;
+        max-width: 500px;
+        height: 200px;
+      }
+
+      .filler {
+        border: 1px solid grey;
+        padding: 1em;
+        background: lightgray;
+        margin: 10px;
+        height: 80px;
+        transition-duration: 0.7s;
+      }
+      .filler:before {
+        content: "Box has overflow.";
+      }
+      .inview {
+        background: yellow;
+        font-size: larger;
+      }
+      .inview:before {
+        content: "Box is complete in view without overflow.";
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container_scroll">
+      <p>Scroll down to see the effect.<br /><br /></p>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+      <div class="filler"></div>
+    </div>
+
+    <script>
+      jQuery(function ($) {
+        var $boundary = $("#container_scroll");
+        function addInviewSupport(index) {
+          var $elem = $(this);
+          var calculator = new $.PositionCalculator({
+            item: $elem,
+            boundary: $boundary,
+            stick: false,
+          });
+
+          function processInview(event) {
+            var result = calculator.calculate();
+            if (!result.distance.overflow) {
+              $elem.addClass("inview");
+            } else {
+              $elem.removeClass("inview");
+            }
+          }
+          $boundary.on("scroll.tl", processInview);
+        }
+
+        $(".filler").each(addInviewSupport);
+
+        //initial call
+        $boundary.trigger("scroll.tl");
+      });
+    </script>
+  </body>
+</html>
