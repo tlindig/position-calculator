@@ -1,14 +1,10 @@
 /*!
  * jQuery.PositionCalculator
- * https://github.com/tlindig/position-calculator
+ * https://github.com/tlindig/position-calculator#readme
  *
- * v1.1.2 - 2014-07-01
- *
- * Copyright (c) 2014 Tobias Lindig
- * http://tlindig.de
+ * v1.1.3
  *
  * License: MIT
- *
  * Author: Tobias Lindig <dev@tlindig.de>
  */
 /*!
@@ -19,12 +15,14 @@
  * Licensed under the MIT license.
  */
 
-/*global define:false*/
+/*global define:false, module:false*/
 (function(factory) {
     // make it public
     if (typeof define === 'function' && define.amd) {
         // as __named__ AMD module
         define("position-calculator", ["jquery"], factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
     } else {
         // as Browser globals
         jQuery.PositionCalculator = factory(jQuery);
@@ -159,6 +157,7 @@
         if ($.isWindow(raw)) {
             normPos.top = $el.scrollTop();
             normPos.left = $el.scrollLeft();
+            return;
         }
         if (raw.preventDefault) {
             // is event
@@ -481,33 +480,27 @@
             return data;
         }
 
-        //to prevent handling overflow in both directions of on axis
-        var skipX = false;
-        var skipY = false;
-
         var edge, diff;
         for (var i = overflow.length - 1; i >= 0; i--) {
             edge = overflow[i];
             switch (edge) {
                 case "top":
                 case "bottom":
-                    if (!skipY && edges === true || edges.indexOf(edge) !== -1) {
+                    if (edges === true || edges.indexOf(edge) !== -1) {
                         diff = data.distance[edge];
                         data.moveBy.y += diff;
                         data.distance.top -= diff;
                         data.distance.bottom -= diff;
-                        skipY = true;
                     }
                     break;
 
                 case "left":
                 case "right":
-                    if (!skipX && edges === true || edges.indexOf(edge) !== -1) {
+                    if (edges === true || edges.indexOf(edge) !== -1) {
                         diff = data.distance[edge];
                         data.moveBy.x += diff;
                         data.distance.left -= diff;
                         data.distance.right -= diff;
-                        skipX = true;
                     }
                     break;
             }
