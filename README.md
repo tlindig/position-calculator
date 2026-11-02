@@ -2,8 +2,8 @@
 
 Calculate the position of an element relative to another element or event. Tries to find a collision free position within the viewport of a given container.
 
-
 ## Getting Started
+
 Download the [production version][min] or the [development version][max] or install it via [Bower][bower].
 
 [min]: https://raw.github.com/tlindig/position-calculator/master/dist/position-calculator.min.js
@@ -13,7 +13,6 @@ Download the [production version][min] or the [development version][max] or inst
 or for quick tests, add this tag to load it direct from github:
 
 `<script src="http://tlindig.github.io/position-calculator/dist/position-calculator.min.js"></script>`
-
 
 I will deploy it on CDN "cdnJS.com" if this requirement is met:
 
@@ -26,63 +25,67 @@ Visit demonstration and documentation page: <a href="http://tlindig.github.io/po
 
 Ready to use version of this lib can be found in folder: "dist"
 
-
 ### Usage example:
 
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <script src="http://rawgit.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
-  <meta charset="utf-8">
-  <script>
-    jQuery(function($) {
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="http://rawgit.com/tlindig/position-calculator/master/dist/position-calculator.min.js"></script>
+    <meta charset="utf-8" />
+    <script>
+      jQuery(function ($) {
+        var $tooltip = $(
+          '<div style="display:none;position:absolute;padding:10px;background:rgba(0,0,0,0.5);"></div>',
+        ).appendTo(document.body);
 
-      var $tooltip = $('<div style="display:none;position:absolute;padding:10px;background:rgba(0,0,0,0.5);"></div>').appendTo(document.body);
+        function showTooltip(event) {
+          $tooltip.text($(this).data("tooltip"));
+          $tooltip.show().css({ top: 0, left: 0 });
 
-      function showTooltip(event) {
-        $tooltip.text($(this).data('tooltip'));
-        $tooltip.show().css({top:0, left:0});
+          var calculator = new $.PositionCalculator({
+            item: $tooltip,
+            itemAt: "bottom left",
+            target: this,
+            targetAt: "top right",
+            flip: "both",
+          });
+          var posResult = calculator.calculate();
 
-        var calculator = new $.PositionCalculator({
-          item: $tooltip,
-          itemAt: "bottom left",
-          target: this,
-          targetAt: "top right",
-          flip: "both"
+          $tooltip.css({
+            top: posResult.moveBy.y + "px",
+            left: posResult.moveBy.x + "px",
+          });
+        }
+
+        $(".has_tooltip").on("mouseenter", showTooltip);
+        $(".has_tooltip").on("mouseout", function () {
+          $tooltip.hide();
         });
-        var posResult = calculator.calculate();
-
-        $tooltip.css({
-          top: posResult.moveBy.y + "px",
-          left: posResult.moveBy.x + "px"
-        })
-      }
-
-      $('.has_tooltip').on('mouseenter', showTooltip);
-      $('.has_tooltip').on('mouseout', function(){$tooltip.hide()});
-    });
-  </script>
-</head>
-<body>
-  <input type="text" class="has_tooltip" data-tooltip="this is a tooltip" value="hover me"/>
-</body>
+      });
+    </script>
+  </head>
+  <body>
+    <input
+      type="text"
+      class="has_tooltip"
+      data-tooltip="this is a tooltip"
+      value="hover me"
+    />
+  </body>
 </html>
 ```
 
 <b>Try this example at [jsBin](http://jsbin.com/balobomomu/2/edit?html,output)</b>
 
-
 ## Bugs and feature requests
 
 Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/tlindig/position-calculator/issues/new).
 
-
 ## Build and test
 
 `npm run build` writes `dist/`. `npm test` runs the tests in headless Chrome (Node 24 or newer, Chrome). See [CONTRIBUTING.md](CONTRIBUTING.md).
-
 
 ## Versioning
 
@@ -92,11 +95,9 @@ Releases will be numbered with the following format:
 
 `<major>.<minor>.<patch>`
 
-
 ## Author
 
 **Tobias Lindig** <http://tlindig.de>
-
 
 ## Copyright and license
 
@@ -107,30 +108,30 @@ Code released under [the MIT license](LICENSE).
 
 ### 1.1.3 (November 2, 2026)
 
-* fix: `calculate()` threw an error if `window` was used as `target`. The visible area of the window is the target now.
-* fix: `stick: "all"` and `stick: true` threw an error if the item was larger than the boundary on an axis. They behave now like listing all four edges.
-* build: Grunt is replaced by `npm run build` (esbuild) and `npm test` (headless Chrome, Node 24 or newer). The source map is now `dist/position-calculator.min.js.map`.
+- fix: `calculate()` threw an error if `window` was used as `target`. The visible area of the window is the target now.
+- fix: `stick: "all"` and `stick: true` threw an error if the item was larger than the boundary on an axis. They behave now like listing all four edges.
+- build: Grunt is replaced by `npm run build` (esbuild) and `npm test` (headless Chrome, Node 24 or newer). The source map is now `dist/position-calculator.min.js.map`.
 
 ### 1.1.2 (July 1, 2014)
 
-* set minimum required version of jQuery to >1.8. jQuery 1.7 has a bug together with css property "box-sizing: border-box" that is fixed with 1.8. ( [#10413](http://bugs.jquery.com/ticket/10413), [#11004](http://bugs.jquery.com/ticket/11004) )
+- set minimum required version of jQuery to >1.8. jQuery 1.7 has a bug together with css property "box-sizing: border-box" that is fixed with 1.8. ( [#10413](http://bugs.jquery.com/ticket/10413), [#11004](http://bugs.jquery.com/ticket/11004) )
 
 ### 1.1.1 (April 17, 2014)
 
-* add support for source map file
-* add support for [Bower][bower]
+- add support for source map file
+- add support for [Bower][bower]
 
 ### 1.1.0 (March 28, 2014)
 
-* add support for calculation without parameter "target" to calculate only overflow of item and boundary
+- add support for calculation without parameter "target" to calculate only overflow of item and boundary
 
 ### 1.0.1 (March 28, 2014)
 
-* update jQuery manifest, add link to demo page
+- update jQuery manifest, add link to demo page
 
 ### 1.0.0 (March 28, 2014)
 
-* first public release
+- first public release
 
 ### 0.0.0 (February 21, 2014)
 
