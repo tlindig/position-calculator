@@ -6,19 +6,20 @@
  * Licensed under the MIT license.
  */
 
-/*global define:false, module:false*/
+/*global module:false*/
 (function(factory) {
     // make it public
-    if (typeof define === 'function' && define.amd) {
-        // as __named__ AMD module
-        define("position-calculator", ["jquery"], factory);
-    } else if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory();
     } else {
         // as Browser globals
-        jQuery.PositionCalculator = factory(jQuery);
+        window.PositionCalculator = factory();
+        if (window.jQuery) {
+            // alias of version 1.x
+            window.jQuery.PositionCalculator = window.PositionCalculator;
+        }
     }
-}(function($) {
+}(function() {
     "use strict"; //enable ECMAScript 5 Strict Mode
 
     // //////////
@@ -30,6 +31,10 @@
     var __rgx_vertical = /top|middle|bottom/;
     var __rgx_horizontal = /left|center|right/;
     var __rgx_percent = /%$/;
+    // computed value with a unit other than px, e.g. "50%"
+    var __rgx_numnonpx = /^([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))(?!px)[a-z%]+$/i;
+    // display values for which the size is measured after a temporary show
+    var __rgx_displayswap = /^(none|table(?!-c[ea]).+)/;
 
     var __mirror = {
         left: "right",
@@ -41,21 +46,38 @@
     };
 
     /**
-     * prepare selector, because jQuery do not return "window" and "document"
+     * Resolve a value given in options to a single raw object.
      *
-     * @param  {selector|DOM|jQuery|null} selector value given in options
-     * @return {selector|DOM|jQuery|null}  if "selector" was a string and match "window" or
-     *                                     "document", than the native object will be returned.
+     * @param  {string|DOM|window|document|event|ArrayLike|null} value  value given in options
+     * @param  {boolean} allowGlobals  if true, a string "window" or "document" resolves to the native object
+     * @return {Object|null}       - string: first match of document.querySelector(), "window" and
+     *                               "document" are resolved to the native objects if allowed
+     *                             - array-like (jQuery object, NodeList, array): its first element
+     *                             - everything else: the value itself
+     *                             null, if nothing was found
      */
-    function __normalizeSlector(selector) {
-        if (typeof selector === "string") {
-            if (selector === "window") {
-                selector = __window;
-            } else if (selector === "document") {
-                selector = __document;
-            }
+    function __resolve(value, allowGlobals) {
+        if (!value) {
+            return null;
         }
-        return selector;
+        if (typeof value === "string") {
+            if (allowGlobals && value === "window") {
+                return __window;
+            }
+            if (allowGlobals && value === "document") {
+                return __document;
+            }
+            return __document.querySelector(value);
+        }
+        // nodes (<form>, <select>) and window have a length, but are no collections
+        if (!value.nodeType && !__isWindow(value) && typeof value.length === "number") {
+            return value[0] || null;
+        }
+        return value;
+    }
+
+    function __isWindow(obj) {
+        return obj != null && obj === obj.window;
     }
 
     /**
@@ -94,31 +116,125 @@
     }
 
     /**
-     * read the correct value for top, left, width and height from the given $el.
+     * Border box size of an element, rounded like offsetWidth/offsetHeight. If that is 0 (e.g.
+     * "display:none"), the size is derived from the computed style.
+     *
+     * @param  {Element} el
+     * @param  {string} prop    "width" | "height"
+     * @return {number}
+     */
+    function __outerSize(el, prop) {
+        var isWidth = prop === "width";
+        var offsetProp = isWidth ? "offsetWidth" : "offsetHeight";
+
+        if (el[offsetProp] === 0 && __rgx_displayswap.test(__window.getComputedStyle(el).display)) {
+            // measure it as if it is shown
+            var show = { position: "absolute", visibility: "hidden", display: "block" };
+            var old = {};
+            var name;
+            for (name in show) {
+                old[name] = el.style[name];
+                el.style[name] = show[name];
+            }
+            try {
+                return __measureOuterSize(el, prop, offsetProp, isWidth);
+            } finally {
+                for (name in show) {
+                    el.style[name] = old[name];
+                }
+            }
+        }
+        return __measureOuterSize(el, prop, offsetProp, isWidth);
+    }
+
+    function __measureOuterSize(el, prop, offsetProp, isWidth) {
+        var styles = __window.getComputedStyle(el);
+        var val = el[offsetProp];
+
+        if (val <= 0 || val == null) {
+            val = __css(el, styles, prop);
+            if (val < 0 || val == null) {
+                val = el.style[prop];
+            }
+            if (__rgx_numnonpx.test(val)) {
+                return parseFloat(val);
+            }
+            val = parseFloat(val) || 0;
+            if (__css(el, styles, "boxSizing") !== "border-box") {
+                // content box: add padding and border
+                var sides = isWidth ? ["Right", "Left"] : ["Top", "Bottom"];
+                for (var i = 0; i < 2; i++) {
+                    val += (parseFloat(__css(el, styles, "padding" + sides[i])) || 0) +
+                        (parseFloat(__css(el, styles, "border" + sides[i] + "Width")) || 0);
+                }
+            }
+        }
+        return val;
+    }
+
+    /**
+     * computed style value. A disconnected node has no computed style, so its inline style is read.
+     */
+    function __css(el, styles, name) {
+        var val = styles[name];
+        if (val === "" && !el.ownerDocument.contains(el)) {
+            val = el.style[name];
+        }
+        return val;
+    }
+
+    /**
+     * Position of an element in document coordinates, like jQuery.offset() of 1.9.
+     * A disconnected node and the root element result in 0/0.
+     *
+     * @param  {Element} el
+     * @return {{top:number, left:number}}
+     */
+    function __offset(el) {
+        var doc = el.ownerDocument;
+        var docElem = doc.documentElement;
+        var parent = el.parentNode;
+        if (parent !== docElem && !(parent && parent.nodeType === 1 && docElem.contains(parent))) {
+            return { top: 0, left: 0 };
+        }
+        var box = typeof el.getBoundingClientRect !== "undefined" ? el.getBoundingClientRect() :
+            { top: 0, left: 0 };
+        var win = doc.defaultView;
+        return {
+            top: box.top + (win.pageYOffset || docElem.scrollTop) - (docElem.clientTop || 0),
+            left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+        };
+    }
+
+    /**
+     * read the correct value for top, left, width and height from the given element.
      * Can handle "window", "document", "event" and "DOM node"
      * resulting "top" and "left" are relative to document top-left corner
      *
-     * @param  {jQuery} $el     input to calculate the position
+     * @param  {Object} raw     input to calculate the position
      * @return {NormPos}        Object with {top:number, left:number, height:number, width:number}
      *
      **/
-    function __nomrmalizePosition($el) {
-        var raw = $el[0];
+    function __nomrmalizePosition(raw) {
         if (raw.nodeType === 9) {
             // is document node
             return {
-                width: $el.outerWidth(),
-                height: $el.outerHeight(),
+                width: Math.max(raw.body.scrollWidth, raw.documentElement.scrollWidth,
+                    raw.body.offsetWidth, raw.documentElement.offsetWidth,
+                    raw.documentElement.clientWidth),
+                height: Math.max(raw.body.scrollHeight, raw.documentElement.scrollHeight,
+                    raw.body.offsetHeight, raw.documentElement.offsetHeight,
+                    raw.documentElement.clientHeight),
                 top: 0,
                 left: 0
             };
         }
-        if ($.isWindow(raw)) {
+        if (__isWindow(raw)) {
             return {
-                width: $el.outerWidth(),
-                height: $el.outerHeight(),
-                top: $el.scrollTop(),
-                left: $el.scrollLeft()
+                width: raw.document.documentElement.clientWidth,
+                height: raw.document.documentElement.clientHeight,
+                top: raw.pageYOffset,
+                left: raw.pageXOffset
             };
         }
         if (raw.preventDefault) {
@@ -130,24 +246,23 @@
                 left: raw.pageX
             };
         }
-        var offset = $el.offset();
+        var offset = __offset(raw);
         return {
-            width: $el.outerWidth(),
-            height: $el.outerHeight(),
+            width: __outerSize(raw, "width"),
+            height: __outerSize(raw, "height"),
             top: offset.top,
             left: offset.left
         };
     }
 
-    function __refreshPosition($el, normPos) {
-        var raw = $el[0];
+    function __refreshPosition(raw, normPos) {
         if (raw.nodeType === 9) {
             // is document node, top and left are always 0
             return;
         }
-        if ($.isWindow(raw)) {
-            normPos.top = $el.scrollTop();
-            normPos.left = $el.scrollLeft();
+        if (__isWindow(raw)) {
+            normPos.top = raw.pageYOffset;
+            normPos.left = raw.pageXOffset;
             return;
         }
         if (raw.preventDefault) {
@@ -157,7 +272,7 @@
             return;
         }
 
-        var offset = $el.offset();
+        var offset = __offset(raw);
         normPos.top = offset.top;
         normPos.left = offset.left;
         return;
@@ -168,11 +283,11 @@
      * Can handle "window", "document" and "DOM node"
      * resulting "top" and "left" are relative to document top-left corner
      *
-     * @param  {jQuery} $el [description]
+     * @param  {Object} raw  window, document or DOM node
      * @return {NormPos}    Object with {top:number, left:number, height:number, width:number}
      */
-    function __normalizeBounding($el) {
-        var domElm = $el[0];
+    function __normalizeBounding(raw) {
+        var domElm = raw;
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
@@ -181,14 +296,14 @@
                 top: 0,
                 left: 0
             };
-        } else if ($.isWindow(domElm)) {
+        } else if (__isWindow(domElm)) {
             domElm = __docElement;
             offset = {
-                top: $el.scrollTop(),
-                left: $el.scrollLeft()
+                top: raw.pageYOffset,
+                left: raw.pageXOffset
             };
         } else {
-            offset = $el.offset();
+            offset = __offset(raw);
         }
 
         return {
@@ -199,8 +314,8 @@
         };
     }
 
-    function __refreshBounding($el, normPos) {
-        var domElm = $el[0];
+    function __refreshBounding(raw, normPos) {
+        var domElm = raw;
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
@@ -209,14 +324,14 @@
                 top: 0,
                 left: 0
             };
-        } else if ($.isWindow(domElm)) {
+        } else if (__isWindow(domElm)) {
             domElm = __docElement;
             offset = {
-                top: $el.scrollTop(),
-                left: $el.scrollLeft()
+                top: raw.pageYOffset,
+                left: raw.pageXOffset
             };
         } else {
-            offset = $el.offset();
+            offset = __offset(raw);
         }
 
         normPos.top = offset.top + domElm.clientTop;
@@ -507,9 +622,9 @@
      *
      * @param {Object} options
      *
-     * {selector|DOM|jQuery} item       -required- the element being positioned
-     * {selector|DOM|jQuery} target     -required- the element align the positioned item against
-     * {selector|DOM|jQuery|null} boundary -optional- constraints the position of item
+     * {string|DOM|ArrayLike} item     -required- the element being positioned
+     * {string|DOM|ArrayLike} target   -required- the element align the positioned item against
+     * {string|DOM|ArrayLike|null} boundary -optional- constraints the position of item
      *                                      default: window
      *
      * {string} itemAt          -optional- placement of reference point on the item
@@ -556,9 +671,9 @@
         }
 
         this.options =
-            this.$itm =
-            this.$trg =
-            this.$bnd =
+            this.itm =
+            this.trg =
+            this.bnd =
             this.itmAt =
             this.trgAt =
             this.itmPos =
@@ -570,18 +685,25 @@
         this._init(options);
     }
     PositionCalculator.prototype._init = function(options) {
-        var o = this.options = $.extend({}, PositionCalculator.defaults, options);
+        var o = this.options = {};
+        var key;
+        // like jQuery.extend: undefined values do not overwrite the defaults
+        for (key in PositionCalculator.defaults) {
+            o[key] = PositionCalculator.defaults[key];
+        }
+        for (key in options) {
+            if (options[key] !== undefined) {
+                o[key] = options[key];
+            }
+        }
 
-        if (!o.item) {
+        this.itm = __resolve(o.item, false);
+        if (!this.itm) {
             return null;
         }
-        this.$itm = o.item.jquery ? o.item : $(o.item);
-        if (this.$itm.length === 0) {
-            return null;
-        }
 
-        this.$trg = o.target && o.target.jquery ? o.target : $(__normalizeSlector(o.target));
-        this.$bnd = o.boundary && o.boundary.jquery ? o.boundary : $(__normalizeSlector(o.boundary));
+        this.trg = __resolve(o.target, true);
+        this.bnd = __resolve(o.boundary, true);
 
         this.itmAt = __normalizeAt(o.itemAt);
         this.trgAt = __normalizeAt(o.targetAt);
@@ -600,9 +722,9 @@
     PositionCalculator.prototype.resize = function() {
         var o = this.options;
 
-        var item_pos = __nomrmalizePosition(this.$itm);
-        var targ_pos = this.$trg.length ? __nomrmalizePosition(this.$trg) : null;
-        this.bndPos = this.$bnd.length ? __normalizeBounding(this.$bnd) : null;
+        var item_pos = __nomrmalizePosition(this.itm);
+        var targ_pos = this.trg ? __nomrmalizePosition(this.trg) : null;
+        this.bndPos = this.bnd ? __normalizeBounding(this.bnd) : null;
 
         if (!this.itmPos || !__isEqualNormPos(item_pos, this.itmPos)) {
             this.itmPos = item_pos;
@@ -714,9 +836,9 @@
 
         // refresh
         // only update the position off elements and scroll offsets, but not the width or height
-        __refreshPosition(this.$itm, this.itmPos);
-        this.trgPos && __refreshPosition(this.$trg, this.trgPos);
-        this.bndPos && __refreshBounding(this.$bnd, this.bndPos);
+        __refreshPosition(this.itm, this.itmPos);
+        this.trgPos && __refreshPosition(this.trg, this.trgPos);
+        this.bndPos && __refreshBounding(this.bnd, this.bndPos);
 
         var result = this.calcVariant(this.itmAt, this.trgAt);
         if (!result.distance || !result.distance.overflow) {

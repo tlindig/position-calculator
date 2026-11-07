@@ -426,6 +426,83 @@
         same(calc({ target: "document" }).calculate(), expected, "'document'");
     });
 
+    test("array-like inputs use their first element", function() {
+        var expected = res(180, 190, "top left", "top left", d(-100, -100, 160, 240));
+        same(calc({ item: [I, T], target: [T, I], boundary: [B] }).calculate(), expected, "array");
+        same(calc({
+            item: document.querySelectorAll("#item"),
+            target: document.querySelectorAll("#target"),
+            boundary: document.querySelectorAll("#boundary")
+        }).calculate(), expected, "NodeList");
+    });
+
+    test("empty array-likes: no item gives null, no target and no boundary are skipped", function() {
+        strictEqual(calc({ item: [] }).calculate(), null, "empty item");
+        strictEqual(calc({ item: document.querySelectorAll("#none") }).calculate(), null, "empty NodeList");
+        same(calc({ target: [] }).calculate(), res(0, 0, null, null, d(80, 90, 340, 430, ["top", "left"])),
+            "empty target");
+        same(calc({ boundary: [] }).calculate(), res(180, 190, "top left", "top left", null), "empty boundary");
+    });
+
+    test("a form is an element, not a collection of its controls", function() {
+        var form = document.createElement("form");
+        form.style.cssText = "position:absolute;left:10px;top:20px;width:60px;height:40px;margin:0;";
+        form.appendChild(document.createElement("input"));
+        s.root.appendChild(form);
+        same(calc({ item: form }).calculate(), res(180, 190, "top left", "top left", d(-100, -100, 160, 240)));
+    });
+
+    // ////////////////////////////////////////////////////////////////
+    module("sizes are measured like jQuery 1.9 did", env);
+
+    // a hidden element has no position: the box is read as 0, 0 plus the scroll offset (0, 0 here)
+
+    test("hidden item is measured as if it is shown", function() {
+        var item = s.box({ left: 10, top: 20, width: 60, height: 40, border: 2, padding: 3 });
+        item.style.display = "none";
+        // 60 x 40 + 2 * 2 border + 2 * 3 padding = 70 x 50
+        same(calc({ item: item, itemAt: "bottom right" }).calculate(),
+            res(150, 130, "bottom right", "top left", d(-50, -30, 200, 300)));
+        strictEqual(item.style.display, "none", "style is restored");
+        strictEqual(item.style.position, "absolute", "style is restored");
+        strictEqual(item.style.visibility, "", "style is restored");
+    });
+
+    test("hidden item with box-sizing border-box", function() {
+        var item = s.box({ left: 10, top: 20, width: 60, height: 40, border: 2, padding: 3 });
+        item.style.boxSizing = "border-box";
+        item.style.display = "none";
+        same(calc({ item: item, itemAt: "bottom right" }).calculate(),
+            res(160, 140, "bottom right", "top left", d(-60, -40, 200, 300)));
+    });
+
+    test("hidden target is measured as if it is shown", function() {
+        var target = s.box({ left: 200, top: 200, width: 100, height: 50 });
+        target.style.display = "none";
+        same(calc({ target: target, targetAt: "bottom right" }).calculate(),
+            res(30, 90, "top left", "bottom right", d(50, 0, 310, 340, ["top"])));
+    });
+
+    test("fractional sizes are rounded like offsetWidth and offsetHeight", function() {
+        var item = s.box({ left: 10, top: 20, width: 60.4, height: 40.6 });
+        // 60.4 -> 60, 40.6 -> 41 (top 20 + 40.6 = 60.6 -> 61)
+        same(calc({ item: item, itemAt: "bottom right" }).calculate(),
+            res(139, 130, "bottom right", "top left", d(-59, -40, 200, 300)));
+    });
+
+    test("fractional position is not rounded", function() {
+        var item = s.box({ left: 10.25, top: 20.5, width: 60, height: 40 });
+        same(calc({ item: item }).calculate(), res(179.5, 189.75, "top left", "top left", d(-100, -100, 160, 240)));
+    });
+
+    test("a disconnected element is measured from its inline style and sits at 0, 0", function() {
+        var item = document.createElement("div");
+        item.style.cssText = "width:40px;height:20px;padding:2px;border:1px solid;";
+        // 46 x 26
+        same(calc({ item: item, itemAt: "bottom right" }).calculate(),
+            res(174, 154, "bottom right", "top left", d(-74, -54, 200, 300)));
+    });
+
     // ////////////////////////////////////////////////////////////////
     module("positions are read from the DOM", env);
 
@@ -513,6 +590,14 @@
         strictEqual(Adapter.create().calculate(), null, "no options");
         strictEqual(Adapter.create({ item: null }).calculate(), null, "item null");
         strictEqual(Adapter.create({ item: "#does-not-exist" }).calculate(), null, "item without match");
+        strictEqual(Adapter.create({ item: "" }).calculate(), null, "empty selector");
+    });
+
+    test("jQuery.PositionCalculator is an alias only if jQuery was loaded first", function() {
+        // run it with --jquery=1 to see the alias
+        strictEqual(window.jQuery ? window.jQuery.PositionCalculator : undefined,
+            window.jQuery ? Adapter.ctor() : undefined);
+        strictEqual(window.PositionCalculator, Adapter.ctor(), "global");
     });
 
     test("invalid itemAt and targetAt fall back to top left", function() {

@@ -18,7 +18,7 @@ const outDir = path.resolve(process.argv[2] || path.join(root, "dist"));
 
 const banner = [
     "/*!",
-    " * jQuery.PositionCalculator",
+    " * PositionCalculator",
     ` * ${pkg.homepage}`,
     " *",
     ` * v${pkg.version}`,

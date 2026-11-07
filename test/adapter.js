@@ -6,7 +6,7 @@
     "use strict";
 
     function implementation() {
-        var ctor = root.PositionCalculator || (root.jQuery && root.jQuery.PositionCalculator);
+        var ctor = root.PositionCalculator;
         if (!ctor) {
             throw new Error("No PositionCalculator found. Check the impl parameter.");
         }
