@@ -2,7 +2,7 @@
  * class PositionCalculator
  * https://github.com/tlindig/position-calculator
  *
- * Copyright (c) 2014 Tobias Lindig
+ * Copyright (c) 2014-2026 Tobias Lindig
  * Licensed under the MIT license.
  */
 

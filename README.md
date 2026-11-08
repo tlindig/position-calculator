@@ -101,7 +101,7 @@ Releases will be numbered with the following format:
 
 ## Copyright and license
 
-Code and documentation copyright 2014 Tobias Lindig
+Code and documentation copyright 2014-2026 Tobias Lindig
 Code released under [the MIT license](LICENSE).
 
 ## Changelog
