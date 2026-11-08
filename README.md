@@ -101,33 +101,4 @@ Code released under [the MIT license](LICENSE).
 
 ## Changelog
 
-### 1.1.3 (November 2, 2026)
-
-- fix: `calculate()` threw an error if `window` was used as `target`. The visible area of the window is the target now.
-- fix: `stick: "all"` and `stick: true` threw an error if the item was larger than the boundary on an axis. They behave now like listing all four edges.
-- build: Grunt is replaced by `npm run build` (esbuild) and `npm test` (headless Chrome, Node 24 or newer). The source map is now `dist/position-calculator.min.js.map`.
-
-### 1.1.2 (July 1, 2014)
-
-- set minimum required version of jQuery to >1.8. jQuery 1.7 has a bug together with css property "box-sizing: border-box" that is fixed with 1.8. ( [#10413](http://bugs.jquery.com/ticket/10413), [#11004](http://bugs.jquery.com/ticket/11004) )
-
-### 1.1.1 (April 17, 2014)
-
-- add support for source map file
-- add support for [Bower][bower]
-
-### 1.1.0 (March 28, 2014)
-
-- add support for calculation without parameter "target" to calculate only overflow of item and boundary
-
-### 1.0.1 (March 28, 2014)
-
-- update jQuery manifest, add link to demo page
-
-### 1.0.0 (March 28, 2014)
-
-- first public release
-
-### 0.0.0 (February 21, 2014)
-
-Initial commit
+See [CHANGELOG.md](CHANGELOG.md).
