@@ -19,8 +19,7 @@
   ],
   "files": [
     "dist",
-    "types",
-    "LICENSE-MIT"
+    "types"
   ],
   "engines": {
     "node": ">=24"
@@ -32,6 +31,9 @@
     "test:node": "node test/node-import.js",
     "test:types": "tsc --noEmit -p test/types/tsconfig.json",
     "build": "node scripts/build.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "prepack": "npm run build"
   },
   "repository": {
@@ -62,7 +64,11 @@
   },
   "homepage": "https://github.com/tlindig/position-calculator#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "esbuild": "~0.17.13",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
     "typescript": "~7.0.2"
   }
 }

@@ -206,6 +206,7 @@ async function runPage(browser, name) {
                 pageErrors.push((details.exception && details.exception.description) || details.text);
             }
         });
+        // eslint-disable-next-line no-use-before-define -- runPage runs after before() has set server
         await cdp.send("Page.navigate", { url: pageUrl(server.baseUrl, name) });
         await withTimeout(loaded, timeoutMs, "page " + name + " did not load");
 

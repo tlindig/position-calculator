@@ -648,6 +648,7 @@
 
     test("the constructor can be called without new", function() {
         var Ctor = Adapter.ctor();
+        // eslint-disable-next-line new-cap -- the test calls the constructor without new on purpose
         var calculator = Ctor({ item: I, target: T, boundary: B });
         ok(calculator instanceof Ctor, "returns an instance");
         same(calculator.calculate(), res(180, 190, "top left", "top left", d(-100, -100, 160, 240)));
