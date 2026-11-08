@@ -9,16 +9,19 @@
  * Must be included with a plain <script> tag, because it uses document.write to keep the load order.
  * Module scripts run deferred, before DOMContentLoaded and so before the "load" event that starts the tests.
  */
-(function() {
+(function () {
     "use strict";
 
     var params = {};
-    location.search.slice(1).split("&").forEach(function(pair) {
-        var kv = pair.split("=");
-        if (kv[0]) {
-            params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || "");
-        }
-    });
+    location.search
+        .slice(1)
+        .split("&")
+        .forEach(function (pair) {
+            var kv = pair.split("=");
+            if (kv[0]) {
+                params[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || "");
+            }
+        });
     window.TestParams = params;
 
     var impl = params.impl || "/src/position-calculator.js";
@@ -29,9 +32,13 @@
     if (params.format === "iife") {
         document.write('<script src="' + encodeURI(impl) + '"><\/script>');
     } else {
-        document.write('<script type="module">' +
-            "import * as impl from " + JSON.stringify(impl) + ";" +
-            "if (impl.PositionCalculator) { window.PositionCalculator = impl.PositionCalculator; }" +
-            "<\/script>");
+        document.write(
+            '<script type="module">' +
+                "import * as impl from " +
+                JSON.stringify(impl) +
+                ";" +
+                "if (impl.PositionCalculator) { window.PositionCalculator = impl.PositionCalculator; }" +
+                "<\/script>",
+        );
     }
-}());
+})();

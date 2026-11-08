@@ -87,13 +87,18 @@ function startServer() {
         response.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
         fs.createReadStream(file).pipe(response);
     });
-    return new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve({
-        baseUrl: "http://127.0.0.1:" + server.address().port,
-        close: () => new Promise((done) => {
-            server.close(done);
-            server.closeAllConnections();
-        })
-    })));
+    return new Promise((resolve) =>
+        server.listen(0, "127.0.0.1", () =>
+            resolve({
+                baseUrl: "http://127.0.0.1:" + server.address().port,
+                close: () =>
+                    new Promise((done) => {
+                        server.close(done);
+                        server.closeAllConnections();
+                    }),
+            }),
+        ),
+    );
 }
 
 function sleep(ms) {
@@ -115,8 +120,13 @@ async function withTimeout(promise, ms, what) {
 async function launchChrome(chrome) {
     const profile = fs.mkdtempSync(path.join(os.tmpdir(), "pc-test-"));
     const args = [
-        "--headless", "--disable-gpu", "--remote-debugging-port=0", "--user-data-dir=" + profile,
-        "--window-size=1200,900", "--no-first-run", "--no-default-browser-check"
+        "--headless",
+        "--disable-gpu",
+        "--remote-debugging-port=0",
+        "--user-data-dir=" + profile,
+        "--window-size=1200,900",
+        "--no-first-run",
+        "--no-default-browser-check",
     ];
     if (options["no-sandbox"]) {
         args.push("--no-sandbox");
@@ -144,7 +154,7 @@ async function launchChrome(chrome) {
             child.kill();
             await exited;
             fs.rmSync(profile, { recursive: true, force: true });
-        }
+        },
     };
 }
 
@@ -169,21 +179,22 @@ function connect(wsUrl) {
                 listeners.forEach((listener) => listener(message));
             }
         };
-        ws.onopen = () => resolve({
-            send(method, params = {}) {
-                return new Promise((res, rej) => {
-                    const id = ++nextId;
-                    pending.set(id, { resolve: res, reject: rej });
-                    ws.send(JSON.stringify({ id, method, params }));
-                });
-            },
-            on(listener) {
-                listeners.push(listener);
-            },
-            close() {
-                ws.close();
-            }
-        });
+        ws.onopen = () =>
+            resolve({
+                send(method, params = {}) {
+                    return new Promise((res, rej) => {
+                        const id = ++nextId;
+                        pending.set(id, { resolve: res, reject: rej });
+                        ws.send(JSON.stringify({ id, method, params }));
+                    });
+                },
+                on(listener) {
+                    listeners.push(listener);
+                },
+                close() {
+                    ws.close();
+                },
+            });
     });
 }
 
@@ -195,11 +206,13 @@ async function runPage(browser, name) {
     try {
         await cdp.send("Page.enable");
         await cdp.send("Runtime.enable");
-        const loaded = new Promise((resolve) => cdp.on((message) => {
-            if (message.method === "Page.loadEventFired") {
-                resolve();
-            }
-        }));
+        const loaded = new Promise((resolve) =>
+            cdp.on((message) => {
+                if (message.method === "Page.loadEventFired") {
+                    resolve();
+                }
+            }),
+        );
         cdp.on((message) => {
             if (message.method === "Runtime.exceptionThrown") {
                 const details = message.params.exceptionDetails;
@@ -216,10 +229,13 @@ async function runPage(browser, name) {
             expression: `new Promise(function(resolve) {
                 if (window.TestDone) { resolve(window.TestResult); }
                 else { window.addEventListener("testdone", function() { resolve(window.TestResult); }); }
-            })`
+            })`,
         });
-        const { result } = await withTimeout(evaluation, timeoutMs,
-            "page " + name + " published no result. Page errors: " + (pageErrors.join(" | ") || "none"));
+        const { result } = await withTimeout(
+            evaluation,
+            timeoutMs,
+            "page " + name + " published no result. Page errors: " + (pageErrors.join(" | ") || "none"),
+        );
         return { result: result.value, pageErrors };
     } finally {
         cdp.close();
@@ -227,8 +243,12 @@ async function runPage(browser, name) {
 }
 
 function describeFailures(failures) {
-    const shown = failures.slice(0, MAX_FAILURES_PER_TEST).map((failure) =>
-        `${failure.message}\n  expected: ${JSON.stringify(failure.expected)}\n  actual:   ${JSON.stringify(failure.actual)}`);
+    const shown = failures
+        .slice(0, MAX_FAILURES_PER_TEST)
+        .map(
+            (failure) =>
+                `${failure.message}\n  expected: ${JSON.stringify(failure.expected)}\n  actual:   ${JSON.stringify(failure.actual)}`,
+        );
     if (failures.length > shown.length) {
         shown.push(`(${failures.length - shown.length} more)`);
     }
@@ -263,11 +283,15 @@ for (const name of targets) {
         }
         for (const entry of result.tests) {
             const target = entry.module.startsWith("[target]");
-            await t.test(`${entry.module} :: ${entry.name}`, target ? { todo: "target behavior, not implemented yet" } : {}, () => {
-                if (entry.failed) {
-                    throw new Error(describeFailures(entry.failures));
-                }
-            });
+            await t.test(
+                `${entry.module} :: ${entry.name}`,
+                target ? { todo: "target behavior, not implemented yet" } : {},
+                () => {
+                    if (entry.failed) {
+                        throw new Error(describeFailures(entry.failures));
+                    }
+                },
+            );
         }
     });
 }

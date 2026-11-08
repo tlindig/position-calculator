@@ -25,7 +25,13 @@ export default [
     },
     {
         // classic scripts, loaded by the HTML pages in test/
-        files: ["test/support/**/*.js", "test/*.test.js", "test/*_test.js", "test/adapter.js", "test/manually_tests.js"],
+        files: [
+            "test/support/**/*.js",
+            "test/*.test.js",
+            "test/*_test.js",
+            "test/adapter.js",
+            "test/manually_tests.js",
+        ],
         languageOptions: { ecmaVersion: 2020, sourceType: "script", globals: { ...globals.browser } },
     },
     {

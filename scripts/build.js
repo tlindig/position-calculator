@@ -27,7 +27,7 @@ const banner = [
     " *",
     ` * License: ${pkg.license}`,
     ` * Author: ${pkg.author}`,
-    " */"
+    " */",
 ].join("\n");
 
 fs.mkdirSync(outDir, { recursive: true });
@@ -37,8 +37,12 @@ fs.writeFileSync(path.join(outDir, "position-calculator.js"), banner + "\n" + so
 
 // require() in Node returns the "module.exports" export. A string export name is ES2022, so it stays
 // out of the ES2020 source and the ESM file. Only the "require" condition of package.json loads this file.
-fs.writeFileSync(path.join(outDir, "position-calculator.require.js"), banner + "\n" +
-    'export { PositionCalculator, PositionCalculator as "module.exports" } from "./position-calculator.js";\n');
+fs.writeFileSync(
+    path.join(outDir, "position-calculator.require.js"),
+    banner +
+        "\n" +
+        'export { PositionCalculator, PositionCalculator as "module.exports" } from "./position-calculator.js";\n',
+);
 
 esbuild.buildSync({
     entryPoints: [iifeEntry],
@@ -49,7 +53,7 @@ esbuild.buildSync({
     sourcemap: true,
     target: "es2020",
     legalComments: "none",
-    banner: { js: banner }
+    banner: { js: banner },
 });
 
 console.log("built into " + outDir);

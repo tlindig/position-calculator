@@ -76,7 +76,7 @@ export interface PositionCalculator {
     /** Calculate one placement without flip and stick. */
     calcVariant(
         itemAt: { x: Horizontal; y: Vertical } | null,
-        targetAt: { x: Horizontal; y: Vertical } | null
+        targetAt: { x: Horizontal; y: Vertical } | null,
     ): CalculationResult;
 }
 

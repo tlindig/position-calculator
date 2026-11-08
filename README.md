@@ -67,12 +67,7 @@ Ready to use version of this lib can be found in folder: "dist"
     </script>
   </head>
   <body>
-    <input
-      type="text"
-      class="has_tooltip"
-      data-tooltip="this is a tooltip"
-      value="hover me"
-    />
+    <input type="text" class="has_tooltip" data-tooltip="this is a tooltip" value="hover me" />
   </body>
 </html>
 ```

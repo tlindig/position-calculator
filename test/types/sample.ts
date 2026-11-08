@@ -1,4 +1,8 @@
-import { PositionCalculator, type CalculationResult, type PositionCalculatorOptions } from "@tlindig/position-calculator";
+import {
+    PositionCalculator,
+    type CalculationResult,
+    type PositionCalculatorOptions,
+} from "@tlindig/position-calculator";
 
 const options: PositionCalculatorOptions = {
     item: "#popup",
@@ -8,7 +12,7 @@ const options: PositionCalculatorOptions = {
     targetAt: "bottom left",
     itemOffset: { y: 0, x: "10%", mirror: true },
     flip: "both",
-    stick: "top left"
+    stick: "top left",
 };
 
 const calculator = new PositionCalculator(options);

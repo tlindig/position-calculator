@@ -12,7 +12,7 @@
  * Scenes in which the reference build itself throws (see the "[target]" modules in the dev set) are skipped.
  */
 /*global Adapter, Scene, Report, TestParams, module, test, ok, deepEqual */
-(function() {
+(function () {
     "use strict";
 
     var seed = TestParams.seed ? Number(TestParams.seed) >>> 0 : Math.floor(Math.random() * 4294967296);
@@ -28,8 +28,8 @@
     // random generator
 
     function mulberry32(a) {
-        return function() {
-            a = (a + 0x6D2B79F5) | 0;
+        return function () {
+            a = (a + 0x6d2b79f5) | 0;
             var t = Math.imul(a ^ (a >>> 15), 1 | a);
             t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
             return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -52,7 +52,9 @@
 
     function weighted(table) {
         var total = 0;
-        Object.keys(table).forEach(function(k) { total += table[k]; });
+        Object.keys(table).forEach(function (k) {
+            total += table[k];
+        });
         var r = rnd() * total;
         var keys = Object.keys(table);
         for (var i = 0; i < keys.length; i++) {
@@ -73,8 +75,14 @@
             return undefined;
         }
         function value() {
-            return pick([0, int(-40, 40), int(-40, 40), int(-40, 40), String(int(-20, 20)),
-                pick(["10%", "-25%", "50%", "100%", "-50%", "0%"])]);
+            return pick([
+                0,
+                int(-40, 40),
+                int(-40, 40),
+                int(-40, 40),
+                String(int(-20, 20)),
+                pick(["10%", "-25%", "50%", "100%", "-50%", "0%"]),
+            ]);
         }
         return { y: value(), x: value(), mirror: chance(0.5) };
     }
@@ -93,14 +101,22 @@
         if (kind === "bool") {
             return pick([true, false]);
         }
-        var edges = EDGES.filter(function() { return chance(0.5); });
+        var edges = EDGES.filter(function () {
+            return chance(0.5);
+        });
         return edges.length ? edges.join(" ") : "top";
     }
 
     function randomScene() {
         var spec = {
-            item: { left: int(0, 400), top: int(0, 400), width: int(10, chance(0.1) ? 700 : 250), height: int(10, 200),
-                border: chance(0.3) ? int(1, 8) : 0, padding: chance(0.3) ? int(1, 10) : 0 },
+            item: {
+                left: int(0, 400),
+                top: int(0, 400),
+                width: int(10, chance(0.1) ? 700 : 250),
+                height: int(10, 200),
+                border: chance(0.3) ? int(1, 8) : 0,
+                padding: chance(0.3) ? int(1, 10) : 0,
+            },
             itemById: chance(0.3),
             targetById: chance(0.3),
             boundaryById: chance(0.3),
@@ -112,21 +128,30 @@
             flip: pick([undefined, "none", "item", "target", "both", "both", true, false]),
             stick: randomStick(),
             variant: { item: randomAt(), target: randomAt() },
-            resized: chance(0.5)
+            resized: chance(0.5),
         };
 
         spec.target = { kind: weighted({ element: 70, event: 8, none: 7, missing: 3, document: 7, window: 5 }) };
-        spec.target.box = { left: int(0, 700), top: int(0, 600), width: int(10, 200), height: int(10, 150),
-            border: chance(0.3) ? int(1, 8) : 0, padding: chance(0.3) ? int(1, 10) : 0 };
+        spec.target.box = {
+            left: int(0, 700),
+            top: int(0, 600),
+            width: int(10, 200),
+            height: int(10, 150),
+            border: chance(0.3) ? int(1, 8) : 0,
+            padding: chance(0.3) ? int(1, 10) : 0,
+        };
         spec.target.page = { x: int(0, 700), y: int(0, 600) };
         spec.target.asString = chance(0.5);
 
         spec.boundary = { kind: weighted({ element: 70, window: 12, none: 6, missing: 4, document: 3 }) };
         spec.boundary.box = {
-            left: int(0, 300), top: int(0, 300), width: int(100, 600), height: int(100, 500),
+            left: int(0, 300),
+            top: int(0, 300),
+            width: int(100, 600),
+            height: int(100, 500),
             border: chance(0.5) ? int(1, 10) : 0,
             padding: chance(0.4) ? int(1, 15) : 0,
-            overflow: pick([undefined, undefined, "auto", "scroll", "hidden"])
+            overflow: pick([undefined, undefined, "auto", "scroll", "hidden"]),
         };
         spec.boundary.scroll = { x: int(0, 200), y: int(0, 200) };
         spec.boundary.form = pick(["omitted", "object", "string"]);
@@ -135,7 +160,7 @@
         spec.newSize = {
             item: { width: int(10, 250), height: int(10, 200) },
             target: { width: int(10, 200), height: int(10, 150) },
-            boundary: { width: int(100, 600), height: int(100, 500) }
+            boundary: { width: int(100, 600), height: int(100, 500) },
         };
         return spec;
     }
@@ -156,7 +181,7 @@
             ctx.targetEl = scene.box(spec.target.box);
         }
         if (spec.boundary.kind === "element") {
-            var b = ctx.boundaryEl = scene.box(spec.boundary.box);
+            var b = (ctx.boundaryEl = scene.box(spec.boundary.box));
             if (spec.boundary.box.overflow) {
                 var filler = document.createElement("div");
                 filler.style.cssText = "position:absolute;left:0;top:0;width:900px;height:900px;";
@@ -171,7 +196,7 @@
             return byId ? "#" + el.id : el;
         }
 
-        var o = ctx.options = { item: ref(ctx.itemEl, spec.itemById) };
+        var o = (ctx.options = { item: ref(ctx.itemEl, spec.itemById) });
         switch (spec.target.kind) {
             case "element":
                 o.target = ref(ctx.targetEl, spec.targetById);
@@ -218,7 +243,7 @@
         }
         o.itemAt = spec.itemAt.y + " " + spec.itemAt.x;
         o.targetAt = spec.targetAt.y + " " + spec.targetAt.x;
-        ["itemOffset", "targetOffset", "flip", "stick"].forEach(function(key) {
+        ["itemOffset", "targetOffset", "flip", "stick"].forEach(function (key) {
             if (spec[key] !== undefined) {
                 o[key] = spec[key];
             }
@@ -252,7 +277,7 @@
         var r = Scene.normalize(result);
         if (r && r.distance) {
             var dst = r.distance;
-            var overflow = EDGES.filter(function(edge) {
+            var overflow = EDGES.filter(function (edge) {
                 return edge === "top" || edge === "left" ? dst[edge] > 0 : dst[edge] < 0;
             });
             dst.overflow = overflow.length ? overflow : null;
@@ -265,7 +290,7 @@
     }
 
     function overflowOf(distance) {
-        var list = EDGES.filter(function(edge) {
+        var list = EDGES.filter(function (edge) {
             return edge === "top" || edge === "left" ? distance[edge] > 0 : distance[edge] < 0;
         });
         return list.length ? list : null;
@@ -285,14 +310,17 @@
         if (!stick || stick === "none") {
             return [];
         }
-        return EDGES.filter(function(edge) { return stick.indexOf(edge) !== -1; });
+        return EDGES.filter(function (edge) {
+            return stick.indexOf(edge) !== -1;
+        });
     }
 
     // returns a list of violations. The item is moved with a transform and measured, then restored.
     function violations(spec, ctx, result) {
         var v = [];
         var el = ctx.itemEl;
-        var hasTarget = spec.target.kind === "element" || spec.target.kind === "event" || spec.target.kind === "document";
+        var hasTarget =
+            spec.target.kind === "element" || spec.target.kind === "event" || spec.target.kind === "document";
 
         if (!hasTarget) {
             // without target only stick may move the item
@@ -300,8 +328,10 @@
             if ((moved && !stickEdges(spec.stick).length) || result.itemAt !== null || result.targetAt !== null) {
                 v.push("without target: moveBy must be 0/0 (unless stick) and itemAt/targetAt null");
             }
-        } else if (!/^(top|middle|bottom) (left|center|right)$/.test(result.itemAt) ||
-            !/^(top|middle|bottom) (left|center|right)$/.test(result.targetAt)) {
+        } else if (
+            !/^(top|middle|bottom) (left|center|right)$/.test(result.itemAt) ||
+            !/^(top|middle|bottom) (left|center|right)$/.test(result.targetAt)
+        ) {
             v.push("itemAt/targetAt is not a valid placement: " + result.itemAt + " / " + result.targetAt);
         }
 
@@ -329,24 +359,29 @@
                     top: bnd.top - after.top,
                     left: bnd.left - after.left,
                     bottom: bnd.top + bnd.height - (after.top + after.height),
-                    right: bnd.left + bnd.width - (after.left + after.width)
+                    right: bnd.left + bnd.width - (after.left + after.width),
                 };
-                EDGES.forEach(function(edge) {
+                EDGES.forEach(function (edge) {
                     if (!near(d[edge], expected[edge])) {
                         v.push("distance." + edge + " is " + d[edge] + ", the moved item has " + expected[edge]);
                     }
                 });
                 var overflow = overflowOf(d);
                 if (JSON.stringify(d.overflow) !== JSON.stringify(overflow)) {
-                    v.push("overflow " + JSON.stringify(d.overflow) + " does not match distance " + JSON.stringify(overflow));
+                    v.push(
+                        "overflow " +
+                            JSON.stringify(d.overflow) +
+                            " does not match distance " +
+                            JSON.stringify(overflow),
+                    );
                 }
 
                 // stick: an edge that is controlled and that can be satisfied does not overflow
                 var fitsY = after.height <= bnd.height + TOLERANCE;
                 var fitsX = after.width <= bnd.width + TOLERANCE;
-                stickEdges(spec.stick).forEach(function(edge) {
-                    var fits = (edge === "top" || edge === "bottom") ? fitsY : fitsX;
-                    var bad = (edge === "top" || edge === "left") ? d[edge] > TOLERANCE : d[edge] < -TOLERANCE;
+                stickEdges(spec.stick).forEach(function (edge) {
+                    var fits = edge === "top" || edge === "bottom" ? fitsY : fitsX;
+                    var bad = edge === "top" || edge === "left" ? d[edge] > TOLERANCE : d[edge] < -TOLERANCE;
                     if (fits && bad) {
                         v.push("stick '" + spec.stick + "': edge " + edge + " still overflows by " + d[edge]);
                     }
@@ -360,8 +395,8 @@
             var inTarget = spec.targetAt;
             var outItem = result.itemAt.split(" ");
             var outTarget = result.targetAt.split(" ");
-            var flip = spec.flip === true ? "both" : (spec.flip || "none");
-            ["y", "x"].forEach(function(axis, i) {
+            var flip = spec.flip === true ? "both" : spec.flip || "none";
+            ["y", "x"].forEach(function (axis, i) {
                 var item = outItem[i];
                 var target = outTarget[i];
                 var itemKept = item === inItem[axis];
@@ -375,12 +410,25 @@
                     allowed = targetKept && (itemKept || itemMirrored);
                 } else if (flip === "target") {
                     allowed = itemKept && (targetKept || targetMirrored);
-                } else { // both: item and target flip together
+                } else {
+                    // both: item and target flip together
                     allowed = (itemKept && targetKept) || (itemMirrored && targetMirrored);
                 }
                 if (!allowed) {
-                    v.push("flip '" + flip + "' (" + axis + "): " + inItem[axis] + "/" + inTarget[axis] +
-                        " became " + item + "/" + target);
+                    v.push(
+                        "flip '" +
+                            flip +
+                            "' (" +
+                            axis +
+                            "): " +
+                            inItem[axis] +
+                            "/" +
+                            inTarget[axis] +
+                            " became " +
+                            item +
+                            "/" +
+                            target,
+                    );
                 }
             });
 
@@ -395,8 +443,17 @@
                 var ip = Scene.point(after, result.itemAt);
                 var tp = Scene.point(targetRect, result.targetAt);
                 if (!near(ip.x, tp.x) || !near(ip.y, tp.y)) {
-                    v.push("reference point of item (" + ip.x + "," + ip.y + ") is not on the one of the target (" +
-                        tp.x + "," + tp.y + ")");
+                    v.push(
+                        "reference point of item (" +
+                            ip.x +
+                            "," +
+                            ip.y +
+                            ") is not on the one of the target (" +
+                            tp.x +
+                            "," +
+                            tp.y +
+                            ")",
+                    );
                 }
             }
         }
@@ -407,8 +464,14 @@
     // tests
 
     var stats = {
-        scenes: 0, skipped: 0, withTarget: 0, withDistance: 0, overflowLeft: 0, flipped: 0, stuck: 0,
-        referenceViolations: []
+        scenes: 0,
+        skipped: 0,
+        withTarget: 0,
+        withDistance: 0,
+        overflowLeft: 0,
+        flipped: 0,
+        stuck: 0,
+        referenceViolations: [],
     };
 
     function atString(at) {
@@ -422,8 +485,8 @@
         specs.push(randomScene());
     }
 
-    specs.forEach(function(spec, index) {
-        test("scene " + index + " " + describe(spec), function() {
+    specs.forEach(function (spec, index) {
+        test("scene " + index + " " + describe(spec), function () {
             var ctx = build(spec);
             var context = " | scene " + index + ", seed " + seed + ": " + JSON.stringify(spec);
 
@@ -448,9 +511,15 @@
                 // calcVariant() right after construction uses what the constructor measured
                 var freshImpl = Adapter.create(ctx.options);
                 var freshRef = Adapter.createReference(ctx.options);
-                compare("calcVariant() on a new instance",
-                    attempt(function() { return freshImpl.calcVariant(v.item, v.target); }),
-                    attempt(function() { return freshRef.calcVariant(v.item, v.target); }));
+                compare(
+                    "calcVariant() on a new instance",
+                    attempt(function () {
+                        return freshImpl.calcVariant(v.item, v.target);
+                    }),
+                    attempt(function () {
+                        return freshRef.calcVariant(v.item, v.target);
+                    }),
+                );
 
                 // the reference throws in calculate() for a window target and is left half-refreshed
                 if (spec.target.kind === "window") {
@@ -460,45 +529,71 @@
                 var impl = Adapter.create(ctx.options);
                 var reference = Adapter.createReference(ctx.options);
 
-                var implResult = attempt(function() { return impl.calculate(); });
-                var refResult = attempt(function() { return reference.calculate(); });
+                var implResult = attempt(function () {
+                    return impl.calculate();
+                });
+                var refResult = attempt(function () {
+                    return reference.calculate();
+                });
                 var comparable = compare("calculate()", implResult, refResult);
 
                 if (comparable && implResult.value) {
-                    violations(spec, ctx, implResult.value).forEach(function(message) {
+                    violations(spec, ctx, implResult.value).forEach(function (message) {
                         ok(false, "property: " + message + context);
                     });
                     ok(true, "properties checked");
                     stats.withTarget += implResult.value.itemAt ? 1 : 0;
                     stats.withDistance += implResult.value.distance ? 1 : 0;
                     stats.overflowLeft += implResult.value.distance && implResult.value.distance.overflow ? 1 : 0;
-                    stats.flipped += implResult.value.itemAt && (implResult.value.itemAt !== atString(spec.itemAt) ||
-                        implResult.value.targetAt !== atString(spec.targetAt)) ? 1 : 0;
+                    stats.flipped +=
+                        implResult.value.itemAt &&
+                        (implResult.value.itemAt !== atString(spec.itemAt) ||
+                            implResult.value.targetAt !== atString(spec.targetAt))
+                            ? 1
+                            : 0;
                     var selfCheck = violations(spec, ctx, refResult.value);
                     if (selfCheck.length) {
                         stats.referenceViolations.push("scene " + index + ": " + selfCheck[0]);
                     }
                     if (stickEdges(spec.stick).length) {
                         var noStick = {};
-                        Object.keys(ctx.options).forEach(function(k) { noStick[k] = ctx.options[k]; });
+                        Object.keys(ctx.options).forEach(function (k) {
+                            noStick[k] = ctx.options[k];
+                        });
                         noStick.stick = "none";
-                        var plain = attempt(function() { return Adapter.createReference(noStick).calculate(); });
-                        stats.stuck += plain.value && JSON.stringify(plain.value.moveBy) !==
-                            JSON.stringify(refResult.value.moveBy) ? 1 : 0;
+                        var plain = attempt(function () {
+                            return Adapter.createReference(noStick).calculate();
+                        });
+                        stats.stuck +=
+                            plain.value && JSON.stringify(plain.value.moveBy) !== JSON.stringify(refResult.value.moveBy)
+                                ? 1
+                                : 0;
                     }
                 }
 
-                compare("calcVariant()",
-                    attempt(function() { return impl.calcVariant(v.item, v.target); }),
-                    attempt(function() { return reference.calcVariant(v.item, v.target); }));
+                compare(
+                    "calcVariant()",
+                    attempt(function () {
+                        return impl.calcVariant(v.item, v.target);
+                    }),
+                    attempt(function () {
+                        return reference.calcVariant(v.item, v.target);
+                    }),
+                );
 
                 if (spec.resized) {
                     resizeElements(spec, ctx);
                     impl.resize();
                     reference.resize();
-                    compare("calculate() after resize()",
-                        attempt(function() { return impl.calculate(); }),
-                        attempt(function() { return reference.calculate(); }));
+                    compare(
+                        "calculate() after resize()",
+                        attempt(function () {
+                            return impl.calculate();
+                        }),
+                        attempt(function () {
+                            return reference.calculate();
+                        }),
+                    );
                 }
             } finally {
                 ctx.scene.destroy();
@@ -509,16 +604,35 @@
     // keeps the generator honest: the scenes must really exercise overflow, flip and stick
     module("validation generator");
 
-    test("generated scenes cover the interesting cases", function() {
-        Report.info("seed " + seed + ", " + stats.scenes + " scenes, " + stats.skipped +
-            " comparisons skipped because the reference throws");
-        Report.info("scenes with target " + stats.withTarget + ", with boundary distance " + stats.withDistance +
-            ", with overflow left " + stats.overflowLeft + ", flipped " + stats.flipped + ", stuck " + stats.stuck);
-        stats.referenceViolations.slice(0, 5).forEach(function(message) {
+    test("generated scenes cover the interesting cases", function () {
+        Report.info(
+            "seed " +
+                seed +
+                ", " +
+                stats.scenes +
+                " scenes, " +
+                stats.skipped +
+                " comparisons skipped because the reference throws",
+        );
+        Report.info(
+            "scenes with target " +
+                stats.withTarget +
+                ", with boundary distance " +
+                stats.withDistance +
+                ", with overflow left " +
+                stats.overflowLeft +
+                ", flipped " +
+                stats.flipped +
+                ", stuck " +
+                stats.stuck,
+        );
+        stats.referenceViolations.slice(0, 5).forEach(function (message) {
             Report.info("reference build violates a property (check the property or the reference): " + message);
         });
-        ok(stats.referenceViolations.length === 0, "the reference build satisfies the properties (" +
-            stats.referenceViolations.length + " violations)");
+        ok(
+            stats.referenceViolations.length === 0,
+            "the reference build satisfies the properties (" + stats.referenceViolations.length + " violations)",
+        );
         if (count >= 100) {
             var min = Math.floor(count * 0.04);
             ok(stats.flipped >= min, "flipped scenes: " + stats.flipped + " >= " + min);
@@ -530,4 +644,4 @@
             ok(true, "fewer than 100 scenes, no coverage thresholds");
         }
     });
-}());
+})();
