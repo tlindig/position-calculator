@@ -29,6 +29,7 @@
     "test:dist": "node test/run.js all --impl=dist/position-calculator.js --jquery=0 && node test/run.js all --impl=dist/position-calculator.iife.min.js --format=iife --jquery=0 && node test/run.js dev --impl=dist/position-calculator.iife.min.js --format=iife --jquery=1",
     "test:jquery": "node test/run.js dev --impl=src/iife.js --jquery=1",
     "test:node": "node test/node-import.js",
+    "test:cross-browser": "node test/cross-browser.js",
     "test:types": "tsc --noEmit -p test/types/tsconfig.json",
     "build": "node scripts/build.js",
     "lint": "eslint .",
@@ -68,6 +69,7 @@
     "esbuild": "~0.17.13",
     "eslint": "^10.14.0",
     "globals": "^17.14.0",
+    "playwright": "^1.65.0",
     "prettier": "^3.9.10",
     "typescript": "~7.0.2"
   }

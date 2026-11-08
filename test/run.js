@@ -16,14 +16,13 @@
 import { spawn, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { test, before, after } from "node:test";
+import { startServer } from "./support/server.js";
 
 const root = path.join(import.meta.dirname, "..");
 const PAGES = { dev: "position-calculator.html", validation: "validation.html" };
-const MIME = { ".html": "text/html", ".js": "text/javascript", ".map": "application/json", ".css": "text/css" };
 const MAX_FAILURES_PER_TEST = 3;
 
 const options = {};
@@ -75,30 +74,6 @@ function pageUrl(baseUrl, name) {
     }
     const query = params.toString();
     return baseUrl + "/test/" + PAGES[name] + (query ? "?" + query : "");
-}
-
-function startServer() {
-    const server = http.createServer((request, response) => {
-        const file = path.join(root, decodeURIComponent(new URL(request.url, "http://localhost").pathname));
-        if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
-            response.writeHead(404).end();
-            return;
-        }
-        response.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
-        fs.createReadStream(file).pipe(response);
-    });
-    return new Promise((resolve) =>
-        server.listen(0, "127.0.0.1", () =>
-            resolve({
-                baseUrl: "http://127.0.0.1:" + server.address().port,
-                close: () =>
-                    new Promise((done) => {
-                        server.close(done);
-                        server.closeAllConnections();
-                    }),
-            }),
-        ),
-    );
 }
 
 function sleep(ms) {
@@ -258,7 +233,7 @@ function describeFailures(failures) {
 let browser;
 let server;
 before(async () => {
-    server = await startServer();
+    server = await startServer(root);
     browser = await launchChrome(findChrome());
 });
 after(async () => {

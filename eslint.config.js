@@ -26,7 +26,7 @@ export default [
     {
         // classic scripts, loaded by the HTML pages in test/
         files: [
-            "test/support/**/*.js",
+            "test/support/{harness,load-impl,scene}.js",
             "test/*.test.js",
             "test/*_test.js",
             "test/adapter.js",
@@ -44,7 +44,14 @@ export default [
         rules: { "no-useless-escape": "off" },
     },
     {
-        files: ["scripts/**/*.js", "test/run.js", "test/node-import.js", "eslint.config.js"],
+        files: [
+            "scripts/**/*.js",
+            "test/run.js",
+            "test/cross-browser.js",
+            "test/support/server.js",
+            "test/node-import.js",
+            "eslint.config.js",
+        ],
         languageOptions: { ecmaVersion: "latest", sourceType: "module", globals: { ...globals.node } },
     },
 ];
