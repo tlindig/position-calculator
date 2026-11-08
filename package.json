@@ -1,16 +1,38 @@
 {
-  "name": "position-calculator",
-  "version": "1.1.3",
+  "name": "@tlindig/position-calculator",
+  "version": "2.0.0",
   "description": "Calculate the position of an element relative to another element or event. It has also functionality to handle collision within the viewport of a given container. It does not manipulate CSS or DOM, it only calculates values. It is a basic technology to support implementation of tooltips, popups, popovers, scrollspies and many more.",
-  "main": "dist/position-calculator.js",
+  "type": "module",
+  "module": "./dist/position-calculator.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "require": "./dist/position-calculator.require.js",
+      "default": "./dist/position-calculator.js"
+    },
+    "./iife": "./dist/position-calculator.iife.min.js",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "./dist/position-calculator.iife.min.js"
+  ],
+  "files": [
+    "dist",
+    "types",
+    "LICENSE-MIT"
+  ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "test": "node test/run.js all --jquery=0",
-    "test:dist": "node test/run.js all --impl=dist/position-calculator.js --jquery=0 && node test/run.js all --impl=dist/position-calculator.min.js --jquery=0",
-    "test:jquery": "node test/run.js dev --jquery=1",
-    "build": "node scripts/build.js"
+    "test:dist": "node test/run.js all --impl=dist/position-calculator.js --jquery=0 && node test/run.js all --impl=dist/position-calculator.iife.min.js --format=iife --jquery=0 && node test/run.js dev --impl=dist/position-calculator.iife.min.js --format=iife --jquery=1",
+    "test:jquery": "node test/run.js dev --impl=src/iife.js --jquery=1",
+    "test:node": "node test/node-import.js",
+    "test:types": "tsc --noEmit -p test/types/tsconfig.json",
+    "build": "node scripts/build.js",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -40,6 +62,7 @@
   },
   "homepage": "https://github.com/tlindig/position-calculator#readme",
   "devDependencies": {
-    "esbuild": "~0.17.13"
+    "esbuild": "~0.17.13",
+    "typescript": "~7.0.2"
   }
 }

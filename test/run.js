@@ -3,23 +3,27 @@
  * Runs the browser test pages in headless Chrome (DevTools protocol, no dependencies besides Node >= 22
  * and Chrome) and reports every browser test as a subtest of node:test.
  *
- *   node test/run.js [dev|validation|all] [--seed=N] [--n=COUNT] [--impl=FILE] [--jquery=0|1]
- *                    [--chrome=PATH] [--no-sandbox] [--timeout=SECONDS]
+ *   node test/run.js [dev|validation|all] [--seed=N] [--n=COUNT] [--impl=FILE] [--format=esm|iife]
+ *                    [--jquery=0|1] [--chrome=PATH] [--no-sandbox] [--timeout=SECONDS]
+ *
+ * The pages are served from the project root by a local HTTP server, because browsers do not load
+ * ES modules from file: URLs. --impl is a file inside the project. --format tells how the browser
+ * loads it: an ES module (default) or a classic script (the IIFE build).
  *
  * Exit code 0: no failure outside "[target]" modules (reported as todo). Otherwise 1.
  * Validation scenes are random. The seed is printed, pass --seed=N to reproduce a run.
  */
-"use strict";
+import { spawn, spawnSync } from "node:child_process";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import http from "node:http";
+import os from "node:os";
+import path from "node:path";
+import { test, before, after } from "node:test";
 
-const { spawn, spawnSync } = require("node:child_process");
-const crypto = require("node:crypto");
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
-const url = require("node:url");
-const { test, before, after } = require("node:test");
-
+const root = path.join(import.meta.dirname, "..");
 const PAGES = { dev: "position-calculator.html", validation: "validation.html" };
+const MIME = { ".html": "text/html", ".js": "text/javascript", ".map": "application/json", ".css": "text/css" };
 const MAX_FAILURES_PER_TEST = 3;
 
 const options = {};
@@ -48,10 +52,17 @@ function findChrome() {
     throw new Error("Chrome not found. Use --chrome=PATH or set CHROME.");
 }
 
-function pageUrl(name) {
+function pageUrl(baseUrl, name) {
     const params = new URLSearchParams();
     if (options.impl) {
-        params.set("impl", url.pathToFileURL(path.resolve(options.impl)).href);
+        const relative = path.relative(root, path.resolve(options.impl));
+        if (relative.startsWith("..") || path.isAbsolute(relative)) {
+            throw new Error("--impl must be a file inside the project: " + options.impl);
+        }
+        params.set("impl", "/" + relative.split(path.sep).join("/"));
+    }
+    if (options.format) {
+        params.set("format", options.format);
     }
     if (options.jquery) {
         params.set("jquery", options.jquery);
@@ -63,7 +74,26 @@ function pageUrl(name) {
         }
     }
     const query = params.toString();
-    return url.pathToFileURL(path.join(__dirname, PAGES[name])).href + (query ? "?" + query : "");
+    return baseUrl + "/test/" + PAGES[name] + (query ? "?" + query : "");
+}
+
+function startServer() {
+    const server = http.createServer((request, response) => {
+        const file = path.join(root, decodeURIComponent(new URL(request.url, "http://localhost").pathname));
+        if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
+            response.writeHead(404).end();
+            return;
+        }
+        response.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream" });
+        fs.createReadStream(file).pipe(response);
+    });
+    return new Promise((resolve) => server.listen(0, "127.0.0.1", () => resolve({
+        baseUrl: "http://127.0.0.1:" + server.address().port,
+        close: () => new Promise((done) => {
+            server.close(done);
+            server.closeAllConnections();
+        })
+    })));
 }
 
 function sleep(ms) {
@@ -176,7 +206,7 @@ async function runPage(browser, name) {
                 pageErrors.push((details.exception && details.exception.description) || details.text);
             }
         });
-        await cdp.send("Page.navigate", { url: pageUrl(name) });
+        await cdp.send("Page.navigate", { url: pageUrl(server.baseUrl, name) });
         await withTimeout(loaded, timeoutMs, "page " + name + " did not load");
 
         const evaluation = cdp.send("Runtime.evaluate", {
@@ -205,12 +235,17 @@ function describeFailures(failures) {
 }
 
 let browser;
+let server;
 before(async () => {
+    server = await startServer();
     browser = await launchChrome(findChrome());
 });
 after(async () => {
     if (browser) {
         await browser.close();
+    }
+    if (server) {
+        await server.close();
     }
 });
 

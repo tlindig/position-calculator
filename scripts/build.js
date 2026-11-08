@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 /*
- * Builds dist/ from src/: a copy with banner and a minified copy with source map.
- * It does not bundle, so the UMD wrapper of src/position-calculator.js stays the entry point.
+ * Builds dist/ from src/:
+ *   position-calculator.js            ESM, a copy of the source with banner
+ *   position-calculator.require.js    ESM shim for require() in Node, see below
+ *   position-calculator.iife.min.js   IIFE bundle of src/iife.js (global and jQuery alias), minified,
+ *                                     with source map
  *
  *   node scripts/build.js [OUT_DIR]     default: dist
  */
-"use strict";
+import fs from "node:fs";
+import path from "node:path";
+import esbuild from "esbuild";
 
-const fs = require("node:fs");
-const path = require("node:path");
-const esbuild = require("esbuild");
-const pkg = require("../package.json");
-
-const root = path.join(__dirname, "..");
+const root = path.join(import.meta.dirname, "..");
+const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const entry = path.join(root, "src", "position-calculator.js");
+const iifeEntry = path.join(root, "src", "iife.js");
 const outDir = path.resolve(process.argv[2] || path.join(root, "dist"));
 
 const banner = [
@@ -33,12 +35,19 @@ fs.mkdirSync(outDir, { recursive: true });
 const source = fs.readFileSync(entry, "utf8").replace(/\r\n/g, "\n");
 fs.writeFileSync(path.join(outDir, "position-calculator.js"), banner + "\n" + source);
 
+// require() in Node returns the "module.exports" export. A string export name is ES2022, so it stays
+// out of the ES2020 source and the ESM file. Only the "require" condition of package.json loads this file.
+fs.writeFileSync(path.join(outDir, "position-calculator.require.js"), banner + "\n" +
+    'export { PositionCalculator, PositionCalculator as "module.exports" } from "./position-calculator.js";\n');
+
 esbuild.buildSync({
-    entryPoints: [entry],
-    outfile: path.join(outDir, "position-calculator.min.js"),
+    entryPoints: [iifeEntry],
+    outfile: path.join(outDir, "position-calculator.iife.min.js"),
+    bundle: true,
+    format: "iife",
     minify: true,
     sourcemap: true,
-    target: "es5",
+    target: "es2020",
     legalComments: "none",
     banner: { js: banner }
 });

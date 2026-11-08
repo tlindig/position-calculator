@@ -6,28 +6,10 @@
  * Licensed under the MIT license.
  */
 
-/*global module:false*/
-(function(factory) {
-    // make it public
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        // as Browser globals
-        window.PositionCalculator = factory();
-        if (window.jQuery) {
-            // alias of version 1.x
-            window.jQuery.PositionCalculator = window.PositionCalculator;
-        }
-    }
-}(function() {
-    "use strict"; //enable ECMAScript 5 Strict Mode
+// window and document are read when a calculator runs, never at import time (SSR-safe).
 
     // //////////
     // private
-    var __window = window;
-    var __document = document;
-    var __docElement = __document.documentElement;
-
     var __rgx_vertical = /top|middle|bottom/;
     var __rgx_horizontal = /left|center|right/;
     var __rgx_percent = /%$/;
@@ -62,12 +44,12 @@
         }
         if (typeof value === "string") {
             if (allowGlobals && value === "window") {
-                return __window;
+                return window;
             }
             if (allowGlobals && value === "document") {
-                return __document;
+                return document;
             }
-            return __document.querySelector(value);
+            return document.querySelector(value);
         }
         // nodes (<form>, <select>) and window have a length, but are no collections
         if (!value.nodeType && !__isWindow(value) && typeof value.length === "number") {
@@ -127,7 +109,7 @@
         var isWidth = prop === "width";
         var offsetProp = isWidth ? "offsetWidth" : "offsetHeight";
 
-        if (el[offsetProp] === 0 && __rgx_displayswap.test(__window.getComputedStyle(el).display)) {
+        if (el[offsetProp] === 0 && __rgx_displayswap.test(window.getComputedStyle(el).display)) {
             // measure it as if it is shown
             var show = { position: "absolute", visibility: "hidden", display: "block" };
             var old = {};
@@ -148,7 +130,7 @@
     }
 
     function __measureOuterSize(el, prop, offsetProp, isWidth) {
-        var styles = __window.getComputedStyle(el);
+        var styles = window.getComputedStyle(el);
         var val = el[offsetProp];
 
         if (val <= 0 || val == null) {
@@ -291,13 +273,13 @@
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
-            domElm = __docElement;
+            domElm = document.documentElement;
             offset = {
                 top: 0,
                 left: 0
             };
         } else if (__isWindow(domElm)) {
-            domElm = __docElement;
+            domElm = document.documentElement;
             offset = {
                 top: raw.pageYOffset,
                 left: raw.pageXOffset
@@ -319,13 +301,13 @@
         var offset;
         if (domElm.nodeType === 9) {
             // is document node
-            domElm = __docElement;
+            domElm = document.documentElement;
             offset = {
                 top: 0,
                 left: 0
             };
         } else if (__isWindow(domElm)) {
-            domElm = __docElement;
+            domElm = document.documentElement;
             offset = {
                 top: raw.pageYOffset,
                 left: raw.pageXOffset
@@ -897,11 +879,19 @@
         }
     };
 
+    // The default boundary is the window. It is read on access, so that importing the module needs no DOM.
+    var __boundaryDefault;
+
     // default options
     PositionCalculator.defaults = {
         item: null,
         target: null,
-        boundary: window,
+        get boundary() {
+            return __boundaryDefault === undefined ? globalThis.window : __boundaryDefault;
+        },
+        set boundary(value) {
+            __boundaryDefault = value;
+        },
         itemAt: "top left",
         targetAt: "top left",
         itemOffset: {
@@ -919,5 +909,4 @@
     };
 
     // export
-    return PositionCalculator;
-}));
+    export { PositionCalculator };
