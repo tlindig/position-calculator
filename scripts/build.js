@@ -5,7 +5,7 @@
  *   position-calculator.iife.min.js   IIFE bundle of src/iife.js (global and jQuery alias), minified,
  *                                     no source map (it was 44 KB for a 7.8 KB bundle)
  *
- *   node scripts/build.js [OUT_DIR]     default: dist
+ *   node scripts/build.js [OUT_DIR]     default: dist (emptied before the build; a given OUT_DIR is not)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -15,7 +15,8 @@ const root = path.join(import.meta.dirname, "..");
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const entry = path.join(root, "src", "position-calculator.js");
 const iifeEntry = path.join(root, "src", "iife.js");
-const outDir = path.resolve(process.argv[2] || path.join(root, "dist"));
+const defaultOutDir = path.join(root, "dist");
+const outDir = path.resolve(process.argv[2] || defaultOutDir);
 
 const banner = [
     "/*!",
@@ -29,6 +30,10 @@ const banner = [
     " */",
 ].join("\n");
 
+// Only the default dist is cleaned, so a stale file is never packed. A given OUT_DIR is left alone.
+if (outDir === defaultOutDir) {
+    fs.rmSync(outDir, { recursive: true, force: true });
+}
 fs.mkdirSync(outDir, { recursive: true });
 
 const source = fs.readFileSync(entry, "utf8").replace(/\r\n/g, "\n");
