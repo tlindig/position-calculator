@@ -13,6 +13,7 @@
  * Exit code 0: no failure outside "[target]" modules (reported as todo). Otherwise 1.
  * Validation scenes are random. The seed is printed, pass --seed=N to reproduce a run.
  */
+import assert from "node:assert/strict";
 import { spawn, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -268,5 +269,8 @@ for (const name of targets) {
                 },
             );
         }
+        // A page that failed to load or ran no tests must not count as a pass.
+        assert.equal(pageErrors.length, 0, `page ${name} had ${pageErrors.length} page error(s)`);
+        assert.notEqual(result.tests.length, 0, `page ${name} reported no tests`);
     });
 }
