@@ -740,6 +740,26 @@
         strictEqual(result.targetAt, "top left", "swapped order");
     });
 
+    test("a half that only contains a keyword falls back, like any other invalid half", function () {
+        // before the regular expressions were anchored this gave NaN
+        same(
+            calc({ itemAt: "bottomleft", targetAt: "xbottomx right" }).calculate(),
+            res(180, 290, "top left", "top right", d(-100, -200, 160, 140)),
+        );
+        var result = calc({ itemAt: "middlex centery", targetAt: "toppy" }).calculate();
+        strictEqual(result.itemAt, "top left", "keyword inside a word");
+        strictEqual(result.targetAt, "top left", "keyword at the start of a word");
+    });
+
+    test("itemAt and targetAt: spaces only separate the two halves", function () {
+        var result = calc({ itemAt: "bottom right", targetAt: "middle  right" }).calculate();
+        strictEqual(result.itemAt, "bottom right", "two words");
+        strictEqual(result.targetAt, "middle left", "two spaces: the second half is empty");
+        result = calc({ itemAt: " bottom right", targetAt: "bottom right " }).calculate();
+        strictEqual(result.itemAt, "top left", "leading space: the first half is empty");
+        strictEqual(result.targetAt, "bottom right", "trailing space");
+    });
+
     test("flip and stick are off by default: an overflow is reported, not resolved", function () {
         size(I, 100, 80);
         var t = s.box({ left: 420, top: 300, width: 60, height: 40 });

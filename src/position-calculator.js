@@ -10,8 +10,8 @@
 
 // //////////
 // private
-var __rgx_vertical = /top|middle|bottom/;
-var __rgx_horizontal = /left|center|right/;
+var __rgx_vertical = /^(?:top|middle|bottom)$/;
+var __rgx_horizontal = /^(?:left|center|right)$/;
 var __rgx_percent = /%$/;
 // computed value with a unit other than px, e.g. "50%"
 var __rgx_numnonpx = /^([+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|))(?!px)[a-z%]+$/i;
