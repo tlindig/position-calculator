@@ -200,7 +200,7 @@ function __offset(el) {
  * @return {NormPos}        Object with {top:number, left:number, height:number, width:number}
  *
  **/
-function __nomrmalizePosition(raw) {
+function __normalizePosition(raw) {
     if (raw.nodeType === 9) {
         // is document node
         return {
@@ -425,7 +425,7 @@ function __updateOverflow(distance) {
  *                              { top:number, left:number, bottom:number, right:number,
  *                                overflow:{Array.<string>|null} }
  */
-function __calulateDistance(bou_Pos, item_Pos) {
+function __calculateDistance(bou_Pos, item_Pos) {
     var result = {
         top: bou_Pos.top - item_Pos.top,
         left: bou_Pos.left - item_Pos.left,
@@ -438,7 +438,7 @@ function __calulateDistance(bou_Pos, item_Pos) {
 }
 
 /**
- * calculate the new fliped placement.
+ * calculate the new flipped placement.
  *
  * {NormAt} is Object with {x:string, y:string}
  *
@@ -455,11 +455,11 @@ function __calulateDistance(bou_Pos, item_Pos) {
  */
 function __flipPlacement(flip, itemAt, tarAt, distance) {
     var y_overflowEdge, x_overflowEdge, flipBits;
-    var item_flipedAt = {
+    var item_flippedAt = {
         y: itemAt.y,
         x: itemAt.x,
     };
-    var tar_flipedAt = {
+    var tar_flippedAt = {
         y: tarAt.y,
         x: tarAt.x,
     };
@@ -507,22 +507,22 @@ function __flipPlacement(flip, itemAt, tarAt, distance) {
     }
 
     if (flipBits & 1) {
-        y_overflowEdge && (item_flipedAt.y = __mirror[item_flipedAt.y]);
-        x_overflowEdge && (item_flipedAt.x = __mirror[item_flipedAt.x]);
+        y_overflowEdge && (item_flippedAt.y = __mirror[item_flippedAt.y]);
+        x_overflowEdge && (item_flippedAt.x = __mirror[item_flippedAt.x]);
     }
     if (flipBits & 2) {
-        y_overflowEdge && (tar_flipedAt.y = __mirror[tar_flipedAt.y]);
-        x_overflowEdge && (tar_flipedAt.x = __mirror[tar_flipedAt.x]);
+        y_overflowEdge && (tar_flippedAt.y = __mirror[tar_flippedAt.y]);
+        x_overflowEdge && (tar_flippedAt.x = __mirror[tar_flippedAt.x]);
     }
 
     return {
-        item_at: item_flipedAt,
-        tar_at: tar_flipedAt,
+        item_at: item_flippedAt,
+        tar_at: tar_flippedAt,
     };
 }
 
 /**
- * compare overflow in distancaA with overflow in distanceB.
+ * compare overflow in distanceA with overflow in distanceB.
  *
  * @param  {Distance}  distanceA  distance object, with top, right, bottom, left
  * @param  {Distance}  distanceB  distance object, with top, right, bottom, left
@@ -691,7 +691,7 @@ PositionCalculator.prototype._init = function (options) {
 };
 
 /**
- * Update intern stored values depending on size and position of elements (item, target, boundary).
+ * Update internally stored values depending on size and position of elements (item, target, boundary).
  * Should be called if dimensions of an element changed.
  *
  * @return {this} allow chaining
@@ -699,8 +699,8 @@ PositionCalculator.prototype._init = function (options) {
 PositionCalculator.prototype.resize = function () {
     var o = this.options;
 
-    var item_pos = __nomrmalizePosition(this.itm);
-    var targ_pos = this.trg ? __nomrmalizePosition(this.trg) : null;
+    var item_pos = __normalizePosition(this.itm);
+    var targ_pos = this.trg ? __normalizePosition(this.trg) : null;
     this.bndPos = this.bnd ? __normalizeBounding(this.bnd) : null;
 
     if (!this.itmPos || !__isEqualNormPos(item_pos, this.itmPos)) {
@@ -729,7 +729,7 @@ PositionCalculator.prototype.resize = function () {
 
 /**
  * Calculate the resulting position and boundary distance for the given placement.
- * That will not handle flip and fit.
+ * That will not handle flip and stick.
  *
  * If target was not specified, only boundary distance will be calculated.
  * If not "item_at" or "tar_at", only boundary distance will be calculated.
@@ -765,12 +765,12 @@ PositionCalculator.prototype.calcVariant = function (item_at, tar_at) {
             y: item_newPos.top - this.itmPos.top,
             x: item_newPos.left - this.itmPos.left,
         };
-        result.distance = this.bndPos ? __calulateDistance(this.bndPos, item_newPos) : null;
+        result.distance = this.bndPos ? __calculateDistance(this.bndPos, item_newPos) : null;
         result.itemAt = item_at.y + " " + item_at.x;
         result.targetAt = tar_at.y + " " + tar_at.x;
     } else {
         result.moveBy = { y: 0, x: 0 };
-        result.distance = this.bndPos ? __calulateDistance(this.bndPos, this.itmPos) : null;
+        result.distance = this.bndPos ? __calculateDistance(this.bndPos, this.itmPos) : null;
     }
 
     return result;
@@ -789,7 +789,7 @@ PositionCalculator.prototype.calcVariant = function (item_at, tar_at) {
  *                                      bottom:number, right:number,
  *                                      overflow:{Array.<string>|null}
  *                                  }
- *                                  - top, left, buttom, right - distance/overflow for this edge
+ *                                  - top, left, bottom, right - distance/overflow for this edge
  *                                  - overflow - Array with edges has overflow
  *                                             - null for no collision detected
  *     itemAt: {string|null}        - used placement of reference point at item
@@ -826,10 +826,10 @@ PositionCalculator.prototype.calculate = function () {
     // collision handling: flip
     if (o.flip && o.flip !== "none" && this.trgPos) {
         var newResult;
-        var flipedPlacement = __flipPlacement(o.flip, this.itmAt, this.trgAt, result.distance);
+        var flippedPlacement = __flipPlacement(o.flip, this.itmAt, this.trgAt, result.distance);
 
-        if (flipedPlacement) {
-            newResult = this.calcVariant(flipedPlacement.item_at, flipedPlacement.tar_at);
+        if (flippedPlacement) {
+            newResult = this.calcVariant(flippedPlacement.item_at, flippedPlacement.tar_at);
 
             if (!newResult.distance.overflow) {
                 //finish, because found placement without collision
@@ -848,12 +848,12 @@ PositionCalculator.prototype.calculate = function () {
                 //need new distance calculation
                 result = this.calcVariant(
                     {
-                        y: useNew.y ? flipedPlacement.item_at.y : this.itmAt.y,
-                        x: useNew.x ? flipedPlacement.item_at.x : this.itmAt.x,
+                        y: useNew.y ? flippedPlacement.item_at.y : this.itmAt.y,
+                        x: useNew.x ? flippedPlacement.item_at.x : this.itmAt.x,
                     },
                     {
-                        y: useNew.y ? flipedPlacement.tar_at.y : this.trgAt.y,
-                        x: useNew.x ? flipedPlacement.tar_at.x : this.trgAt.x,
+                        y: useNew.y ? flippedPlacement.tar_at.y : this.trgAt.y,
+                        x: useNew.x ? flippedPlacement.tar_at.x : this.trgAt.x,
                     },
                 );
                 if (!result.distance.overflow) {
