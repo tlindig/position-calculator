@@ -3,7 +3,7 @@
  * Builds dist/ from src/:
  *   position-calculator.js            ESM, a copy of the source with banner
  *   position-calculator.iife.min.js   IIFE bundle of src/iife.js (global and jQuery alias), minified,
- *                                     with source map
+ *                                     no source map (it was 44 KB for a 7.8 KB bundle)
  *
  *   node scripts/build.js [OUT_DIR]     default: dist
  */
@@ -40,7 +40,6 @@ esbuild.buildSync({
     bundle: true,
     format: "iife",
     minify: true,
-    sourcemap: true,
     target: "es2020",
     legalComments: "none",
     banner: { js: banner },
