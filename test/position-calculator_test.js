@@ -246,12 +246,20 @@
         root.style.border = "10px solid #888";
         try {
             var vp = Scene.viewport();
-            strictEqual(root.clientTop + root.clientLeft, 20, "precondition: <html> has a border");
-            // target is at 190 / 190 for the library (200 minus the border), the item is moved there,
-            // the window boundary starts behind the border at 10 / 10
+            // Chrome reports the border of <html> as clientTop / clientLeft (10), Firefox reports 0
+            var ct = root.clientTop;
+            var cl = root.clientLeft;
+            // target is at 200 - ct / 200 - cl for the library, the item is moved there,
+            // the window boundary starts behind the border at ct / cl
             same(
                 calc({ boundary: undefined }).calculate(),
-                res(180, 190, "top left", "top left", d(-180, -180, vp.height - 220, vp.width - 240)),
+                res(
+                    180,
+                    190,
+                    "top left",
+                    "top left",
+                    d(2 * ct - 200, 2 * cl - 200, vp.height - 240 + 2 * ct, vp.width - 260 + 2 * cl),
+                ),
             );
         } finally {
             root.style.border = "";
