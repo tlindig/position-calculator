@@ -31,6 +31,7 @@ jobs:
   # Cross-browser check, remove it again if it costs too much time
   cross-browser:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
