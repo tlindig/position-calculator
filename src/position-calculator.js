@@ -164,7 +164,7 @@ function __measureOuterSize(el, prop, offsetProp, isWidth) {
  */
 function __css(el, styles, name) {
     var val = styles[name];
-    if (val === "" && !el.ownerDocument.contains(el)) {
+    if (val === "" && !el.isConnected) {
         val = el.style[name];
     }
     return val;
@@ -172,7 +172,7 @@ function __css(el, styles, name) {
 
 /**
  * Position of an element in document coordinates, like jQuery.offset() of 1.9.
- * A disconnected node and the root element result in 0/0.
+ * A disconnected node and the root element result in 0/0. An element in a shadow tree counts as connected.
  *
  * @param  {Element} el
  * @return {{top:number, left:number}}
@@ -180,8 +180,7 @@ function __css(el, styles, name) {
 function __offset(el) {
     var doc = el.ownerDocument;
     var docElem = doc.documentElement;
-    var parent = el.parentNode;
-    if (parent !== docElem && !(parent && parent.nodeType === 1 && docElem.contains(parent))) {
+    if (el === docElem || !el.isConnected) {
         return { top: 0, left: 0 };
     }
     var box = typeof el.getBoundingClientRect !== "undefined" ? el.getBoundingClientRect() : { top: 0, left: 0 };

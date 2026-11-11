@@ -602,6 +602,29 @@
         same(calc({ item: item }).calculate(), res(179.5, 189.75, "top left", "top left", d(-100, -100, 160, 240)));
     });
 
+    test("an element in an open shadow root is positioned like one in the document", function () {
+        var shadow = s.root.appendChild(document.createElement("div")).attachShadow({ mode: "open" });
+        var item = document.createElement("div");
+        item.style.cssText = "position:absolute;left:400px;top:400px;width:60px;height:40px;";
+        shadow.appendChild(item);
+        var target = document.createElement("div");
+        target.style.cssText = "position:absolute;left:200px;top:200px;width:100px;height:50px;";
+        shadow.appendChild(target);
+        ok(item.isConnected && target.isConnected, "precondition: both are connected");
+        ok(!document.documentElement.contains(item), "precondition: contains() does not reach into the shadow root");
+
+        same(
+            calc({ item: item, targetAt: "bottom right" }).calculate(),
+            res(-150, -100, "top left", "bottom right", d(-150, -200, 110, 140)),
+            "item in the shadow root",
+        );
+        same(
+            calc({ target: target }).calculate(),
+            res(180, 190, "top left", "top left", d(-100, -100, 160, 240)),
+            "target in the shadow root",
+        );
+    });
+
     test("a disconnected element is measured from its inline style and sits at 0, 0", function () {
         var item = document.createElement("div");
         item.style.cssText = "width:40px;height:20px;padding:2px;border:1px solid;";
