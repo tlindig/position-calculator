@@ -32,6 +32,7 @@
     "test:types": "tsc --noEmit -p test/types/tsconfig.json",
     "test:consumer": "node scripts/check-consumer.js",
     "build": "node scripts/build.js",
+    "docs:build": "node scripts/build-docs.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

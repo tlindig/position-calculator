@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{{title}} · PositionCalculator</title>
+        <meta name="description" content="{{summary}}" />
+        <link rel="stylesheet" href="{{root}}assets/docs.css" />
+        <script type="module" src="{{root}}assets/docs.js"></script>
+    </head>
+    <body data-root="{{root}}">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <header class="site-header">
+            <a class="brand" href="{{root}}index.html">PositionCalculator</a>
+            <span class="version">v{{version}}</span>
+            <a class="header-link" href="https://github.com/tlindig/position-calculator">GitHub</a>
+        </header>
+        <div class="shell">
+            <nav class="site-nav" aria-label="Documentation">
+                <details open>
+                    <summary>Menu</summary>
+                    {{nav}}
+                </details>
+            </nav>
+            <main id="main">
+                <h1>{{title}}</h1>
+                <p class="lead">{{summary}}</p>
+                {{content}}
+            </main>
+        </div>
+        <footer class="site-footer">
+            <p>MIT license, copyright 2014-2026 Tobias Lindig.</p>
+        </footer>
+    </body>
+</html>

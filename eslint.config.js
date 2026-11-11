@@ -16,12 +16,16 @@ const rules = {
 };
 
 export default [
-    { ignores: ["dist/", "node_modules/", "test/reference/"] },
+    { ignores: ["dist/", "_site/", "node_modules/", "test/reference/"] },
     js.configs.recommended,
     { rules },
     {
         files: ["src/**/*.js"],
         languageOptions: { ecmaVersion: 2020, sourceType: "module", globals: { ...globals.browser } },
+    },
+    {
+        files: ["docs/assets/*.js"],
+        languageOptions: { ecmaVersion: 2022, sourceType: "module", globals: { ...globals.browser } },
     },
     {
         // classic scripts, loaded by the HTML pages in test/

@@ -1,0 +1,10 @@
+{
+  "pages": [
+    {
+      "path": "index",
+      "title": "PositionCalculator",
+      "navTitle": "Overview",
+      "summary": "Calculates where an element has to go relative to another element or a pointer event, and keeps it inside a boundary. You apply the result yourself."
+    }
+  ]
+}
