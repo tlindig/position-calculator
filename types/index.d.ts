@@ -1,8 +1,11 @@
 /** Something that resolves to one element: an element, a selector, or an array-like (jQuery object, NodeList). */
 export type ElementInput = string | Element | ArrayLike<Element>;
 
-/** Like {@link ElementInput}, plus window, document, an event, and the strings "window" and "document". */
-export type TargetInput = ElementInput | Window | Document | Event | "window" | "document";
+/**
+ * Like {@link ElementInput}, plus window, document, a mouse or pointer event, and the strings "window" and "document".
+ * Only events with pageX and pageY work, other events (keyboard, focus, touch) give NaN.
+ */
+export type TargetInput = ElementInput | Window | Document | MouseEvent | "window" | "document";
 
 /** Like {@link ElementInput}, plus window, document, and the strings "window" and "document". */
 export type BoundaryInput = ElementInput | Window | Document | "window" | "document";

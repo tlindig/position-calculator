@@ -31,3 +31,9 @@ PositionCalculator.defaults.itemAt = "bottom right";
 new PositionCalculator({ itemOffset: { y: true, x: 0 } });
 // @ts-expect-error calculate() is an instance method
 PositionCalculator.calculate();
+
+// only events with pageX and pageY work as target: mouse and pointer events
+// @ts-expect-error a keyboard event has no pageX and pageY, the result would be NaN
+new PositionCalculator({ item: "#popup", target: new KeyboardEvent("keydown") });
+new PositionCalculator({ item: "#popup", target: new MouseEvent("click") });
+new PositionCalculator({ item: "#popup", target: new PointerEvent("pointerdown") });
