@@ -1,0 +1,19 @@
+{
+  "title": "Speech bubble at the pointer",
+  "order": 2,
+  "hint": "Move the pointer over the dashed box: a speech bubble follows it. Go towards the right or bottom edge: the bubble jumps to the other side and its tail changes the corner. The Calculated values show the placement (itemAt).",
+  "tweak": "In the JavaScript tab, remove flip and stick and try again.",
+  "height": 230,
+  "scenarios": [
+    {
+      "name": "the bubble sits below right of the pointer when there is room",
+      "steps": [{ "dispatch": "pointermove", "on": "#stage", "x": 100, "y": 60 }],
+      "checks": [{ "element": "#label", "relativeTo": "#stage", "left": 116, "top": 76 }]
+    },
+    {
+      "name": "the bubble moves to the other side at the right and bottom edge",
+      "steps": [{ "dispatch": "pointermove", "on": "#stage", "x": 300, "y": 170 }],
+      "checks": [{ "element": "#label", "relativeTo": "#stage", "left": 144, "top": 122 }]
+    }
+  ]
+}

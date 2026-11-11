@@ -1,0 +1,46 @@
+<h2 id="demo">Demo</h2>
+
+{{example:tooltip}}
+
+<h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        The tooltip is the <em>item</em>, the hovered button is the <em>target</em>, and the stage is the
+        <em>boundary</em>. There is one calculator for each button.
+    </li>
+    <li>
+        <code>itemAt: "bottom right"</code> and <code>targetAt: "top right"</code> put the bottom right corner of the
+        tooltip on the top right corner of the button. The buttons sit at the right edge of the form, so the tooltip
+        grows to the left and stays inside. <code>targetOffset</code> with <code>y: -8</code> leaves a gap of 8 pixels.
+    </li>
+    <li>
+        <code>flip: "both"</code> lets the library try the opposite placement when the first one overflows the boundary.
+        <code>mirror: true</code> turns the gap around with it, so it is still 8 pixels, now below the button.
+    </li>
+    <li>
+        The tooltip is hidden with <code>hidden</code> and has no size then. That is why the example calls
+        <code>resize()</code> after showing it, and only then <code>calculate()</code>.
+    </li>
+    <li>
+        <code>calculate()</code> returns how far to move the tooltip from where it is now. The example adds
+        <code>moveBy</code> to the current <code>left</code> and <code>top</code>.
+    </li>
+</ol>
+
+<h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=tooltip">playground</a>, change <code>flip</code> to
+        <code>"none"</code> and hover the i next to <strong>Username</strong>: the tooltip stays above and leaves the
+        box. <code>distance.overflow</code> in the result says which edge.
+    </li>
+    <li>Add <code>stick: "all"</code> to pull the tooltip back inside the box when no placement fits completely.</li>
+    <li>Use <code>targetAt: "middle right"</code> and <code>itemAt: "middle left"</code> for a tooltip at the side.</li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+    <li><a href="{{root}}reference/methods.html">Methods</a></li>
+    <li><a href="{{root}}playground.html">Playground</a></li>
+</ul>

@@ -1,0 +1,5 @@
+dist/
+_site/
+node_modules/
+package-lock.json
+test/reference/

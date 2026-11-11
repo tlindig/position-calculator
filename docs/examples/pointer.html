@@ -1,0 +1,86 @@
+<div id="stage">
+    <div id="label" data-at="top left">Follows the pointer</div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const stage = document.querySelector("#stage");
+    const label = document.querySelector("#label");
+
+    stage.addEventListener("pointermove", (event) => {
+        const { moveBy, itemAt } = new PositionCalculator({
+            item: label,
+            target: event, // the pointer position
+            boundary: stage,
+            targetOffset: { x: 16, y: 16, mirror: true },
+            flip: "both",
+            stick: "all",
+        }).calculate();
+
+        label.style.left = parseFloat(getComputedStyle(label).left) + moveBy.x + "px";
+        label.style.top = parseFloat(getComputedStyle(label).top) + moveBy.y + "px";
+        label.dataset.at = itemAt; // the corner at the pointer, where the tail points from
+        label.classList.add("show");
+    });
+    stage.addEventListener("pointerleave", () => {
+        label.classList.remove("show");
+    });
+</script>
+
+<style>
+    #stage {
+        position: relative;
+        width: 360px;
+        height: 200px;
+        outline: 1px dashed gray;
+    }
+    #label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 140px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+    #label.show {
+        opacity: 1;
+    }
+    /* the tail: a spike at the corner that is nearest to the pointer */
+    #label::after {
+        content: "";
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background: inherit;
+    }
+    #label[data-at="top left"]::after {
+        left: -10px;
+        top: -10px;
+        clip-path: polygon(0 0, 24px 10px, 10px 24px);
+    }
+    #label[data-at="top right"]::after {
+        right: -10px;
+        top: -10px;
+        clip-path: polygon(24px 0, 0 10px, 14px 24px);
+    }
+    #label[data-at="bottom left"]::after {
+        left: -10px;
+        bottom: -10px;
+        clip-path: polygon(0 24px, 24px 14px, 10px 0);
+    }
+    #label[data-at="bottom right"]::after {
+        right: -10px;
+        bottom: -10px;
+        clip-path: polygon(24px 24px, 0 14px, 14px 0);
+    }
+</style>

@@ -1,0 +1,51 @@
+<h2 id="try-the-options">Try the options</h2>
+<p>
+    The code below the stage is the configuration. Click a value to change it: a small dialog opens and the stage reacts
+    at once. The dashed box is the boundary. Drag the blue target, or move it with the arrow keys, and the yellow item
+    follows. The red dot marks <code>itemAt</code> on the item, the white dot marks <code>targetAt</code> on the target.
+    The small boxes in front of the names in the code have the same colors, so you see what each property belongs to.
+</p>
+<p>
+    <code>flip</code> and <code>stick</code> only act when the item would leave the boundary. Drag the target towards an
+    edge to see them work. The stage frame turns red while the item still overflows.
+</p>
+
+<div class="configurator">
+    <div class="cfg-left">
+        <div class="cfg-canvas">
+            <div class="cfg-stage">
+                <div class="cfg-item">
+                    item
+                    <span class="cfg-marker"></span>
+                </div>
+                <div class="cfg-target" tabindex="0" role="group" aria-label="target, drag or use the arrow keys">
+                    target
+                    <span class="cfg-marker"></span>
+                </div>
+            </div>
+        </div>
+        <pre><code class="cfg-code"></code></pre>
+    </div>
+    <div class="cfg-right">
+        <div class="values">
+            <p class="values-title">Calculated values</p>
+            <dl class="values-list"></dl>
+            <p class="values-note"></p>
+        </div>
+    </div>
+    <div class="cfg-dialog" role="dialog" aria-labelledby="cfg-dialog-title" hidden>
+        <div class="cfg-dialog-head">
+            <code id="cfg-dialog-title"></code>
+            <button type="button" class="cfg-dialog-close" aria-label="Close">×</button>
+        </div>
+        <p class="cfg-dialog-text"></p>
+        <div class="cfg-dialog-body"></div>
+    </div>
+</div>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/constructor.html">Constructor and options</a></li>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+    <li><a href="{{root}}playground.html">Playground</a></li>
+</ul>
