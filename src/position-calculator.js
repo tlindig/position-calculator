@@ -549,16 +549,6 @@ function __overflowLT(distanceA, distanceB, isY) {
     b1 < 0 && (b1 = 0);
     b2 < 0 && (b2 = 0);
 
-    if (a1 < 0 && a2 < 0) {
-        //take a
-        return true;
-    }
-
-    if (b1 < 0 && b2 < 0) {
-        // take b
-        return false;
-    }
-
     return a1 + a2 < b1 + b2;
 }
 
@@ -878,7 +868,7 @@ PositionCalculator.prototype.calculate = function () {
 
     // ////////////////////
     // collision handling: stick
-    if (o.stick && o.stick !== "none") {
+    if (o.stick) {
         return __adaptSticking(result, o.stick);
     } else {
         return result;
