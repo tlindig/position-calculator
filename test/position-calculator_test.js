@@ -241,6 +241,23 @@
         same(calculator.calculate(), res(0, 0, null, null, d(180, -10, 200 + vp.height - 60, vp.width - 70, ["top"])));
     });
 
+    test("border of <html> is subtracted from element positions, like jQuery.offset() of 1.9", function () {
+        var root = document.documentElement;
+        root.style.border = "10px solid #888";
+        try {
+            var vp = Scene.viewport();
+            strictEqual(root.clientTop + root.clientLeft, 20, "precondition: <html> has a border");
+            // target is at 190 / 190 for the library (200 minus the border), the item is moved there,
+            // the window boundary starts behind the border at 10 / 10
+            same(
+                calc({ boundary: undefined }).calculate(),
+                res(180, 190, "top left", "top left", d(-180, -180, vp.height - 220, vp.width - 240)),
+            );
+        } finally {
+            root.style.border = "";
+        }
+    });
+
     test("boundary 'window' as string is the window", function () {
         var vp = Scene.viewport();
         same(
@@ -608,6 +625,13 @@
         var calculator = calc();
         I.style.left = "50px";
         same(calculator.calculate(), res(180, 150, "top left", "top left", d(-100, -100, 160, 240)));
+    });
+
+    test("calculate() reads the current position of the boundary", function () {
+        var calculator = calc();
+        B.style.left = "150px";
+        // boundary is now 150..550 wide, the item is applied at 200..260
+        same(calculator.calculate(), res(180, 190, "top left", "top left", d(-100, -50, 160, 290)));
     });
 
     test("applying moveBy puts the item in place, calculating again gives no further move", function () {
