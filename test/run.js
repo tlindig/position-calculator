@@ -3,12 +3,16 @@
  * Runs the browser test pages in headless Chrome (DevTools protocol, no dependencies besides Node >= 22
  * and Chrome) and reports every browser test as a subtest of node:test.
  *
- *   node test/run.js [dev|validation|all] [--seed=N] [--n=COUNT] [--impl=FILE] [--format=esm|iife]
+ *   node test/run.js [dev|validation|docs|all] [--seed=N] [--n=COUNT] [--impl=FILE] [--format=esm|iife]
  *                    [--jquery=0|1] [--chrome=PATH] [--no-sandbox] [--timeout=SECONDS]
  *
  * The pages are served from the project root by a local HTTP server, because browsers do not load
  * ES modules from file: URLs. --impl is a file inside the project. --format tells how the browser
  * loads it: an ES module (default) or a classic script (the IIFE build).
+ *
+ * "docs" builds the documentation site with --impl as its library (default src/position-calculator.js) into
+ * a temporary directory, opens every try-it area and runs the scenarios of the examples. It needs an ES
+ * module, so "all" leaves it out for --format=iife.
  *
  * Exit code 0: no failure outside "[target]" modules (reported as todo). Otherwise 1.
  * Validation scenes are random. The seed is printed, pass --seed=N to reproduce a run.
@@ -24,6 +28,9 @@ import { startServer } from "./support/server.js";
 
 const root = path.join(import.meta.dirname, "..");
 const PAGES = { dev: "position-calculator.html", validation: "validation.html" };
+const TARGETS = [...Object.keys(PAGES), "docs"];
+const DOCS_WAIT_MS = 15000;
+const DOCS_TOLERANCE_PX = 1;
 const MAX_FAILURES_PER_TEST = 3;
 
 const options = {};
@@ -37,7 +44,7 @@ for (const arg of process.argv.slice(2)) {
     }
 }
 if (!targets.length || targets.includes("all")) {
-    targets = ["dev", "validation"];
+    targets = options.format === "iife" ? Object.keys(PAGES) : TARGETS;
 }
 options.seed = options.seed || String(crypto.randomBytes(4).readUInt32BE(0));
 const timeoutMs = (Number(options.timeout) || 300) * 1000;
@@ -231,6 +238,212 @@ function describeFailures(failures) {
     return shown.join("\n");
 }
 
+function buildDocs(outDir) {
+    const library = path.resolve(options.impl || path.join(root, "src/position-calculator.js"));
+    const build = spawnSync(
+        process.execPath,
+        [path.join(root, "scripts/build-docs.js"), "--out=" + outDir, "--library=" + library],
+        { encoding: "utf8" },
+    );
+    if (build.status !== 0) {
+        throw new Error("The docs build failed:\n" + build.stdout + build.stderr);
+    }
+}
+
+async function openSession(browser) {
+    const response = await fetch(`http://127.0.0.1:${browser.port}/json/list`);
+    const page = (await response.json()).find((target) => target.type === "page");
+    const cdp = await connect(page.webSocketDebuggerUrl);
+    const pageErrors = [];
+    cdp.on((message) => {
+        if (message.method === "Runtime.exceptionThrown") {
+            const details = message.params.exceptionDetails;
+            pageErrors.push((details.exception && details.exception.description) || details.text);
+        }
+    });
+    await cdp.send("Page.enable");
+    await cdp.send("Runtime.enable");
+    return {
+        pageErrors,
+        async goto(url) {
+            pageErrors.length = 0;
+            const loaded = new Promise((resolve) =>
+                cdp.on((message) => {
+                    if (message.method === "Page.loadEventFired") {
+                        resolve();
+                    }
+                }),
+            );
+            await cdp.send("Page.navigate", { url });
+            await withTimeout(loaded, DOCS_WAIT_MS, "page did not load: " + url);
+        },
+        async evaluate(expression) {
+            const evaluation = cdp.send("Runtime.evaluate", { awaitPromise: true, returnByValue: true, expression });
+            const { result, exceptionDetails } = await withTimeout(evaluation, DOCS_WAIT_MS, "the page did not answer");
+            if (exceptionDetails) {
+                throw new Error(
+                    (exceptionDetails.exception && exceptionDetails.exception.description) || exceptionDetails.text,
+                );
+            }
+            return result.value;
+        },
+        close: () => cdp.close(),
+    };
+}
+
+const tryItWidget = (id) => `document.querySelector('.tryit[data-example="${id}"]')`;
+
+// Resolves with the state of the widget as soon as the example in its frame has finished or failed.
+const waitForOutcome = (session, id) =>
+    session.evaluate(
+        `new Promise((resolve) => {
+                const widget = ${tryItWidget(id)};
+                const poll = () => {
+                    const state = widget.dataset.state;
+                    if (state === "ok" || state === "error") {
+                        resolve({ state, text: widget.querySelector(".tryit-state").textContent });
+                    } else {
+                        setTimeout(poll, 50);
+                    }
+                };
+                poll();
+            })`,
+    );
+
+const waitForExample = async (session, id) => {
+    const outcome = await waitForOutcome(session, id);
+    assert.equal(outcome.state, "ok", `example "${id}": ${outcome.text}`);
+};
+
+function selectExample(session, widgetId, exampleId) {
+    return session.evaluate(`(() => {
+        const select = ${tryItWidget(widgetId)}.querySelector("[data-picker]");
+        select.value = ${JSON.stringify(exampleId)};
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+    })()`);
+}
+
+// Replays the steps in the frame of the widget and measures the checked elements.
+function measureScenario(session, widgetId, scenario) {
+    return session.evaluate(`(() => {
+        const frame = ${tryItWidget(widgetId)}.querySelector(".tryit-frame").contentDocument;
+        const scenario = ${JSON.stringify(scenario)};
+        for (const step of scenario.steps ?? []) {
+            frame.querySelector(step.on).dispatchEvent(new Event(step.dispatch));
+        }
+        return (scenario.checks ?? []).map((check) => {
+            const box = frame.querySelector(check.element).getBoundingClientRect();
+            const origin = check.relativeTo ? frame.querySelector(check.relativeTo).getBoundingClientRect() : { left: 0, top: 0 };
+            return { check, left: box.left - origin.left, top: box.top - origin.top };
+        });
+    })()`);
+}
+
+async function runDocs(t, chrome) {
+    const outDir = fs.mkdtempSync(path.join(os.tmpdir(), "pc-docs-"));
+    const docsServer = await startServer(outDir);
+    const session = await openSession(chrome);
+    try {
+        buildDocs(outDir);
+        const manifest = JSON.parse(fs.readFileSync(path.join(outDir, "manifest.json"), "utf8"));
+        const url = (page) => `${docsServer.baseUrl}/${page}`;
+
+        for (const page of manifest.pages) {
+            await t.test(`page ${page} loads without errors`, async () => {
+                await session.goto(url(page));
+                assert.deepEqual(session.pageErrors, []);
+            });
+        }
+        for (const widget of manifest.widgets) {
+            await t.test(`try-it ${widget.page} :: ${widget.example}`, async () => {
+                await session.goto(url(widget.page));
+                await waitForExample(session, widget.example);
+                for (const example of widget.picker ? manifest.examples : []) {
+                    await selectExample(session, widget.example, example.id);
+                    await waitForExample(session, widget.example);
+                }
+                assert.deepEqual(session.pageErrors, []);
+            });
+        }
+        for (const example of manifest.examples) {
+            // A picker shows every example, so the first widget that has the example is enough.
+            const widget = manifest.widgets.find((entry) => entry.example === example.id || entry.picker);
+            for (const scenario of example.scenarios) {
+                await t.test(`example ${example.id} :: ${scenario.name}`, async () => {
+                    assert.ok(widget, `no try-it area shows the example "${example.id}"`);
+                    await session.goto(url(widget.page));
+                    await waitForExample(session, widget.example);
+                    if (widget.example !== example.id) {
+                        await selectExample(session, widget.example, example.id);
+                        await waitForExample(session, widget.example);
+                    }
+                    for (const measured of await measureScenario(session, widget.example, scenario)) {
+                        const { check } = measured;
+                        const place = `${check.element}${check.relativeTo ? " relative to " + check.relativeTo : ""}`;
+                        assert.ok(
+                            Math.abs(measured.left - check.left) <= DOCS_TOLERANCE_PX &&
+                                Math.abs(measured.top - check.top) <= DOCS_TOLERANCE_PX,
+                            `${place}: expected left ${check.left}, top ${check.top}, got left ${measured.left}, top ${measured.top}`,
+                        );
+                    }
+                });
+            }
+        }
+
+        await t.test("try-it reports an error of the code and Reset restores the example", async () => {
+            const widget = manifest.widgets[0];
+            await session.goto(url(widget.page));
+            await waitForExample(session, widget.example);
+            await session.evaluate(`(() => {
+                const widget = ${tryItWidget(widget.example)};
+                widget.querySelector(".tryit-code").value += "\\n<script>throw new Error('boom')</script>";
+                widget.querySelector('[data-action="run"]').click();
+            })()`);
+            const failed = await waitForOutcome(session, widget.example);
+            assert.equal(failed.state, "error");
+            assert.match(failed.text, /boom/);
+            await session.evaluate(`${tryItWidget(widget.example)}.querySelector('[data-action="reset"]').click()`);
+            await waitForExample(session, widget.example);
+        });
+
+        await t.test("configurator", async () => {
+            await session.goto(url("playground.html"));
+            const outcome = await session.evaluate(`new Promise((resolve) => {
+                const configurator = document.querySelector(".configurator");
+                const choose = (name, value) => {
+                    const control = configurator.querySelector('[name="' + name + '"][value="' + value + '"]') ?? configurator.querySelector('select[name="' + name + '"]');
+                    control.value = value;
+                    control.checked = true;
+                    control.dispatchEvent(new Event("change", { bubbles: true }));
+                };
+                const read = () => JSON.parse(configurator.querySelector(".cfg-result").textContent);
+                const poll = () => {
+                    if (configurator.dataset.state !== "ready") {
+                        setTimeout(poll, 50);
+                        return;
+                    }
+                    choose("targetAt", "top right");
+                    const overflowing = read();
+                    choose("flip", "both");
+                    resolve({ overflowing, flipped: read(), code: configurator.querySelector(".cfg-code").textContent });
+                };
+                poll();
+            })`);
+            assert.deepEqual(outcome.overflowing.moveBy, { x: 380, y: 100 });
+            assert.deepEqual(outcome.overflowing.distance.overflow, ["right"]);
+            assert.deepEqual(outcome.flipped.moveBy, { x: 180, y: 100 });
+            assert.equal(outcome.flipped.itemAt, "top right");
+            assert.equal(outcome.flipped.targetAt, "top left");
+            assert.match(outcome.code, /targetAt: "top right",\n\s+flip: "both",/);
+            assert.deepEqual(session.pageErrors, []);
+        });
+    } finally {
+        session.close();
+        await docsServer.close();
+        fs.rmSync(outDir, { recursive: true, force: true });
+    }
+}
+
 let browser;
 let server;
 before(async () => {
@@ -247,8 +460,15 @@ after(async () => {
 });
 
 for (const name of targets) {
-    if (!PAGES[name]) {
+    if (!TARGETS.includes(name)) {
         throw new Error("Unknown target: " + name);
+    }
+    if (name === "docs") {
+        if (options.format === "iife") {
+            throw new Error("The docs examples import an ES module, so --format=iife does not work with docs.");
+        }
+        test("docs", (t) => runDocs(t, browser));
+        continue;
     }
     test(name, async (t) => {
         const { result, pageErrors } = await runPage(browser, name);

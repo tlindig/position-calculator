@@ -22,6 +22,7 @@ jobs:
       - run: npm run format:check
       # dist/ is not tracked, the dist tests and the Node import test need it
       - run: npm run build
+      - run: npm run docs:build
       - run: npm test
       - run: npm run test:dist
       - run: npm run test:node

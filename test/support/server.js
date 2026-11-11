@@ -2,7 +2,13 @@ import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
 
-const MIME = { ".html": "text/html", ".js": "text/javascript", ".map": "application/json", ".css": "text/css" };
+const MIME = {
+    ".html": "text/html",
+    ".js": "text/javascript",
+    ".map": "application/json",
+    ".json": "application/json",
+    ".css": "text/css",
+};
 
 // Serves `root` on a random local port. Browsers do not load ES modules from file: URLs.
 export function startServer(root) {
