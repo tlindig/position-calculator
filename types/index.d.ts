@@ -14,22 +14,26 @@ export type Vertical = "top" | "middle" | "bottom";
 export type Horizontal = "left" | "center" | "right";
 export type Edge = "top" | "left" | "bottom" | "right";
 
-/** "<vertical> <horizontal>", for example "bottom left". An invalid half falls back to "top" or "left". */
-export type At = string;
+/** "<vertical>" or "<vertical> <horizontal>", for example "bottom left". A missing or invalid half falls back to "top" or "left". */
+export type At = Vertical | `${Vertical} ${Horizontal}`;
 
 export interface Offset {
     /** pixels, or a percentage of the height as string, for example "10%" */
     y: number | string;
     /** pixels, or a percentage of the width as string, for example "10%" */
     x: number | string;
-    /** mirror the offset when the placement is flipped */
+    /**
+     * mirror the offset when the placement is flipped.
+     * Absent means false. It does not take the `true` of the default offsets.
+     */
     mirror?: boolean;
 }
 
 export type Flip = "none" | "item" | "target" | "both" | boolean;
 
-/** "none", "all", true, false, or space separated edges, for example "top left". */
-export type Stick = string | boolean;
+/** "none", "all", true, false, or one to four edges separated by a space, for example "top left". */
+export type Stick =
+    "none" | "all" | boolean | Edge | `${Edge} ${Edge}` | `${Edge} ${Edge} ${Edge}` | `${Edge} ${Edge} ${Edge} ${Edge}`;
 
 export interface PositionCalculatorOptions {
     /** the element being positioned (required) */
@@ -71,7 +75,8 @@ export interface CalculationResult {
 }
 
 export interface PositionCalculator {
-    options: PositionCalculatorOptions;
+    /** options of this instance, merged with the defaults */
+    options: Required<PositionCalculatorOptions>;
     /** Read sizes again. Call it when the size of item, target or boundary changed. */
     resize(): this;
     /** Calculate for the current position in the DOM. null if the item was not found. */
@@ -88,7 +93,7 @@ export interface PositionCalculatorConstructor {
     /** works without new, too */
     (options?: PositionCalculatorOptions): PositionCalculator;
     /** default options of new instances. `boundary` is the window in a browser, undefined without a DOM. */
-    defaults: PositionCalculatorOptions;
+    defaults: Required<PositionCalculatorOptions>;
 }
 
 export declare const PositionCalculator: PositionCalculatorConstructor;
