@@ -1,0 +1,61 @@
+<h2 id="editor">Try your own code</h2>
+<p>
+    Edit the code, and the result updates after a short pause. <strong>Reset</strong> restores the example, and
+    <strong>Copy</strong> copies the current code. Examples import the library as
+    <code>@tlindig/position-calculator</code>; the same build that is documented on these pages runs here.
+</p>
+
+{{playground:starter}}
+
+<h2 id="configurator">Configurator</h2>
+<p>
+    Pick a reference point on the item and on the target, choose how collisions are handled, and watch the item move.
+    The dashed box is the boundary, the target is the blue box. The code below the stage is what you need in your own
+    page.
+</p>
+
+<div class="configurator">
+    <div class="cfg-controls">
+        <fieldset>
+            <legend><code>itemAt</code></legend>
+            <div class="cfg-grid" data-grid="itemAt" data-initial="top left"></div>
+        </fieldset>
+        <fieldset>
+            <legend><code>targetAt</code></legend>
+            <div class="cfg-grid" data-grid="targetAt" data-initial="bottom left"></div>
+        </fieldset>
+        <label class="cfg-field">
+            <code>flip</code>
+            <select name="flip">
+                <option value="none">none</option>
+                <option value="item">item</option>
+                <option value="target">target</option>
+                <option value="both">both</option>
+            </select>
+        </label>
+        <label class="cfg-field">
+            <code>stick</code>
+            <select name="stick">
+                <option value="none">none</option>
+                <option value="all">all</option>
+                <option value="top">top</option>
+                <option value="right">right</option>
+                <option value="bottom">bottom</option>
+                <option value="left">left</option>
+                <option value="top left">top left</option>
+                <option value="bottom right">bottom right</option>
+            </select>
+        </label>
+        <label class="cfg-field"><input type="checkbox" name="boundary" checked /> use the boundary</label>
+    </div>
+    <div class="cfg-stage-wrap">
+        <div class="cfg-stage">
+            <div class="cfg-target">target</div>
+            <div class="cfg-item">item</div>
+        </div>
+    </div>
+    <h3>Code</h3>
+    <pre><code class="cfg-code"></code></pre>
+    <h3>Result</h3>
+    <pre><code class="cfg-result"></code></pre>
+</div>

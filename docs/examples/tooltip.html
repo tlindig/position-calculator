@@ -1,0 +1,80 @@
+<div id="stage">
+    <button id="save" type="button">Save</button>
+    <button id="help" type="button">Help</button>
+    <div id="tip" role="tooltip" hidden></div>
+</div>
+<p id="info">Hover or focus a button.</p>
+
+<style>
+    #stage {
+        position: relative;
+        width: 360px;
+        height: 200px;
+        border: 1px dashed gray;
+    }
+    #stage button {
+        position: absolute;
+        width: 100px;
+        height: 32px;
+    }
+    #save {
+        left: 40px;
+        top: 110px;
+    }
+    /* close to the top edge, so there is no room above */
+    #help {
+        left: 220px;
+        top: 10px;
+    }
+    #tip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 140px;
+        height: 32px;
+        padding: 6px 8px;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+    }
+</style>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const stage = document.querySelector("#stage");
+    const tip = document.querySelector("#tip");
+    const info = document.querySelector("#info");
+    const texts = { save: "Saves the file", help: "Opens the help" };
+
+    for (const button of stage.querySelectorAll("button")) {
+        const calculator = new PositionCalculator({
+            item: tip,
+            target: button,
+            boundary: stage,
+            itemAt: "bottom center",
+            targetAt: "top center",
+            targetOffset: { y: -8, x: 0, mirror: true },
+            flip: "both",
+        });
+
+        const show = () => {
+            tip.textContent = texts[button.id];
+            tip.hidden = false;
+            calculator.resize(); // the tooltip has a size only while it is visible
+            const { moveBy, itemAt, targetAt } = calculator.calculate();
+            tip.style.left = parseFloat(getComputedStyle(tip).left) + moveBy.x + "px";
+            tip.style.top = parseFloat(getComputedStyle(tip).top) + moveBy.y + "px";
+            info.textContent = `tooltip ${itemAt} at button ${targetAt}`;
+        };
+        const hide = () => {
+            tip.hidden = true;
+        };
+
+        button.addEventListener("mouseenter", show);
+        button.addEventListener("focus", show);
+        button.addEventListener("mouseleave", hide);
+        button.addEventListener("blur", hide);
+    }
+</script>

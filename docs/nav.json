@@ -49,6 +49,12 @@
       "summary": "What the library does not handle, and what to do instead."
     },
     {
+      "path": "examples/tooltip",
+      "section": "Examples",
+      "title": "Tooltip",
+      "summary": "A tooltip above a button that moves below it when the top edge is in the way."
+    },
+    {
       "path": "examples/in-view",
       "section": "Examples",
       "title": "In view",
@@ -59,6 +65,12 @@
       "section": "Examples",
       "title": "Dropdown",
       "summary": "A small dropdown that opens upwards when there is no room below."
+    },
+    {
+      "path": "playground",
+      "section": "Tools",
+      "title": "Playground",
+      "summary": "Edit an example and see the result, or click together the options and copy the code."
     }
   ]
 }

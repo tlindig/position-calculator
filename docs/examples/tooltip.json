@@ -1,0 +1,19 @@
+{
+  "title": "Tooltip",
+  "height": 280,
+  "scenarios": [
+    {
+      "name": "above the button when there is room",
+      "steps": [{ "dispatch": "mouseenter", "on": "#save" }],
+      "checks": [{ "element": "#tip", "relativeTo": "#save", "left": -20, "top": -40 }]
+    },
+    {
+      "name": "below the button when the top edge is in the way",
+      "steps": [
+        { "dispatch": "mouseleave", "on": "#save" },
+        { "dispatch": "mouseenter", "on": "#help" }
+      ],
+      "checks": [{ "element": "#tip", "relativeTo": "#help", "left": -20, "top": 40 }]
+    }
+  ]
+}

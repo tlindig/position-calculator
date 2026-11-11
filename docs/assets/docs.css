@@ -10,6 +10,7 @@
     --color-border: #d5d9df;
     --color-accent: #0b5fd1;
     --color-accent-text: #ffffff;
+    --color-error: #b42318;
     --color-draft: #fff4d6;
     --color-draft-text: #5c4300;
     --radius: 0.5rem;
@@ -26,6 +27,7 @@
         --color-border: #343b45;
         --color-accent: #6aa7ff;
         --color-accent-text: #0b1220;
+        --color-error: #ff8a80;
         --color-draft: #3a3115;
         --color-draft-text: #f0dd9b;
     }
@@ -250,4 +252,177 @@ dd {
     color: var(--color-muted);
     font-size: 0.875rem;
     text-align: center;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Try-it widget */
+.tryit {
+    margin: 1rem 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+.tryit-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+.tryit-bar[hidden] {
+    display: none;
+}
+.tryit-picker {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-right: auto;
+    font-size: 0.875rem;
+}
+.tryit-state {
+    margin-left: auto;
+    color: var(--color-muted);
+    font-size: 0.875rem;
+}
+.tryit[data-state="error"] .tryit-state {
+    color: var(--color-error);
+}
+.tryit-code {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: 0.8125rem/1.5 var(--font-code);
+    resize: vertical;
+    tab-size: 4;
+}
+.tryit-frame {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: var(--color-bg);
+}
+
+select {
+    padding: 0.25rem 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.875rem;
+}
+
+/* Page of an example frame: only a little space around the example */
+.example-frame {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+.example-frame p {
+    margin: 0.5rem 0 0;
+}
+
+/* Configurator */
+.configurator {
+    margin: 1rem 0;
+}
+.cfg-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1rem 1.5rem;
+}
+.cfg-controls fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.cfg-controls legend {
+    padding: 0;
+    margin-bottom: 0.25rem;
+}
+.cfg-field {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+}
+.cfg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1.75rem);
+    gap: 0.25rem;
+}
+.cfg-grid label {
+    position: relative;
+    display: block;
+    height: 1.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    background: var(--color-surface);
+    cursor: pointer;
+}
+.cfg-grid input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.cfg-grid label:has(input:checked) {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+}
+.cfg-grid label:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+.cfg-stage-wrap {
+    margin: 1rem 0;
+    padding: 1px; /* room for the outline of the stage, which overflow would clip */
+    overflow-x: auto;
+}
+.cfg-stage {
+    position: relative;
+    width: 400px;
+    height: 240px;
+    outline: 1px dashed var(--color-muted);
+    outline-offset: 0;
+}
+.cfg-target,
+.cfg-item {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+.cfg-target {
+    left: 300px;
+    top: 100px;
+    width: 80px;
+    height: 40px;
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+}
+.cfg-item {
+    left: 0;
+    top: 0;
+    width: 120px;
+    height: 60px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
 }

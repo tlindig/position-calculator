@@ -1,0 +1,56 @@
+<div id="stage">
+    <div id="target">target</div>
+    <div id="item">item</div>
+</div>
+<p id="info"></p>
+
+<style>
+    #stage {
+        position: relative;
+        width: 360px;
+        height: 200px;
+        border: 1px dashed gray;
+    }
+    #target,
+    #item {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        font-size: 14px;
+    }
+    #target {
+        left: 140px;
+        top: 80px;
+        width: 80px;
+        height: 40px;
+        background: #cde;
+    }
+    #item {
+        left: 0;
+        top: 0;
+        width: 120px;
+        height: 60px;
+        background: #fc9;
+    }
+</style>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const calculator = new PositionCalculator({
+        item: "#item",
+        target: "#target",
+        boundary: "#stage",
+        itemAt: "top left",
+        targetAt: "bottom left",
+        flip: "both",
+    });
+
+    const item = document.querySelector("#item");
+    const { moveBy, distance } = calculator.calculate();
+    item.style.left = parseFloat(getComputedStyle(item).left) + moveBy.x + "px";
+    item.style.top = parseFloat(getComputedStyle(item).top) + moveBy.y + "px";
+
+    document.querySelector("#info").textContent =
+        `moveBy x ${moveBy.x}, y ${moveBy.y}, overflow ${distance.overflow ?? "none"}`;
+</script>

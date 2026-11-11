@@ -139,6 +139,8 @@ for (const file of listFiles(path.join(docsDir, "examples"), ".html")) {
 finish();
 
 // ---- rendering
+const rowsFor = (source) => Math.min(18, source.split("\n").length + 1);
+
 function tryIt(id, picker, where, widgets) {
     const example = examples.get(id);
     if (!example) {
@@ -161,7 +163,7 @@ function tryIt(id, picker, where, widgets) {
     }
     return `<div class="tryit" data-example="${id}">
 <div class="tryit-bar" hidden>${pickerHtml}<button type="button" data-action="run">Run</button><button type="button" data-action="reset">Reset</button><button type="button" data-action="copy">Copy</button><span class="tryit-state" role="status"></span></div>
-<div class="tryit-body"><textarea class="tryit-code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code of the example">${escapeHtml(example.source)}</textarea><iframe class="tryit-frame" title="Result of the example" height="${example.height}" hidden></iframe></div>${sources}
+<div class="tryit-body"><textarea class="tryit-code" rows="${rowsFor(example.source)}" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code of the example">${escapeHtml(example.source)}</textarea><iframe class="tryit-frame" title="Result of the example" height="${example.height}" hidden></iframe></div>${sources}
 </div>`;
 }
 
@@ -215,7 +217,7 @@ const write = (file, content) => {
 };
 
 const layout = read("layout.html");
-const manifest = { version: pkg.version, widgets: [], examples: [] };
+const manifest = { version: pkg.version, pages: pages.map((page) => page.path + ".html"), widgets: [], examples: [] };
 let drafts = 0;
 for (const page of pages) {
     const where = "pages/" + page.path;
