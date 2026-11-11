@@ -329,7 +329,16 @@ function measureScenario(session, widgetId, scenario) {
         const frame = ${tryItWidget(widgetId)}.querySelector(".tryit-frame").contentDocument;
         const scenario = ${JSON.stringify(scenario)};
         for (const step of scenario.steps ?? []) {
-            frame.querySelector(step.on).dispatchEvent(new Event(step.dispatch));
+            const element = frame.querySelector(step.on);
+            const view = frame.defaultView;
+            if (step.x === undefined) {
+                element.dispatchEvent(new view.Event(step.dispatch));
+            } else {
+                // x and y are relative to the top left corner of the element
+                const box = element.getBoundingClientRect();
+                const pointer = { bubbles: true, clientX: box.left + step.x, clientY: box.top + step.y };
+                element.dispatchEvent(new view.MouseEvent(step.dispatch, pointer));
+            }
         }
         return (scenario.checks ?? []).map((check) => {
             const box = frame.querySelector(check.element).getBoundingClientRect();
@@ -390,13 +399,15 @@ async function runDocs(t, chrome) {
             }
         }
 
+        const editor = manifest.widgets.find((entry) => entry.mode === "editor");
+
         await t.test("try-it reports an error of the code and Reset restores the example", async () => {
-            const widget = manifest.widgets[0];
+            const widget = editor;
             await session.goto(url(widget.page));
             await waitForExample(session, widget.example);
             await session.evaluate(`(() => {
                 const widget = ${tryItWidget(widget.example)};
-                widget.querySelector(".tryit-code").value += "\\n<script>throw new Error('boom')</script>";
+                widget.querySelector('.tryit-code[data-part="js"]').value += "\\nthrow new Error('boom');";
                 widget.querySelector('[data-action="run"]').click();
             })()`);
             const failed = await waitForOutcome(session, widget.example);
@@ -406,22 +417,112 @@ async function runDocs(t, chrome) {
             await waitForExample(session, widget.example);
         });
 
+        await t.test("try-it tabs show one part at a time and all parts run together", async () => {
+            const widget = editor;
+            await session.goto(url(widget.page));
+            await waitForExample(session, widget.example);
+            const visible = () =>
+                session.evaluate(
+                    `[...${tryItWidget(widget.example)}.querySelectorAll(".tryit-pane")].filter((pane) => !pane.hidden).map((pane) => pane.querySelector("textarea").dataset.part)`,
+                );
+            assert.deepEqual(await visible(), ["html"]);
+            await session.evaluate(
+                `${tryItWidget(widget.example)}.querySelector('[role="tab"][data-part="css"]').click()`,
+            );
+            assert.deepEqual(await visible(), ["css"]);
+            await session.evaluate(`(() => {
+                const widget = ${tryItWidget(widget.example)};
+                widget.querySelector('.tryit-code[data-part="css"]').value += "\\n#stage { background: rgb(1, 2, 3); }";
+                widget.querySelector('[data-action="run"]').click();
+            })()`);
+            await waitForExample(session, widget.example);
+            const background = await session.evaluate(
+                `getComputedStyle(${tryItWidget(widget.example)}.querySelector(".tryit-frame").contentDocument.querySelector("#stage")).backgroundColor`,
+            );
+            assert.equal(background, "rgb(1, 2, 3)");
+        });
+
+        await t.test("a demo has no code and its link opens the example in the playground", async () => {
+            const demo = manifest.widgets.find((entry) => entry.mode === "demo");
+            assert.ok(demo, "no page has a demo");
+            await session.goto(url(demo.page));
+            await waitForExample(session, demo.example);
+            const widget = tryItWidget(demo.example);
+            assert.equal(await session.evaluate(`${widget}.querySelectorAll("textarea").length`), 0);
+            const link = await session.evaluate(`${widget}.querySelector(".tryit-foot a").href`);
+            assert.ok(link.endsWith(`playground.html?example=${demo.example}`), link);
+
+            await session.goto(link);
+            await waitForExample(session, editor.example);
+            const opened = await session.evaluate(`({
+                picked: document.querySelector("[data-picker]").value,
+                html: document.querySelector('.tryit-code[data-part="html"]').value,
+                hint: document.querySelector(".tryit-hint").textContent,
+            })`);
+            assert.equal(opened.picked, demo.example);
+            assert.match(opened.html, new RegExp(`id="${demo.example === "tooltip" ? "tip" : "stage"}"`));
+            assert.match(opened.hint, /JavaScript tab/);
+            assert.deepEqual(session.pageErrors, []);
+        });
+
+        await t.test("try-it shows the calculated values of the example", async () => {
+            const widget = manifest.widgets.find((entry) => entry.example === "tooltip");
+            assert.ok(widget, "no try-it area shows the example tooltip");
+            await session.goto(url(widget.page));
+            await waitForExample(session, "tooltip");
+            const panel = `${tryItWidget("tooltip")}.querySelector(".values")`;
+            const readValues = `Object.fromEntries([...${panel}.querySelectorAll("dt")].map((term) => [term.textContent, term.nextElementSibling.textContent]))`;
+            assert.match(
+                await session.evaluate(`${panel}.querySelector(".values-note").textContent`),
+                /Nothing calculated yet/,
+            );
+            const emptyHeight = await session.evaluate(`${panel}.offsetHeight`);
+            assert.equal((await session.evaluate(readValues)).itemAt, "-");
+            await measureScenario(session, "tooltip", { steps: [{ dispatch: "mouseenter", on: "#info-name" }] });
+            const values = await session.evaluate(`new Promise((resolve) => {
+                const poll = () => {
+                    const values = ${readValues};
+                    if (values.itemAt === "-") {
+                        setTimeout(poll, 50);
+                        return;
+                    }
+                    resolve(values);
+                };
+                poll();
+            })`);
+            assert.equal(await session.evaluate(`${panel}.offsetHeight`), emptyHeight, "the panel changed its height");
+            const frameHeight = await session.evaluate(
+                `${tryItWidget("tooltip")}.querySelector(".tryit-frame").offsetHeight`,
+            );
+            assert.ok(
+                Math.abs(frameHeight - emptyHeight) <= 1,
+                `the frame is ${frameHeight}px high, the panel ${emptyHeight}px`,
+            );
+            // the top edge is in the way, so the tooltip uses the flipped placement
+            assert.equal(values.itemAt, "top right");
+            assert.equal(values.targetAt, "bottom right");
+            assert.equal(values.overflow, "none");
+            assert.match(values["moveBy.x"], /^-?\d/);
+        });
+
         await t.test("configurator", async () => {
-            await session.goto(url("playground.html"));
+            await session.goto(url("configurator.html"));
             const outcome = await session.evaluate(`new Promise((resolve) => {
                 const configurator = document.querySelector(".configurator");
-                const choose = (name, value) => {
-                    const control = configurator.querySelector('[name="' + name + '"][value="' + value + '"]') ?? configurator.querySelector('select[name="' + name + '"]');
-                    control.value = value;
-                    control.checked = true;
-                    control.dispatchEvent(new Event("change", { bubbles: true }));
+                const dialog = configurator.querySelector(".cfg-dialog");
+                const choose = (option, value) => {
+                    configurator.querySelector('.cfg-value[data-option="' + option + '"]').click();
+                    dialog.querySelector('input[name="' + option + '"][value="' + value + '"]').click();
+                    dialog.querySelector(".cfg-dialog-close").click();
                 };
-                const read = () => JSON.parse(configurator.querySelector(".cfg-result").textContent);
+                const read = () =>
+                    Object.fromEntries([...configurator.querySelectorAll(".values dt")].map((term) => [term.textContent, term.nextElementSibling.textContent]));
                 const poll = () => {
                     if (configurator.dataset.state !== "ready") {
                         setTimeout(poll, 50);
                         return;
                     }
+                    choose("itemAt", "top left");
                     choose("targetAt", "top right");
                     const overflowing = read();
                     choose("flip", "both");
@@ -429,12 +530,66 @@ async function runDocs(t, chrome) {
                 };
                 poll();
             })`);
-            assert.deepEqual(outcome.overflowing.moveBy, { x: 380, y: 100 });
-            assert.deepEqual(outcome.overflowing.distance.overflow, ["right"]);
-            assert.deepEqual(outcome.flipped.moveBy, { x: 180, y: 100 });
+            // the item is placed from the top left corner of the stage, the target sits at 110/70 and is 80 wide,
+            // the item is 100 wide: at the right of the target it leaves the 280 wide stage, at the left it fits
+            assert.equal(outcome.overflowing["moveBy.x"], "190");
+            assert.equal(outcome.overflowing["moveBy.y"], "70");
+            assert.equal(outcome.overflowing.overflow, "right");
+            assert.equal(outcome.flipped["moveBy.x"], "10");
+            assert.equal(outcome.flipped["moveBy.y"], "70");
             assert.equal(outcome.flipped.itemAt, "top right");
             assert.equal(outcome.flipped.targetAt, "top left");
-            assert.match(outcome.code, /targetAt: "top right",\n\s+flip: "both",/);
+            assert.match(outcome.code, /targetAt: "top right",[^]*flip: "both",/);
+            assert.deepEqual(session.pageErrors, []);
+        });
+
+        await t.test("configurator dialog edits the value, the arrow keys move the target", async () => {
+            await session.goto(url("configurator.html"));
+            const outcome = await session.evaluate(`new Promise((resolve) => {
+                const configurator = document.querySelector(".configurator");
+                const dialog = configurator.querySelector(".cfg-dialog");
+                const value = (option) => configurator.querySelector('.cfg-value[data-option="' + option + '"]');
+                const read = () =>
+                    Object.fromEntries([...configurator.querySelectorAll(".values dt")].map((term) => [term.textContent, term.nextElementSibling.textContent]));
+                const poll = () => {
+                    if (configurator.dataset.state !== "ready") {
+                        setTimeout(poll, 50);
+                        return;
+                    }
+                    const closed = dialog.hidden;
+                    value("targetOffset").click();
+                    const title = dialog.querySelector("#cfg-dialog-title").textContent;
+                    const input = dialog.querySelector('[data-field="y"] input');
+                    input.value = "-8";
+                    input.dispatchEvent(new Event("input", { bubbles: true }));
+                    input.value = "oops";
+                    input.dispatchEvent(new Event("input", { bubbles: true }));
+                    const rejected = input.getAttribute("aria-invalid");
+                    const offset = value("targetOffset").textContent;
+                    const before = read();
+                    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+                    const closedAgain = dialog.hidden;
+                    const target = configurator.querySelector(".cfg-target");
+                    target.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+                    const after = read();
+                    value("targetOffset").click();
+                    dialog.querySelector('[data-field="y"] input').value = "-50";
+                    const unit = dialog.querySelector('[data-field="y"] select');
+                    unit.value = "%";
+                    unit.dispatchEvent(new Event("input", { bubbles: true }));
+                    resolve({ closed, title, rejected, offset, before, closedAgain, after, percent: read() });
+                };
+                poll();
+            })`);
+            assert.equal(outcome.closed, true);
+            assert.equal(outcome.title, "targetOffset");
+            assert.equal(outcome.rejected, "true");
+            assert.equal(outcome.offset, "{ x: 0, y: -8 }");
+            assert.equal(outcome.before["moveBy.y"], "12");
+            assert.equal(outcome.closedAgain, true);
+            assert.equal(Number(outcome.after["moveBy.x"]), Number(outcome.before["moveBy.x"]) + 10);
+            // -50% of the target height (40) lifts the item by 20 instead of 8
+            assert.equal(outcome.percent["moveBy.y"], "0");
             assert.deepEqual(session.pageErrors, []);
         });
     } finally {

@@ -52,7 +52,7 @@
       "path": "examples/tooltip",
       "section": "Examples",
       "title": "Tooltip",
-      "summary": "A tooltip above a button that moves below it when the top edge is in the way."
+      "summary": "A tooltip for the info button of a form field. It sits above the button and jumps below it when the top edge is in the way."
     },
     {
       "path": "examples/in-view",
@@ -70,7 +70,13 @@
       "path": "playground",
       "section": "Tools",
       "title": "Playground",
-      "summary": "Edit an example and see the result, or click together the options and copy the code."
+      "summary": "Edit the code of an example and see the result."
+    },
+    {
+      "path": "configurator",
+      "section": "Tools",
+      "title": "Configurator",
+      "summary": "Click together the options, drag the target and copy the code."
     }
   ]
 }

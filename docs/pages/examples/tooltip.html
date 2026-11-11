@@ -1,10 +1,4 @@
-<h2 id="what-it-shows">What it shows</h2>
-<p>
-    A tooltip that sits above its button. When the button is so close to the top edge that the tooltip would leave the
-    box, the tooltip jumps below the button. Hover or focus <strong>Save</strong> and then <strong>Help</strong>.
-</p>
-
-<h2 id="try-it">Try it</h2>
+<h2 id="demo">Demo</h2>
 
 {{example:tooltip}}
 
@@ -15,9 +9,9 @@
         <em>boundary</em>. There is one calculator for each button.
     </li>
     <li>
-        <code>itemAt: "bottom center"</code> and <code>targetAt: "top center"</code> put the bottom middle of the
-        tooltip on the top middle of the button. <code>targetOffset</code> with <code>y: -8</code> leaves a gap of 8
-        pixels.
+        <code>itemAt: "bottom right"</code> and <code>targetAt: "top right"</code> put the bottom right corner of the
+        tooltip on the top right corner of the button. The buttons sit at the right edge of the form, so the tooltip
+        grows to the left and stays inside. <code>targetOffset</code> with <code>y: -8</code> leaves a gap of 8 pixels.
     </li>
     <li>
         <code>flip: "both"</code> lets the library try the opposite placement when the first one overflows the boundary.
@@ -36,8 +30,9 @@
 <h2 id="variations">Variations</h2>
 <ul>
     <li>
-        Change <code>flip</code> to <code>"none"</code> and hover <strong>Help</strong>: the tooltip stays above and
-        leaves the box. <code>distance.overflow</code> in the result says which edge.
+        In the <a href="{{root}}playground.html?example=tooltip">playground</a>, change <code>flip</code> to
+        <code>"none"</code> and hover the i next to <strong>Username</strong>: the tooltip stays above and leaves the
+        box. <code>distance.overflow</code> in the result says which edge.
     </li>
     <li>Add <code>stick: "all"</code> to pull the tooltip back inside the box when no placement fits completely.</li>
     <li>Use <code>targetAt: "middle right"</code> and <code>itemAt: "middle left"</code> for a tooltip at the side.</li>

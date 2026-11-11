@@ -1,60 +1,31 @@
 <div id="stage">
-    <button id="save" type="button">Save</button>
-    <button id="help" type="button">Help</button>
+    <div class="row">
+        <label for="name">Username</label>
+        <input id="name" type="text" />
+        <button class="info" id="info-name" type="button" aria-label="About the username">i</button>
+    </div>
+    <div class="row">
+        <label for="password">Password</label>
+        <input id="password" type="password" />
+        <button class="info" id="info-password" type="button" aria-label="About the password">i</button>
+    </div>
     <div id="tip" role="tooltip" hidden></div>
 </div>
-<p id="info">Hover or focus a button.</p>
-
-<style>
-    #stage {
-        position: relative;
-        width: 360px;
-        height: 200px;
-        border: 1px dashed gray;
-    }
-    #stage button {
-        position: absolute;
-        width: 100px;
-        height: 32px;
-    }
-    #save {
-        left: 40px;
-        top: 110px;
-    }
-    /* close to the top edge, so there is no room above */
-    #help {
-        left: 220px;
-        top: 10px;
-    }
-    #tip {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 140px;
-        height: 32px;
-        padding: 6px 8px;
-        border-radius: 4px;
-        background: #222;
-        color: white;
-        font-size: 14px;
-    }
-</style>
 
 <script type="module">
     import { PositionCalculator } from "@tlindig/position-calculator";
 
     const stage = document.querySelector("#stage");
     const tip = document.querySelector("#tip");
-    const info = document.querySelector("#info");
-    const texts = { save: "Saves the file", help: "Opens the help" };
+    const texts = { "info-name": "Shown on your profile", "info-password": "At least 12 characters" };
 
-    for (const button of stage.querySelectorAll("button")) {
+    for (const button of stage.querySelectorAll(".info")) {
         const calculator = new PositionCalculator({
             item: tip,
             target: button,
             boundary: stage,
-            itemAt: "bottom center",
-            targetAt: "top center",
+            itemAt: "bottom right",
+            targetAt: "top right",
             targetOffset: { y: -8, x: 0, mirror: true },
             flip: "both",
         });
@@ -63,10 +34,9 @@
             tip.textContent = texts[button.id];
             tip.hidden = false;
             calculator.resize(); // the tooltip has a size only while it is visible
-            const { moveBy, itemAt, targetAt } = calculator.calculate();
+            const { moveBy } = calculator.calculate();
             tip.style.left = parseFloat(getComputedStyle(tip).left) + moveBy.x + "px";
             tip.style.top = parseFloat(getComputedStyle(tip).top) + moveBy.y + "px";
-            info.textContent = `tooltip ${itemAt} at button ${targetAt}`;
         };
         const hide = () => {
             tip.hidden = true;
@@ -78,3 +48,43 @@
         button.addEventListener("blur", hide);
     }
 </script>
+
+<style>
+    #stage {
+        position: relative;
+        box-sizing: border-box;
+        width: 360px;
+        height: 110px;
+        padding: 12px;
+        outline: 1px dashed gray;
+    }
+    .row {
+        display: grid;
+        grid-template-columns: 5.5rem minmax(0, 1fr) 28px;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .info {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 50%;
+        font-style: italic;
+        font-weight: 700;
+    }
+    #tip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 180px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+    }
+</style>
