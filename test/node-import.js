@@ -1,6 +1,6 @@
 /*
  * Node smoke test, no DOM: the source and the package can be imported (SSR-safe), and import and
- * require() of the package reach the same class. The package check reads dist/, so run `npm run build` first.
+ * require() of the package reach the same class (require() returns the namespace). The package check reads dist/, so run `npm run build` first.
  *
  *   node test/node-import.js
  */
@@ -26,8 +26,8 @@ try {
     throw new Error("Cannot load the package from dist/. Run `npm run build` first.", { cause: error });
 }
 assert.equal(typeof imported.PositionCalculator, "function", "import: named export PositionCalculator");
-assert.equal(typeof required, "function", "require(): returns the class");
-assert.equal(required, imported.PositionCalculator, "import and require() reach the same class");
-assert.equal(required.name, "PositionCalculator");
+assert.deepEqual(Object.keys(required), ["PositionCalculator"], "require(): returns the namespace, no other exports");
+assert.equal(required.PositionCalculator, imported.PositionCalculator, "import and require() reach the same class");
+assert.equal(required.PositionCalculator.name, "PositionCalculator");
 
 console.log("ok: import and require() of " + pkg.name + ", import of src without a DOM");

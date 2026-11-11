@@ -8,7 +8,6 @@
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "require": "./dist/position-calculator.require.js",
       "default": "./dist/position-calculator.js"
     },
     "./iife": "./dist/position-calculator.iife.min.js",

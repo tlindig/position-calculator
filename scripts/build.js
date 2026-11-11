@@ -2,7 +2,6 @@
 /*
  * Builds dist/ from src/:
  *   position-calculator.js            ESM, a copy of the source with banner
- *   position-calculator.require.js    ESM shim for require() in Node, see below
  *   position-calculator.iife.min.js   IIFE bundle of src/iife.js (global and jQuery alias), minified,
  *                                     with source map
  *
@@ -34,15 +33,6 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const source = fs.readFileSync(entry, "utf8").replace(/\r\n/g, "\n");
 fs.writeFileSync(path.join(outDir, "position-calculator.js"), banner + "\n" + source);
-
-// require() in Node returns the "module.exports" export. A string export name is ES2022, so it stays
-// out of the ES2020 source and the ESM file. Only the "require" condition of package.json loads this file.
-fs.writeFileSync(
-    path.join(outDir, "position-calculator.require.js"),
-    banner +
-        "\n" +
-        'export { PositionCalculator, PositionCalculator as "module.exports" } from "./position-calculator.js";\n',
-);
 
 esbuild.buildSync({
     entryPoints: [iifeEntry],
