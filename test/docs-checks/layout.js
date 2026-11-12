@@ -7,11 +7,18 @@
  *
  * Exit code 0: no page scrolls sideways and no code block is cut off. Otherwise 1.
  */
+import fs from "node:fs";
+import path from "node:path";
 import { chromium } from "playwright";
 import { startServer } from "../support/server.js";
-import { option, pages, READY, site } from "./support.js";
 
+const site = path.join(import.meta.dirname, "..", "..", "_site");
+const option = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
 const widths = (option("widths") ?? "360,768,1280").split(",").map(Number);
+const pages =
+    option("pages")?.split(",") ?? JSON.parse(fs.readFileSync(path.join(site, "manifest.json"), "utf8")).pages;
+// a widget leaves the state "running" when its example has loaded or failed
+const READY = `[...document.querySelectorAll(".tryit")].every((widget) => widget.dataset.state !== "running")`;
 
 // runs in the page. Elements inside a scrolling or clipping parent may reach past the window, so they do not count
 const MEASURE = `(() => {
@@ -49,7 +56,7 @@ const rows = [];
 let failed = 0;
 for (const width of widths) {
     const context = await browser.newContext({ viewport: { width, height: 900 } });
-    for (const name of pages()) {
+    for (const name of pages) {
         const page = await context.newPage();
         await page.goto(`${server.baseUrl}/${name}`);
         await page.waitForFunction(READY);
