@@ -521,7 +521,7 @@ select {
 }
 .cfg-right {
     flex: 1 1 18rem;
-    min-width: 0;
+    min-width: min-content; /* the panel has a fixed width, so the column wraps below the stage */
 }
 .cfg-field {
     display: flex;

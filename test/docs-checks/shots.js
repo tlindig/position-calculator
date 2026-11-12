@@ -10,9 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
 import { startServer } from "../support/server.js";
-
-const site = path.join(import.meta.dirname, "..", "..", "_site");
-const option = (name) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3);
+import { FAILED, option, pages, READY, site } from "./support.js";
 
 const out = option("out");
 if (!out) {
@@ -20,12 +18,6 @@ if (!out) {
     process.exit(1);
 }
 const widths = (option("widths") ?? "1280,375").split(",").map(Number);
-const manifest = JSON.parse(fs.readFileSync(path.join(site, "manifest.json"), "utf8"));
-const pages = option("pages")?.split(",") ?? manifest.pages;
-
-// a widget leaves the state "running" when its example has loaded or failed
-const READY = `[...document.querySelectorAll(".tryit")].every((widget) => widget.dataset.state !== "running")`;
-const FAILED = `document.querySelectorAll('.tryit[data-state="error"]').length`;
 
 fs.mkdirSync(out, { recursive: true });
 const server = await startServer(site);
@@ -35,7 +27,7 @@ let count = 0;
 for (const colorScheme of ["light", "dark"]) {
     for (const width of widths) {
         const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
-        for (const name of pages) {
+        for (const name of pages()) {
             const page = await context.newPage();
             page.on("pageerror", (error) => problems.push(`${name}: ${error}`));
             await page.goto(`${server.baseUrl}/${name}`);
