@@ -52,6 +52,7 @@ export default [
             "scripts/**/*.js",
             "test/run.js",
             "test/cross-browser.js",
+            "test/docs-checks/*.js",
             "test/support/server.js",
             "test/node-import.js",
             "eslint.config.js",
