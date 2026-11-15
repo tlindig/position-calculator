@@ -1,5 +1,3 @@
-<p class="draft">Draft: the content of this page follows.</p>
-
 <h2 id="what-it-does">What it does</h2>
 <p>
     You give <code>PositionCalculator</code> an <em>item</em>, usually a <em>target</em> and optionally a
@@ -7,6 +5,21 @@
 </p>
 
 <h2 id="quick-start">Quick start</h2>
+<p>
+    Create an instance with an item and a target, then apply <code>moveBy</code> to the item. Both reference points use
+    the form <code>"vertical horizontal"</code>:
+</p>
+<pre><code>const calculator = new PositionCalculator({
+    item: tooltip,
+    target: button,
+    itemAt: "top center",
+    targetAt: "bottom center",
+});
+const { moveBy } = calculator.calculate();</code></pre>
+<p>
+    The full steps, including the IIFE build and a check of the result, are in
+    <a href="{{root}}guides/getting-started.html">Getting started</a>.
+</p>
 
 <h2 id="where-next">Where next</h2>
 <ul>
