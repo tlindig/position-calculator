@@ -13,6 +13,7 @@
  * Tokens in a fragment (an unknown token fails the build):
  *   {{root}}                   relative path to the site root, so the site works under any base path
  *   {{version}}                version of package.json
+ *   {{types-source}}           types/index.d.ts, HTML-escaped, for a code block
  *   {{example:<id>}}           live demo of the example <id> with the calculated values, without code, and a
  *                              link to the playground
  *   {{playground:<id>}}        editor with a picker for all examples, starting with <id> (?example=<id> in the
@@ -67,6 +68,7 @@ const read = (...parts) => fs.readFileSync(path.join(docsDir, ...parts), "utf8")
 const escapeHtml = (text) =>
     text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const isString = (value) => typeof value === "string" && value !== "";
+const typesSource = escapeHtml(fs.readFileSync(path.join(root, "types", "index.d.ts"), "utf8"));
 
 // Removes the common indentation and the blank lines around the code.
 function dedent(text) {
@@ -305,7 +307,7 @@ for (const page of pages) {
     const widgets = [];
     const content = expand(
         read("pages", page.path + ".html"),
-        { root: rootPath, version: pkg.version },
+        { root: rootPath, version: pkg.version, "types-source": typesSource },
         where,
         widgets,
     );
