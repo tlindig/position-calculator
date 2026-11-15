@@ -1,0 +1,479 @@
+{
+  "chrome": "157.0.8103.78",
+  "date": "2026-11-15T21:41:12.183Z",
+  "errors": [],
+  "scenes": [
+    {
+      "name": "S1 visible item+target, window boundary",
+      "ctor": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 32,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 32,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "layoutReads": 18,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 200,
+          "x": 300
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S2 as S1, element boundary",
+      "ctor": {
+        "getBoundingClientRect": 3,
+        "pageYOffset": 3,
+        "scrollTop": 3,
+        "clientTop": 4,
+        "pageXOffset": 3,
+        "scrollLeft": 3,
+        "clientLeft": 4,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 37,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 3,
+        "pageYOffset": 3,
+        "scrollTop": 3,
+        "clientTop": 4,
+        "pageXOffset": 3,
+        "scrollLeft": 3,
+        "clientLeft": 4,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 37,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 3,
+        "pageYOffset": 3,
+        "scrollTop": 3,
+        "clientTop": 4,
+        "pageXOffset": 3,
+        "scrollLeft": 3,
+        "clientLeft": 4,
+        "layoutReads": 23,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 200,
+          "x": 300
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S3 hidden item (display:none), window boundary",
+      "ctor": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 6,
+        "styleWrite": 12,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 34,
+        "styleWrites": 12
+      },
+      "resize": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 6,
+        "styleWrite": 12,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 34,
+        "styleWrites": 12
+      },
+      "calc": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "layoutReads": 18,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 200,
+          "x": 300
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S4 target = mouse-like event, window boundary",
+      "ctor": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 2,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 2,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 19,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 2,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 2,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 19,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 2,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 2,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "layoutReads": 11,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 100,
+          "x": 100
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S5 target = 'document', boundary null",
+      "ctor": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "offsetWidth": 4,
+        "getComputedStyle": 2,
+        "offsetHeight": 4,
+        "scrollWidth": 2,
+        "clientWidth": 1,
+        "scrollHeight": 2,
+        "clientHeight": 1,
+        "layoutReads": 23,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "offsetWidth": 4,
+        "getComputedStyle": 2,
+        "offsetHeight": 4,
+        "scrollWidth": 2,
+        "clientWidth": 1,
+        "scrollHeight": 2,
+        "clientHeight": 1,
+        "layoutReads": 23,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "layoutReads": 7,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 0,
+          "x": 0
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S6 no target, no boundary",
+      "ctor": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "layoutReads": 13,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "layoutReads": 13,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 1,
+        "scrollTop": 1,
+        "clientTop": 1,
+        "pageXOffset": 1,
+        "scrollLeft": 1,
+        "clientLeft": 1,
+        "layoutReads": 7,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 0,
+          "x": 0
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S7 overflow with flip both + stick all",
+      "ctor": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 32,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "offsetWidth": 4,
+        "getComputedStyle": 4,
+        "offsetHeight": 4,
+        "clientWidth": 1,
+        "clientHeight": 1,
+        "layoutReads": 32,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 2,
+        "pageYOffset": 3,
+        "scrollTop": 2,
+        "clientTop": 3,
+        "pageXOffset": 3,
+        "scrollLeft": 2,
+        "clientLeft": 3,
+        "layoutReads": 18,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 480,
+          "x": 680
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S8 target = 'window', window boundary",
+      "ctor": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 3,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 3,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "clientWidth": 2,
+        "clientHeight": 2,
+        "layoutReads": 23,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 3,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 3,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "offsetWidth": 2,
+        "getComputedStyle": 2,
+        "offsetHeight": 2,
+        "clientWidth": 2,
+        "clientHeight": 2,
+        "layoutReads": 23,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 1,
+        "pageYOffset": 3,
+        "scrollTop": 1,
+        "clientTop": 2,
+        "pageXOffset": 3,
+        "scrollLeft": 1,
+        "clientLeft": 2,
+        "layoutReads": 13,
+        "styleWrites": 0
+      },
+      "result": {
+        "moveBy": {
+          "y": 0,
+          "x": 0
+        },
+        "overflow": null
+      }
+    },
+    {
+      "name": "S9 100 items, 1 shared element target, window boundary",
+      "ctor": {
+        "getBoundingClientRect": 200,
+        "pageYOffset": 300,
+        "scrollTop": 200,
+        "clientTop": 300,
+        "pageXOffset": 300,
+        "scrollLeft": 200,
+        "clientLeft": 300,
+        "offsetWidth": 400,
+        "getComputedStyle": 400,
+        "offsetHeight": 400,
+        "clientWidth": 100,
+        "clientHeight": 100,
+        "layoutReads": 3200,
+        "styleWrites": 0
+      },
+      "resize": {
+        "getBoundingClientRect": 200,
+        "pageYOffset": 300,
+        "scrollTop": 200,
+        "clientTop": 300,
+        "pageXOffset": 300,
+        "scrollLeft": 200,
+        "clientLeft": 300,
+        "offsetWidth": 400,
+        "getComputedStyle": 400,
+        "offsetHeight": 400,
+        "clientWidth": 100,
+        "clientHeight": 100,
+        "layoutReads": 3200,
+        "styleWrites": 0
+      },
+      "calc": {
+        "getBoundingClientRect": 200,
+        "pageYOffset": 300,
+        "scrollTop": 200,
+        "clientTop": 300,
+        "pageXOffset": 300,
+        "scrollLeft": 200,
+        "clientLeft": 300,
+        "layoutReads": 1800,
+        "styleWrites": 0
+      }
+    }
+  ]
+}
