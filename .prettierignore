@@ -1,5 +1,6 @@
 dist/
 _site/
+bench/results/
 node_modules/
 package-lock.json
 test/reference/

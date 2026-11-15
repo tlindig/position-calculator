@@ -48,6 +48,20 @@ export default [
         rules: { "no-useless-escape": "off" },
     },
     {
+        // the scripts pass functions to page.evaluate(), so they also use browser globals
+        files: ["bench/*.mjs"],
+        languageOptions: {
+            ecmaVersion: "latest",
+            sourceType: "module",
+            globals: { ...globals.node, ...globals.browser },
+        },
+    },
+    {
+        // bundled by esbuild and run in the page
+        files: ["bench/harness.js", "bench/entries/*.js"],
+        languageOptions: { ecmaVersion: 2022, sourceType: "module", globals: { ...globals.browser } },
+    },
+    {
         files: [
             "scripts/**/*.js",
             "test/run.js",
