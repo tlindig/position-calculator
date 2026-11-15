@@ -49,6 +49,12 @@
       "summary": "The object that calculate() and calcVariant() return."
     },
     {
+      "path": "reference/types",
+      "section": "Reference",
+      "title": "TypeScript types",
+      "summary": "The type declarations of the package, as in types/index.d.ts."
+    },
+    {
       "path": "reference/limits",
       "section": "Reference",
       "title": "Limits",
