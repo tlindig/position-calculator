@@ -1,11 +1,72 @@
-<p class="draft">Draft: the content of this page follows.</p>
-
 <h2 id="goal">Goal</h2>
+<p>
+    Place a small tooltip below a button. At the end, the tooltip is centred under the button and touches it. The
+    library calculates the offset. You move the element.
+</p>
 
 <h2 id="before-you-start">Before you start</h2>
+<ul>
+    <li>Node.js 24 or later, if you install with npm.</li>
+    <li>An element to move (the item) and an element to place it at (the target), both in the page.</li>
+</ul>
 
 <h2 id="steps">Steps</h2>
 
+<h3 id="install">1. Install</h3>
+<pre><code>npm install @tlindig/position-calculator</code></pre>
+
+<h3 id="import">2. Import</h3>
+<p>In an ES module, import the named export:</p>
+<pre><code>import { PositionCalculator } from "@tlindig/position-calculator";</code></pre>
+<p>
+    Without a bundler, load the IIFE build from <code>node_modules/@tlindig/position-calculator/dist/</code> with a
+    script tag, file <code>position-calculator.iife.min.js</code>. It defines the global
+    <code>PositionCalculator</code>.
+</p>
+
+<h3 id="place">3. Create the instance and calculate</h3>
+<p>
+    The item must be positioned, for example with <code>position: absolute</code>, so that <code>moveBy</code> can be
+    applied to its <code>left</code> and <code>top</code>. Give the item a target and the reference points:
+</p>
+<pre><code>const tooltip = document.querySelector("#tooltip");
+const button = document.querySelector("#button");
+
+const calculator = new PositionCalculator({
+    item: tooltip,
+    target: button,
+    itemAt: "top center",
+    targetAt: "bottom center",
+});
+
+const result = calculator.calculate();
+const style = getComputedStyle(tooltip);
+tooltip.style.left = parseFloat(style.left) + result.moveBy.x + "px";
+tooltip.style.top = parseFloat(style.top) + result.moveBy.y + "px";</code></pre>
+<p>
+    <code>itemAt</code> is the point of the item that meets <code>targetAt</code>, the point of the target. Both use the
+    form <code>"vertical horizontal"</code>. <code>moveBy</code> is the distance the item has to move, in pixels.
+</p>
+
 <h2 id="try-it">Try it</h2>
+<p>
+    The code above is checked in a browser against the built IIFE file. The tooltip is centred under the button, its top
+    edge is at the bottom edge of the button, and the horizontal centres match. Use the
+    <a href="{{root}}playground.html">playground</a> to change the placement and see the result.
+</p>
 
 <h2 id="next">Next</h2>
+<ul>
+    <li>
+        <a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a> explains the reference
+        points and what flip and stick do.
+    </li>
+    <li><a href="{{root}}reference/methods.html">Methods</a> lists everything an instance can do.</li>
+</ul>
+
+<h2 id="coming-from-1x">Coming from 1.x</h2>
+<p>
+    Version 1 was a jQuery plugin. Version 2 is a standalone library: the ESM build has no jQuery dependency. Its API
+    differs from 1.x, so check your calls against the <a href="{{root}}reference/constructor.html">constructor</a> and
+    <a href="{{root}}reference/result.html">result</a> pages instead of reusing 1.x code.
+</p>
