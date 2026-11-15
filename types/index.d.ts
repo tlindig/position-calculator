@@ -1,4 +1,4 @@
-/** Something that resolves to one element: an element, a selector, or an array-like (jQuery object, NodeList). */
+/** Something that resolves to one element: an element, a selector, or an array-like such as a NodeList. */
 export type ElementInput = string | Element | ArrayLike<Element>;
 
 /**
