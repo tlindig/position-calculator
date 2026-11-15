@@ -1,11 +1,140 @@
-<p class="draft">Draft: the content of this page follows.</p>
-
 <h2 id="goal">Goal</h2>
+<p>
+    Decide where an item ends up relative to its target: which points meet, how far they are shifted, and what happens
+    when the item leaves the boundary. Each example below was run in a browser.
+</p>
 
 <h2 id="before-you-start">Before you start</h2>
+<p>
+    You know how to create an instance, as shown in <a href="{{root}}guides/getting-started.html">Getting started</a>.
+    The examples use a button as the target and a tooltip as the item. The code is the same as in the getting-started
+    guide, with other options.
+</p>
 
-<h2 id="steps">Steps</h2>
+<h2 id="reference-points">Reference points</h2>
+<p>
+    <code>itemAt</code> names the point of the item and <code>targetAt</code> the point of the target. The library moves
+    the item so that the two points meet. Each value has the form <code>"vertical horizontal"</code>. The default is
+    <code>"top left"</code> for both.
+</p>
+<pre><code>const calculator = new PositionCalculator({
+    item: tooltip,
+    target: button,
+    itemAt: "bottom center",
+    targetAt: "top center",
+});</code></pre>
+<p>
+    With these values the bottom edge of the tooltip touches the top edge of the button, and both are centred on each
+    other.
+</p>
+
+<h2 id="offsets">Offsets</h2>
+<p>
+    <code>itemOffset</code> and <code>targetOffset</code> shift a reference point after it has been placed. Each offset
+    has <code>y</code> and <code>x</code>, in pixels or as a percentage of the element size, and a
+    <code>mirror</code> flag. A percentage refers to the height for <code>y</code> and to the width for <code>x</code>.
+</p>
+<pre><code>const calculator = new PositionCalculator({
+    item: tooltip,
+    target: button,
+    itemAt: "bottom center",
+    targetAt: "top center",
+    itemOffset: { y: 8, x: 0, mirror: true },
+});</code></pre>
+<p>
+    With <code>y: 8</code> and no flip, the tooltip moves 8 px down, so it overlaps the button by 8 px. A positive value
+    moves the item toward the target in this placement.
+</p>
+<p>
+    <code>mirror</code> decides whether the offset follows the flip. With <code>mirror: true</code>, the sign of the
+    offset is inverted on each flipped axis, so it keeps pointing toward the target after a flip. The default offsets
+    have <code>mirror: true</code>. An offset object you pass without <code>mirror</code> has
+    <code>mirror: false</code>. To keep an 8 px gap on the same side of the target after a flip, use a negative value
+    with <code>mirror: true</code>:
+</p>
+<pre><code>const calculator = new PositionCalculator({
+    item: tooltip,
+    target: button,
+    itemAt: "bottom center",
+    targetAt: "top center",
+    flip: "both",
+    itemOffset: { y: -8, x: 0, mirror: true },
+});</code></pre>
+<p>
+    With this setup the tooltip keeps 8 px of space to the button, both when it sits above and when the flip puts it
+    below. Without <code>mirror</code>, the same <code>y: 8</code> keeps its screen direction after a flip, so the
+    tooltip ends 8 px below the button in the flipped case.
+</p>
+
+<h2 id="flip">Flip</h2>
+<p>
+    Flip changes the placement when the item overflows an edge of the boundary. It needs a target. The values are
+    <code>"none"</code> (the default), <code>"item"</code>, <code>"target"</code>, <code>"both"</code>, and
+    <code>true</code>, which means <code>"both"</code>.
+</p>
+<ul>
+    <li><code>"item"</code> flips only <code>itemAt</code>.</li>
+    <li><code>"target"</code> flips only <code>targetAt</code>.</li>
+    <li><code>"both"</code> flips both points.</li>
+</ul>
+<p>
+    With <code>itemAt: "bottom center"</code> and <code>targetAt: "top center"</code> and a button near the top of the
+    window, the three values give different results:
+</p>
+<ul>
+    <li>
+        <code>"item"</code>: <code>itemAt</code> becomes <code>"top center"</code>, <code>targetAt</code> stays
+        <code>"top center"</code>.
+    </li>
+    <li>
+        <code>"target"</code>: <code>itemAt</code> stays <code>"bottom center"</code>, <code>targetAt</code> becomes
+        <code>"bottom center"</code>.
+    </li>
+    <li>
+        <code>"both"</code>: <code>itemAt</code> becomes <code>"top center"</code>, <code>targetAt</code> becomes
+        <code>"bottom center"</code>. The item sits below the button.
+    </li>
+</ul>
+<p>
+    Flip changes only the axis that overflows. If the item overflows both edges of one axis, for example because it is
+    taller than the boundary, the library does not flip on that axis. The result then keeps the placement and lists both
+    edges in <code>distance.overflow</code>.
+</p>
+<p>
+    If the flipped placement still overflows, the library picks, for each axis, the placement with less overflow. The
+    <a href="{{root}}reference/result.html">result</a> object shows which placement was used in <code>itemAt</code> and
+    <code>targetAt</code>.
+</p>
+
+<h2 id="stick">Stick</h2>
+<p>
+    Stick moves the item back inside the boundary along the edges you name, after flip has been applied. Values are
+    <code>"none"</code> (the default), <code>"all"</code> or <code>true</code> for every edge, <code>false</code>, or a
+    list of one to four edges separated by spaces, for example <code>"top left"</code>. Stick works without a target.
+</p>
+<pre><code>const calculator = new PositionCalculator({
+    item: tooltip,
+    boundary: container,
+    stick: "left top",
+});</code></pre>
+<p>
+    In a check with the item 50 px left of a boundary that starts at x = 0, <code>stick: "left"</code> moved the item 50
+    px to the right, and no edge overflowed. With <code>stick: "top"</code> the item was not moved, and
+    <code>"left"</code> stayed in <code>distance.overflow</code>. The stick does not change the placement, so
+    <code>itemAt</code> and <code>targetAt</code> stay the same.
+</p>
 
 <h2 id="try-it">Try it</h2>
+<p>
+    Change the options in the <a href="{{root}}playground.html">playground</a> and see where the item ends up. The
+    <a href="{{root}}reference/methods.html#calculate"><code>calculate()</code></a> method gives the final placement.
+</p>
 
 <h2 id="next">Next</h2>
+<ul>
+    <li><a href="{{root}}guides/how-it-works.html">How it works</a> shows the order of the four steps in a diagram.</li>
+    <li>
+        <a href="{{root}}reference/constructor.html">Constructor and options</a> lists every option with its type and
+        default.
+    </li>
+</ul>

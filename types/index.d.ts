@@ -23,7 +23,8 @@ export interface Offset {
     /** pixels, or a percentage of the width as string, for example "10%" */
     x: number | string;
     /**
-     * mirror the offset when the placement is flipped.
+     * mirror the offset when the placement is flipped: on each flipped axis the sign of the offset is inverted,
+     * so it keeps pointing toward the target.
      * Absent means false. It does not take the `true` of the default offsets.
      */
     mirror?: boolean;

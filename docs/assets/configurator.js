@@ -34,9 +34,9 @@ const OPTIONS = {
     itemAt: "The point of the item that is placed on the target point (red dot).",
     targetAt: "The point of the target the item is aligned to (white dot).",
     itemOffset:
-        "Moves the item point. Pixels or a percentage like 10%. With mirror the offset is turned around when the placement flips.",
+        "Moves the item point. Pixels or a percentage like 10%. With mirror the sign of the offset is inverted on each flipped axis, so it keeps pointing toward the target.",
     targetOffset:
-        "Moves the target point. Pixels or a percentage like 10%. With mirror the offset is turned around when the placement flips.",
+        "Moves the target point. Pixels or a percentage like 10%. With mirror the sign of the offset is inverted on each flipped axis, so it keeps pointing toward the target.",
     flip: "When the item would leave the boundary, try the opposite placement. It acts only on a collision, so drag the target to an edge.",
     stick: "Pull the item back inside the boundary at the chosen edges when it still overflows. It acts only on a collision, too.",
 };
