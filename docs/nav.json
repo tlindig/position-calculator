@@ -19,6 +19,12 @@
       "summary": "How reference points, offsets, flip and stick decide where the item ends up."
     },
     {
+      "path": "guides/how-it-works",
+      "section": "Guides",
+      "title": "How it works",
+      "summary": "The four steps of a calculation: place, check the boundary, flip, stick."
+    },
+    {
       "path": "guides/css-anchor-positioning",
       "section": "Guides",
       "title": "CSS anchor positioning or this library",
