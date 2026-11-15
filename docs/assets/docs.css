@@ -35,6 +35,9 @@
 
 body {
     margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: var(--color-bg);
     color: var(--color-text);
     font: 1rem/1.7 var(--font-text);
@@ -268,6 +271,7 @@ dd {
 }
 
 .site-footer {
+    margin-top: auto;
     display: grid;
     justify-items: center;
     gap: 0.75rem;
