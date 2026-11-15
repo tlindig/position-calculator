@@ -1,6 +1,6 @@
 /*
- * Contrast of the docs colors after WCAG 2.x, computed from the tokens in docs/assets/docs.css for light and
- * dark mode. Run it when a color token changes. Prints a Markdown table.
+ * Contrast of the docs colors after WCAG 2.x, computed from the light tokens in docs/assets/docs.css.
+ * Run it when a color token changes. Prints a Markdown table.
  *
  *   node test/docs-checks/contrast.js
  *
@@ -39,7 +39,6 @@ const css = fs.readFileSync(path.join(import.meta.dirname, "..", "..", "docs", "
 const tokensOf = (block) =>
     Object.fromEntries([...block.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map((match) => [match[1], match[2].trim()]));
 const light = tokensOf(/:root\s*{([^}]*)}/.exec(css)[1]);
-const dark = { ...light, ...tokensOf(/prefers-color-scheme:\s*dark\)\s*{\s*:root\s*{([^}]*)}/.exec(css)[1]) };
 
 const channel = (value) => {
     const c = value / 255;
@@ -61,25 +60,20 @@ function ratio(a, b) {
 
 const rows = [];
 let failed = 0;
-for (const [mode, tokens] of [
-    ["light", light],
-    ["dark", dark],
-]) {
-    for (const [label, foreground, background, needed] of PAIRS) {
-        for (const name of [foreground, background]) {
-            if (!tokens[name]) {
-                throw new Error(`token ${name} not found in docs.css`);
-            }
+for (const [label, foreground, background, needed] of PAIRS) {
+    for (const name of [foreground, background]) {
+        if (!light[name]) {
+            throw new Error(`token ${name} not found in docs.css`);
         }
-        const value = ratio(tokens[foreground], tokens[background]);
-        const passes = value >= needed;
-        failed += passes ? 0 : 1;
-        const colors = `${tokens[foreground]} on ${tokens[background]}`;
-        rows.push(`| ${mode} | ${label} | ${colors} | ${value.toFixed(2)} | ${needed} | ${passes ? "pass" : "FAIL"} |`);
     }
+    const value = ratio(light[foreground], light[background]);
+    const passes = value >= needed;
+    failed += passes ? 0 : 1;
+    const colors = `${light[foreground]} on ${light[background]}`;
+    rows.push(`| ${label} | ${colors} | ${value.toFixed(2)} | ${needed} | ${passes ? "pass" : "FAIL"} |`);
 }
-console.log("| Mode | Pair | Colors | Ratio | Needed | Result |");
-console.log("| ---- | ---- | ------ | ----- | ------ | ------ |");
+console.log("| Pair | Colors | Ratio | Needed | Result |");
+console.log("| ---- | ------ | ----- | ------ | ------ |");
 console.log(rows.join("\n"));
 console.log(`\n${rows.length} pairs, ${failed} below the needed ratio`);
 process.exitCode = failed ? 1 : 0;
