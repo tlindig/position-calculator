@@ -67,6 +67,12 @@
       "summary": "A tooltip for the info button of a form field. It sits above the button and jumps below it when the top edge is in the way."
     },
     {
+      "path": "examples/pointer",
+      "section": "Examples",
+      "title": "Speech bubble at the pointer",
+      "summary": "A bubble that follows the pointer, jumps to the other side at an edge and points its tail at the pointer."
+    },
+    {
       "path": "examples/in-view",
       "section": "Examples",
       "title": "In view",

@@ -8,7 +8,7 @@
     const stage = document.querySelector("#stage");
     const label = document.querySelector("#label");
 
-    stage.addEventListener("pointermove", (event) => {
+    function follow(event) {
         const { moveBy, itemAt } = new PositionCalculator({
             item: label,
             target: event, // the pointer position
@@ -22,7 +22,11 @@
         label.style.top = parseFloat(getComputedStyle(label).top) + moveBy.y + "px";
         label.dataset.at = itemAt; // the corner at the pointer, where the tail points from
         label.classList.add("show");
-    });
+    }
+
+    // pointerdown shows the bubble for a tap, pointermove for a mouse, a pen and a finger that moves
+    stage.addEventListener("pointerdown", follow);
+    stage.addEventListener("pointermove", follow);
     stage.addEventListener("pointerleave", () => {
         label.classList.remove("show");
     });
@@ -34,6 +38,7 @@
         width: 360px;
         height: 200px;
         outline: 1px dashed gray;
+        touch-action: none; /* a finger moves the bubble instead of scrolling the page */
     }
     #label {
         position: absolute;
