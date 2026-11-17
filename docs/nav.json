@@ -25,10 +25,10 @@
       "summary": "The four steps of a calculation: place, check the boundary, flip, stick."
     },
     {
-      "path": "guides/css-anchor-positioning",
+      "path": "guides/alternatives",
       "section": "Guides",
-      "title": "CSS anchor positioning or this library",
-      "summary": "When native CSS anchor positioning is enough and when this library fits better."
+      "title": "Alternatives and comparison",
+      "summary": "Native CSS anchor positioning, Floating UI, Popper and Tether compared with Position Calculator, with a benchmark you can repeat."
     },
     {
       "path": "reference/constructor",

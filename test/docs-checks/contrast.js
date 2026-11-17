@@ -33,6 +33,8 @@ const PAIRS = [
     ["item border on stage", "--color-item-border", "--color-bg", UI],
     ["item dot on item", "--color-mark-item", "--color-item", UI],
     ["target dot on target", "--color-mark-target", "--color-target", UI],
+    ["chart bars of other tools on page", "--color-chart-other", "--color-bg", UI],
+    ["chart bars of Position Calculator on page", "--color-accent", "--color-bg", UI],
 ];
 
 const css = fs.readFileSync(path.join(import.meta.dirname, "..", "..", "docs", "assets", "docs.css"), "utf8");

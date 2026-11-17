@@ -1,0 +1,585 @@
+<h2 id="goal">Goal</h2>
+<p>
+    Decide whether native CSS anchor positioning, Position Calculator, or another tool fits your case. The page states
+    what each one does, with the source or the run behind each statement, and it shows a benchmark that you can repeat.
+    Where a statement could not be checked, it says so.
+</p>
+
+<h2 id="before-you-start">Before you start</h2>
+<p>
+    You know what a tooltip or popup needs: an item that sits next to a target and stays inside a boundary. If you have
+    not used the library yet, see <a href="{{root}}guides/getting-started.html">Getting started</a>.
+</p>
+
+<h2 id="choose">Choose</h2>
+<h3 id="choose-native">Choose native CSS when</h3>
+<p>
+    The layout can be written with <code>position-area</code> and <code>position-try-fallbacks</code>, the
+    <a href="#browser-status">browsers in the status below</a> are enough for your users, and nothing in your script
+    needs the position as a number. You write no JavaScript, and the browser keeps the placement up to date.
+</p>
+<h3 id="choose-library">Choose Position Calculator when</h3>
+<p>
+    You need the position, the collision and the way out of a collision as values: how far to move, how far the item is
+    from each edge of the boundary, which edges overflow and which placement was used. You apply them yourself, for
+    example as a <code>transform</code>, a tween, a class or a canvas drawing, and the library writes nothing in the
+    normal path. The result is synchronous. It is one function with no dependencies. The
+    <a href="{{root}}examples/tooltip.html">examples</a> show uses beyond a tooltip, and the
+    <a href="#benchmark">benchmark</a> shows what a calculation costs.
+</p>
+<h3 id="choose-other">Choose another tool when</h3>
+<p>
+    You need scroll and resize updates done for you, clipping by scroll parents, a virtual element, right-to-left
+    placement or a ready-made tooltip. Floating UI computes like Position Calculator and has <code>autoUpdate</code> and
+    virtual elements. Popper and Tether apply the styles themselves. This page did not test how much code a tooltip
+    needs in each tool.
+</p>
+
+<h2 id="native-css">What native CSS can do</h2>
+<p>
+    CSS anchor positioning places an element next to an anchor element without JavaScript. The browser does the
+    placement and keeps it up to date on scroll and resize. This is a check in Chrome 157, Firefox 159 and WebKit 27.2
+    (Playwright, the same page in all three). The anchor is 80 x 30 px, the tooltip 100 x 40 px:
+</p>
+<pre><code>.anchor { anchor-name: --a; }
+.tip {
+    position: absolute;
+    position-anchor: --a;
+    position-area: top;
+    position-try-fallbacks: flip-block;
+}</code></pre>
+<ul>
+    <li>
+        The tooltip sat above the anchor and centred on it (left -10 px, top -40 px relative to the anchor) in all three
+        browsers.
+    </li>
+    <li>
+        With the anchor 10 px from the top edge of the containing block, the fallback
+        <code>flip-block</code> moved the tooltip below the anchor (left -10 px, top 30 px) in all three browsers.
+    </li>
+    <li>
+        In a container with <code>dir="rtl"</code>, <code>position-area: block-end span-inline-end</code> gave left -20
+        px and top 30 px in all three browsers. The logical keywords follow the text direction.
+    </li>
+    <li><code>CSS.supports("position-area", "top")</code> was true in all three.</li>
+</ul>
+<p>
+    The browser applies the result. A script gets no numbers from it: there is no value for how far the element moved,
+    how far it is from an edge, or which edge it overflows. If the page must react to such values, native CSS is not
+    enough. This follows from the CSS properties. You can check it in the
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning">MDN overview</a>.
+</p>
+
+<h2 id="browser-status">Browser status of native CSS</h2>
+<p>
+    Read on 2026-11-17 from the <a href="https://webstatus.dev/features/anchor-positioning">Web Platform Status</a> data
+    of the feature <code>anchor-positioning</code>. The state changes, so read it again before you decide.
+</p>
+<ul>
+    <li>
+        The whole feature is Baseline "limited". Its support list names Chrome 157 and Edge 157 (November 2026) and
+        Safari 27 (September 2026). Firefox is not in the list for the whole feature.
+    </li>
+    <li>
+        The core groups (<code>anchor-name</code> with <code>anchor()</code>, <code>position-visibility</code>,
+        <code>position-try-fallbacks</code>, <code>position-area</code>, <code>anchor-scope</code>) are Baseline "low"
+        since 2026-01-13. They start in Chrome and Edge 125 to 131, in Firefox 147 and in Safari 26 (26.2 for
+        <code>position-visibility</code>).
+    </li>
+    <li>
+        Not read to the end: a further group of features that starts in Chrome 132. Check it if you use a feature that
+        this page does not name.
+    </li>
+</ul>
+
+<h2 id="compare">Compare the tools</h2>
+<p>
+    The facts about Floating UI, Popper and Tether come from their npm pages and documentation, read on 2026-11-11. They
+    were not re-checked in a run, except where a row names the benchmark.
+</p>
+<table>
+    <thead>
+        <tr>
+            <th>Aspect</th>
+            <th>Position Calculator</th>
+            <th>Floating UI</th>
+            <th>Popper</th>
+            <th>Tether</th>
+            <th>Native CSS</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Moves the element</td>
+            <td>No, returns <code>moveBy</code></td>
+            <td>No, returns coordinates</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>Size, gzip (<a href="#size">details</a>)</td>
+            <td>2.7 kB</td>
+            <td>4.3 kB (6.7 kB with middleware)</td>
+            <td>4.1 kB (7.5 kB, full build)</td>
+            <td>7.3 kB</td>
+            <td>none</td>
+        </tr>
+        <tr>
+            <td>Update on scroll and resize</td>
+            <td>You call <code>calculate()</code></td>
+            <td><code>autoUpdate</code></td>
+            <td>Built in</td>
+            <td>Built in</td>
+            <td>Built in</td>
+        </tr>
+        <tr>
+            <td>Scroll parents</td>
+            <td>No, pass the boundary element</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Yes</td>
+            <td>Built in</td>
+        </tr>
+        <tr>
+            <td>Event or virtual target</td>
+            <td>Mouse or pointer event, not touch events</td>
+            <td>Virtual element</td>
+            <td>Virtual element</td>
+            <td>Not checked</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>Right-to-left placement</td>
+            <td>No</td>
+            <td>Yes</td>
+            <td>Not checked</td>
+            <td>Not checked</td>
+            <td>Yes, logical keywords (run above)</td>
+        </tr>
+        <tr>
+            <td>Result as numbers</td>
+            <td>Yes: <code>moveBy</code>, <code>distance</code>, used placement</td>
+            <td>Yes: coordinates and overflow values</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="benchmark">The benchmark</h2>
+<p>
+    The benchmark lives in the folder <code>bench/</code> of the
+    <a href="https://github.com/tlindig/position-calculator">repository</a>, with its own <code>README.md</code> that
+    lists the commands. The numbers below are the run stored in <code>bench/reference/</code>: Chrome 157.0.8103.78, run
+    on 2026-11-15, one machine with 12 threads, viewport 2300 x 2300 px. A timing depends on the machine, the load and
+    the browser version, so run the benchmark yourself before you quote a number.
+</p>
+
+<h3 id="the-scene">The scene</h3>
+<p>
+    Every element is an item of 80 x 30 px with its own target of 60 x 24 px. The targets sit in a grid. Every tool
+    places the item at the bottom left of its target. After each run the script checks the result: the largest deviation
+    from the wanted position is 0 px for every tool.
+</p>
+<ul>
+    <li>
+        Position Calculator runs with <code>flip: "both"</code> and <code>stick: "all"</code>. No item overflows in this
+        scene, so both options are on but idle.
+    </li>
+    <li>
+        Floating UI runs with the <code>flip</code> and <code>shift</code> middleware, Popper with its defaults, Tether
+        with a constraint to the window.
+    </li>
+    <li>
+        <strong>Variant A</strong> calculates only and writes nothing. Only Position Calculator and Floating UI can do
+        that.
+    </li>
+    <li>
+        <strong>Variant B</strong> moves the targets by a few pixels, calculates all positions, writes them as a
+        <code>transform</code>, and reads the layout once. The row "without any tool" is only moving the targets and
+        that one read, with no calculation and no write. It is the base cost that every B number includes.
+    </li>
+</ul>
+
+<h3 id="time-per-round">Time per round</h3>
+<p>
+    Median in milliseconds for one round, that is, one calculation for every element. Each point is 30 samples from
+    three runs with a fresh page each. A shorter bar is faster. Position Calculator is purple.
+</p>
+<figure class="chart-figure">
+    <svg class="chart" viewBox="0 0 400 711" role="img" aria-labelledby="chart-time-title chart-time-desc">
+        <title id="chart-time-title">Time per round for 10, 100 and 500 elements</title>
+        <desc id="chart-time-desc">
+            Bars in milliseconds, one group per tool and variant, with one bar each for 10, 100 and 500 elements.
+            Variant A comes first, then variant B. Inside a variant the groups are sorted by the time at 500 elements,
+            the fastest first. Variant A: Position Calculator 0.080, 0.800 and 4.00, Floating UI 0.683, 6.77 and 33.1.
+            Variant B: without any tool 0.020, 0.167 and 0.800, Position Calculator with all reads first 0.123, 1.17 and
+            5.40, Tether 0.463, 4.53 and 20.6, Floating UI with all reads first 0.737, 7.27 and 35.9, Position
+            Calculator with a read and a write per item 0.163, 3.17 and 46.5, Floating UI with a read and a write per
+            item 0.813, 9.63 and 83.8, Popper 1.43, 16.0 and 111.1. The table below the chart has the exact numbers.
+        </desc>
+        <text class="group" x="0" y="13" font-size="13">A, Position Calculator</text>
+        <text x="0" y="30" font-size="12">10</text>
+        <rect class="bar bar-own" x="34" y="19" width="1" height="13" />
+        <text x="41" y="30" font-size="12">0.080 ms</text>
+        <text x="0" y="47" font-size="12">100</text>
+        <rect class="bar bar-own" x="34" y="36" width="2.1" height="13" />
+        <text x="42.1" y="47" font-size="12">0.800 ms</text>
+        <text x="0" y="64" font-size="12">500</text>
+        <rect class="bar bar-own" x="34" y="53" width="10.4" height="13" />
+        <text x="50.4" y="64" font-size="12">4.00 ms</text>
+        <text class="group" x="0" y="92" font-size="13">A, Floating UI</text>
+        <text x="0" y="109" font-size="12">10</text>
+        <rect class="bar" x="34" y="98" width="1.8" height="13" />
+        <text x="41.8" y="109" font-size="12">0.683 ms</text>
+        <text x="0" y="126" font-size="12">100</text>
+        <rect class="bar" x="34" y="115" width="17.7" height="13" />
+        <text x="57.7" y="126" font-size="12">6.77 ms</text>
+        <text x="0" y="143" font-size="12">500</text>
+        <rect class="bar" x="34" y="132" width="86.4" height="13" />
+        <text x="126.4" y="143" font-size="12">33.1 ms</text>
+        <text class="group" x="0" y="171" font-size="13">B, no tool (targets move, one read)</text>
+        <text x="0" y="188" font-size="12">10</text>
+        <rect class="bar bar-base" x="34" y="177" width="1" height="13" />
+        <text x="41" y="188" font-size="12">0.020 ms</text>
+        <text x="0" y="205" font-size="12">100</text>
+        <rect class="bar bar-base" x="34" y="194" width="1" height="13" />
+        <text x="41" y="205" font-size="12">0.167 ms</text>
+        <text x="0" y="222" font-size="12">500</text>
+        <rect class="bar bar-base" x="34" y="211" width="2.1" height="13" />
+        <text x="42.1" y="222" font-size="12">0.800 ms</text>
+        <text class="group" x="0" y="250" font-size="13">B, Position Calculator, all reads first</text>
+        <text x="0" y="267" font-size="12">10</text>
+        <rect class="bar bar-own" x="34" y="256" width="1" height="13" />
+        <text x="41" y="267" font-size="12">0.123 ms</text>
+        <text x="0" y="284" font-size="12">100</text>
+        <rect class="bar bar-own" x="34" y="273" width="3" height="13" />
+        <text x="43" y="284" font-size="12">1.17 ms</text>
+        <text x="0" y="301" font-size="12">500</text>
+        <rect class="bar bar-own" x="34" y="290" width="14.1" height="13" />
+        <text x="54.1" y="301" font-size="12">5.40 ms</text>
+        <text class="group" x="0" y="329" font-size="13">B, Tether</text>
+        <text x="0" y="346" font-size="12">10</text>
+        <rect class="bar" x="34" y="335" width="1.2" height="13" />
+        <text x="41.2" y="346" font-size="12">0.463 ms</text>
+        <text x="0" y="363" font-size="12">100</text>
+        <rect class="bar" x="34" y="352" width="11.8" height="13" />
+        <text x="51.8" y="363" font-size="12">4.53 ms</text>
+        <text x="0" y="380" font-size="12">500</text>
+        <rect class="bar" x="34" y="369" width="53.8" height="13" />
+        <text x="93.8" y="380" font-size="12">20.6 ms</text>
+        <text class="group" x="0" y="408" font-size="13">B, Floating UI, all reads first</text>
+        <text x="0" y="425" font-size="12">10</text>
+        <rect class="bar" x="34" y="414" width="1.9" height="13" />
+        <text x="41.9" y="425" font-size="12">0.737 ms</text>
+        <text x="0" y="442" font-size="12">100</text>
+        <rect class="bar" x="34" y="431" width="19" height="13" />
+        <text x="59" y="442" font-size="12">7.27 ms</text>
+        <text x="0" y="459" font-size="12">500</text>
+        <rect class="bar" x="34" y="448" width="93.7" height="13" />
+        <text x="133.7" y="459" font-size="12">35.9 ms</text>
+        <text class="group" x="0" y="487" font-size="13">B, Position Calculator, read and write per item</text>
+        <text x="0" y="504" font-size="12">10</text>
+        <rect class="bar bar-own" x="34" y="493" width="1" height="13" />
+        <text x="41" y="504" font-size="12">0.163 ms</text>
+        <text x="0" y="521" font-size="12">100</text>
+        <rect class="bar bar-own" x="34" y="510" width="8.3" height="13" />
+        <text x="48.3" y="521" font-size="12">3.17 ms</text>
+        <text x="0" y="538" font-size="12">500</text>
+        <rect class="bar bar-own" x="34" y="527" width="121.4" height="13" />
+        <text x="161.4" y="538" font-size="12">46.5 ms</text>
+        <text class="group" x="0" y="566" font-size="13">B, Floating UI, read and write per item</text>
+        <text x="0" y="583" font-size="12">10</text>
+        <rect class="bar" x="34" y="572" width="2.1" height="13" />
+        <text x="42.1" y="583" font-size="12">0.813 ms</text>
+        <text x="0" y="600" font-size="12">100</text>
+        <rect class="bar" x="34" y="589" width="25.1" height="13" />
+        <text x="65.1" y="600" font-size="12">9.63 ms</text>
+        <text x="0" y="617" font-size="12">500</text>
+        <rect class="bar" x="34" y="606" width="218.7" height="13" />
+        <text x="258.7" y="617" font-size="12">83.8 ms</text>
+        <text class="group" x="0" y="645" font-size="13">B, Popper</text>
+        <text x="0" y="662" font-size="12">10</text>
+        <rect class="bar" x="34" y="651" width="3.7" height="13" />
+        <text x="43.7" y="662" font-size="12">1.43 ms</text>
+        <text x="0" y="679" font-size="12">100</text>
+        <rect class="bar" x="34" y="668" width="41.9" height="13" />
+        <text x="81.9" y="679" font-size="12">16.0 ms</text>
+        <text x="0" y="696" font-size="12">500</text>
+        <rect class="bar" x="34" y="685" width="290" height="13" />
+        <text x="330" y="696" font-size="12">111.1 ms</text>
+    </svg>
+    <figcaption>
+        Median time of one round for 10, 100 and 500 elements, in milliseconds, on one linear scale. Variant A comes
+        first, then variant B. Inside a variant the groups are sorted by the time at 500 elements, the fastest first.
+        The bars for 10 elements are 1 to 4 px wide, so read the number.
+    </figcaption>
+</figure>
+<details>
+    <summary>All numbers of the time per round</summary>
+    <table>
+        <thead>
+            <tr>
+                <th>Variant and tool</th>
+                <th>1 element</th>
+                <th>10</th>
+                <th>100</th>
+                <th>500</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>A, Position Calculator</td>
+                <td>0.009</td>
+                <td>0.080</td>
+                <td>0.800</td>
+                <td>4.0</td>
+            </tr>
+            <tr>
+                <td>A, Floating UI</td>
+                <td>0.076</td>
+                <td>0.683</td>
+                <td>6.767</td>
+                <td>33.1</td>
+            </tr>
+            <tr>
+                <td>B, without any tool (moving the targets and one read)</td>
+                <td>0.004</td>
+                <td>0.020</td>
+                <td>0.167</td>
+                <td>0.8</td>
+            </tr>
+            <tr>
+                <td>B, Position Calculator, all reads first</td>
+                <td>0.017</td>
+                <td>0.123</td>
+                <td>1.167</td>
+                <td>5.4</td>
+            </tr>
+            <tr>
+                <td>B, Tether</td>
+                <td>0.057</td>
+                <td>0.463</td>
+                <td>4.533</td>
+                <td>20.6</td>
+            </tr>
+            <tr>
+                <td>B, Floating UI, all reads first</td>
+                <td>0.085</td>
+                <td>0.737</td>
+                <td>7.267</td>
+                <td>35.9</td>
+            </tr>
+            <tr>
+                <td>B, Position Calculator, read and write per item</td>
+                <td>0.016</td>
+                <td>0.163</td>
+                <td>3.167</td>
+                <td>46.5</td>
+            </tr>
+            <tr>
+                <td>B, Floating UI, read and write per item</td>
+                <td>0.084</td>
+                <td>0.813</td>
+                <td>9.633</td>
+                <td>83.8</td>
+            </tr>
+            <tr>
+                <td>B, Popper</td>
+                <td>0.146</td>
+                <td>1.433</td>
+                <td>16.033</td>
+                <td>111.1</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<p>
+    One frame at 60 fps is about 16.7 ms. In this scene, 100 elements take 1.2 ms with Position Calculator in variant B,
+    and 500 elements take 5.4 ms. Popper and Tether decide the order of reads and writes themselves.
+</p>
+
+<h3 id="order-of-reads-and-writes">The order of reads and writes</h3>
+<p>
+    A read of a position after a write forces the browser to lay out the page again. The rows "all reads first" read the
+    positions of all items and write afterwards. The rows "read and write per item" alternate. At 500 elements, the same
+    library took 5.4 ms in the first order and 46.5 ms in the second. This is a fact about how the calling code is
+    structured, not about the library. Calculate for all items first, then write the results.
+</p>
+
+<h3 id="overflow">A scene with overflow</h3>
+<p>
+    In a second scene, every item has to flip or shift because its target sits near the right or bottom edge of the
+    window. At 100 elements, Position Calculator took 1.2 ms in variant B (0.833 ms in variant A) and Floating UI 10.5
+    ms (10.1 ms in A). Popper took 21.6 ms and Tether 4.5 ms. With <code>flip: "none"</code> and
+    <code>stick: "none"</code>, Position Calculator left items 22 px outside the window, so in this scene flip and stick
+    are what keep them inside. Its time did not change compared with the scene without overflow.
+</p>
+
+<h3 id="size">Bundle size</h3>
+<p>
+    Each tool was bundled from one entry file with esbuild (ES module, minified). The entry decides the result. 1 kB is
+    1000 bytes, rounded to 0.1 kB. The exact byte counts are in <code>bench/reference/size.json</code>.
+</p>
+<p>
+    Position Calculator appears twice. The first row is the ES module <code>dist/position-calculator.js</code>, bundled
+    and minified in the same way as the other tools, so the rows are comparable. The second row is the file
+    <code>dist/position-calculator.iife.min.js</code> as the package ships it, for use in a script tag. It is larger
+    because it also has a header comment and the lines that set the global variable.
+</p>
+<figure class="chart-figure">
+    <svg class="chart" viewBox="0 0 400 320" role="img" aria-labelledby="chart-size-title chart-size-desc">
+        <title id="chart-size-title">Bundle size, gzip</title>
+        <desc id="chart-size-desc">
+            Bars in kilobytes, gzip, sorted from the smallest to the largest. Position Calculator 2.7 as ES module and
+            2.9 as shipped, Popper 4.1 as popper-lite, Floating UI 4.3 with computePosition only and 6.7 with
+            middleware, Tether 7.3, Popper 7.5 in full, Tippy 12.7. The table below the chart has the exact numbers.
+        </desc>
+        <text x="0" y="13" font-size="13">Position Calculator, ES module</text>
+        <rect class="bar bar-own" x="0" y="17" width="71.2" height="14" />
+        <text x="77.2" y="29" font-size="13">2.7 kB</text>
+        <text x="0" y="53" font-size="13">Position Calculator, iife.min.js as shipped</text>
+        <rect class="bar bar-own" x="0" y="57" width="74.6" height="14" />
+        <text x="80.6" y="69" font-size="13">2.9 kB</text>
+        <text x="0" y="93" font-size="13">Popper, popper-lite</text>
+        <rect class="bar" x="0" y="97" width="107.8" height="14" />
+        <text x="113.8" y="109" font-size="13">4.1 kB</text>
+        <text x="0" y="133" font-size="13">Floating UI, computePosition only</text>
+        <rect class="bar" x="0" y="137" width="110.7" height="14" />
+        <text x="116.7" y="149" font-size="13">4.3 kB</text>
+        <text x="0" y="173" font-size="13">Floating UI with middleware</text>
+        <rect class="bar" x="0" y="177" width="173.4" height="14" />
+        <text x="179.4" y="189" font-size="13">6.7 kB</text>
+        <text x="0" y="213" font-size="13">Tether</text>
+        <rect class="bar" x="0" y="217" width="188.9" height="14" />
+        <text x="194.9" y="229" font-size="13">7.3 kB</text>
+        <text x="0" y="253" font-size="13">Popper, full</text>
+        <rect class="bar" x="0" y="257" width="194.9" height="14" />
+        <text x="200.9" y="269" font-size="13">7.5 kB</text>
+        <text x="0" y="293" font-size="13">Tippy (its CSS not counted)</text>
+        <rect class="bar" x="0" y="297" width="330" height="14" />
+        <text x="336" y="309" font-size="13">12.7 kB</text>
+    </svg>
+    <figcaption>
+        Size of the minified bundle after gzip, in kilobytes, the smallest first. A shorter bar is smaller.
+    </figcaption>
+</figure>
+<details>
+    <summary>All numbers of the bundle size</summary>
+    <table>
+        <thead>
+            <tr>
+                <th>Entry</th>
+                <th>Minified</th>
+                <th>gzip</th>
+                <th>brotli</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Position Calculator, ES module</td>
+                <td>7.5 kB</td>
+                <td>2.7 kB</td>
+                <td>2.5 kB</td>
+            </tr>
+            <tr>
+                <td>Position Calculator, <code>position-calculator.iife.min.js</code> as shipped</td>
+                <td>7.7 kB</td>
+                <td>2.9 kB</td>
+                <td>2.6 kB</td>
+            </tr>
+            <tr>
+                <td>Popper, <code>popper-lite</code></td>
+                <td>10.9 kB</td>
+                <td>4.1 kB</td>
+                <td>3.7 kB</td>
+            </tr>
+            <tr>
+                <td>Floating UI, <code>computePosition</code> only</td>
+                <td>10.5 kB</td>
+                <td>4.3 kB</td>
+                <td>3.8 kB</td>
+            </tr>
+            <tr>
+                <td>
+                    Floating UI with <code>flip</code>, <code>shift</code>, <code>limitShift</code>,
+                    <code>offset</code> and
+                    <code>autoUpdate</code>
+                </td>
+                <td>16.6 kB</td>
+                <td>6.7 kB</td>
+                <td>6.0 kB</td>
+            </tr>
+            <tr>
+                <td>Tether</td>
+                <td>22.2 kB</td>
+                <td>7.3 kB</td>
+                <td>6.6 kB</td>
+            </tr>
+            <tr>
+                <td>Popper, full</td>
+                <td>20.1 kB</td>
+                <td>7.5 kB</td>
+                <td>6.7 kB</td>
+            </tr>
+            <tr>
+                <td>Tippy (its CSS not counted)</td>
+                <td>35.9 kB</td>
+                <td>12.7 kB</td>
+                <td>11.5 kB</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+
+<h3 id="limits">What the numbers do not say</h3>
+<ul>
+    <li>One browser (headless Chrome) and one machine. No Firefox, no Safari, no mobile.</li>
+    <li>
+        Two scenes with one target per item, no scroll above 0 and no scroll containers. Whether an item overflows
+        decides how much work <code>flip</code> and <code>shift</code> of Floating UI do.
+    </li>
+    <li>
+        The other tools do more. Floating UI checks clipping ancestors and offers <code>autoUpdate</code>. Popper and
+        Tether listen to scroll and resize and know scroll parents. Position Calculator has none of that: you call
+        <code>calculate()</code> again. A time comparison does not compare equal work. Floating UI without middleware
+        took 1.63 ms in variant A and 2.0 ms in variant B at 100 elements, so a large part of its gap to Position
+        Calculator comes from the middleware.
+    </li>
+    <li>
+        Popper and Tether write the styles themselves, so only variant B compares them. Tippy is a complete UI on top of
+        Popper and is only in the size table.
+    </li>
+    <li>No real application or game code. The call pattern of your code can change the numbers by a factor.</li>
+    <li>The sizes depend on the entry and the bundler. Other entries give other numbers.</li>
+    <li>The benchmark does not measure memory, start-up cost, touch devices or the quality of the placement.</li>
+</ul>
+
+<h2 id="try-it">Try it</h2>
+<p>
+    Open the <a href="{{root}}examples/tooltip.html">tooltip example</a> and compare it with the native code above. The
+    result of <code>calculate()</code> shows the numbers that CSS does not give you. The library was run in Chrome 157.
+    Support in other browsers is not part of this page.
+</p>
+<p>
+    To repeat the benchmark, build the library in the project root of a clone and run it. The commands are in
+    <code>bench/README.md</code>:
+</p>
+<pre><code>npm run build
+cd bench
+npm ci
+npm run bench -- 100</code></pre>
+
+<h2 id="next">Next</h2>
+<ul>
+    <li>
+        <a href="{{root}}reference/limits.html">Limits</a> lists what the library does not do, including right-to-left
+        placement.
+    </li>
+    <li>
+        <a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a> explains flip and stick,
+        which the benchmark switches on.
+    </li>
+</ul>
