@@ -1,0 +1,55 @@
+<h2 id="demo">Demo</h2>
+
+{{example:popup}}
+
+<h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        The popup is the <em>item</em>, the Add line button is the <em>target</em>, and the dashed box is the
+        <em>boundary</em>. The Remove line button only changes the content of the popup.
+    </li>
+    <li>
+        <code>itemAt: "bottom left"</code> and <code>targetAt: "top right"</code> put the popup above the button, with
+        its lower left corner at the upper right corner of the button.
+    </li>
+    <li>
+        <code>flip: "both"</code> tries the opposite placement when the first one overflows. The popup grows with every
+        line, and from the fourth line the room above the button is too small, so it goes below. Removing a line brings
+        it back above.
+    </li>
+    <li>
+        <code>stick: "all"</code> is the last resort. From the sixth line neither side fits completely, and the popup is
+        pulled back inside the box. The example allows at most eight lines.
+    </li>
+    <li>
+        Every added or removed line changes the size of the popup. The example calls <code>resize()</code> before
+        <code>calculate()</code> because a calculator keeps the size it has read.
+    </li>
+    <li>
+        The example applies <code>moveBy</code> as a <code>transform</code> and removes the transform before the next
+        calculation, because <code>calculate()</code> starts from where the popup is now.
+    </li>
+    <li>
+        A click on the popup or the Escape key closes it. The library does not handle that. It only calculates a
+        position.
+    </li>
+</ol>
+
+<h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=popup">playground</a>, set <code>stick</code> to
+        <code>"none"</code> and add eight lines: the popup leaves the box at the bottom.
+    </li>
+    <li>
+        Set <code>flip</code> to <code>"none"</code>: the popup stays above the button and leaves the box at the top
+        from the fourth line.
+    </li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+    <li><a href="{{root}}examples/dropdown.html">Dropdown</a></li>
+    <li><a href="{{root}}reference/methods.html">Methods</a></li>
+</ul>
