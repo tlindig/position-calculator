@@ -1,0 +1,50 @@
+<h2 id="demo">Demo</h2>
+
+{{example:scroll-container}}
+
+<h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        The note is the <em>item</em>, the Details button is the <em>target</em>, and the scrolling box is the
+        <em>boundary</em>. Both the button and the note are inside the scrolling content, so they move together when you
+        scroll. Only the box stays where it is.
+    </li>
+    <li>
+        The <code>boundary</code> is the box element. The library does not look for a scroll container, so you pass it.
+        The other choices are <code>"window"</code> and <code>"document"</code>, which measure the page viewport (see
+        <a href="{{root}}reference/limits.html">Limits</a> for frames), and <code>null</code> for no boundary. A target
+        can be an element, <code>"window"</code>, <code>"document"</code>, or a mouse or pointer event, as in the
+        <a href="{{root}}examples/pointer.html">pointer example</a>.
+    </li>
+    <li>
+        The calculation is not automatic. The example listens to the <code>scroll</code> event of the box and calls
+        <code>calculate()</code> again. The call reads the current positions, so scrolling needs no
+        <code>resize()</code>.
+    </li>
+    <li>
+        When the button is close to the top edge of the box, the note would leave the boundary at the top. With
+        <code>flip: "both"</code> it goes below the button. When you scroll back, the next calculation puts it above the
+        button again.
+    </li>
+    <li>
+        The example removes the <code>transform</code> of the note before every calculation, because
+        <code>calculate()</code> starts from where the note is now.
+    </li>
+    <li>The box has <code>tabindex="0"</code>, so keyboard users can scroll it with the arrow keys.</li>
+</ol>
+
+<h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=scroll-container">playground</a>, set <code>boundary</code> to
+        <code>null</code>: the note does not flip any more, and the top edge of the box cuts it off.
+    </li>
+    <li>Add <code>stick: "all"</code> to keep the note inside the box even when the button has scrolled out of it.</li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}examples/in-view.html">In view</a></li>
+    <li><a href="{{root}}reference/constructor.html">Constructor and options</a></li>
+    <li><a href="{{root}}reference/limits.html">Limits</a></li>
+</ul>

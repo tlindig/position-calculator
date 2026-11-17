@@ -97,6 +97,12 @@
       "summary": "A speech bubble that follows a moving object and stays visible at the edges of its field."
     },
     {
+      "path": "examples/scroll-container",
+      "section": "Examples",
+      "title": "Scroll container",
+      "summary": "A note that stays inside a scrolling box, with a scroll handler that calculates again."
+    },
+    {
       "path": "playground",
       "section": "Tools",
       "title": "Playground",
