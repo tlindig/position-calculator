@@ -1,7 +1,27 @@
 <h2 id="what-it-does">What it does</h2>
 <p>
+    Position Calculator gives you dynamic values in JavaScript for position, collision and collision avoidance, for
+    popups and the like. It is made for people who build their own styles and components. It hides the complexity and
+    keeps the flexibility: it does one thing, and it does that thing very well.
+</p>
+<p>
     You give <code>PositionCalculator</code> an <em>item</em>, usually a <em>target</em> and optionally a
     <em>boundary</em>. It measures them and returns how far the item has to move. It does not move anything itself.
+</p>
+
+<h2 id="speed">Speed</h2>
+<p>
+    The numbers are data, they come back synchronously, and the library writes nothing to the page in the normal path.
+    In the benchmark scene of this repository (Chrome 157, one machine, one target per item), one calculation for 100
+    elements takes 0.80 ms when it only calculates and writes nothing. When the targets move and the results are written
+    as a <code>transform</code>, it takes 1.17 ms if you calculate all items first and apply the results afterwards, and
+    3.17 ms if you calculate and apply one item after the other. At 500 elements the same two orders take 5.4 ms and
+    46.5 ms, so call <code>calculate()</code> for all items first.
+</p>
+<p>
+    These numbers say nothing about other browsers or other pages, and the other tools in the comparison do more, for
+    example updates for scroll parents. Scene, limits, the other tools and a way to repeat the run are on
+    <a href="{{root}}guides/alternatives.html">Alternatives and comparison</a>.
 </p>
 
 <h2 id="quick-start">Quick start</h2>
