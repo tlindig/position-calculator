@@ -91,6 +91,12 @@
       "summary": "A popup that grows with its content and changes its side when it no longer fits."
     },
     {
+      "path": "examples/bouncing-ball",
+      "section": "Examples",
+      "title": "Bouncing ball",
+      "summary": "A speech bubble that follows a moving object and stays visible at the edges of its field."
+    },
+    {
       "path": "playground",
       "section": "Tools",
       "title": "Playground",

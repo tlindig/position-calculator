@@ -1,0 +1,141 @@
+<div id="stage">
+    <div id="field" role="img" aria-label="A ball bounces in a box. Its speech bubble shows the number of bounces.">
+        <div id="ball"></div>
+        <div id="bubble">Bounces: 0</div>
+    </div>
+    <div class="bar">
+        <button id="play" type="button">Play</button>
+        <button id="step" type="button">Step</button>
+    </div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const BALL_SIZE = 20;
+    const TICK_MS = 1000 / 60;
+    const field = document.querySelector("#field");
+    const ball = document.querySelector("#ball");
+    const bubble = document.querySelector("#bubble");
+    const play = document.querySelector("#play");
+    const step = document.querySelector("#step");
+    const state = { x: 50, y: 84, vx: -5, vy: -3, bounces: 0 };
+
+    // the bubble is above the ball, centered. flip puts it below the ball at the top edge,
+    // stick keeps it inside the box where flip cannot help (centered at the left or right edge)
+    const calculator = new PositionCalculator({
+        item: bubble,
+        target: ball,
+        boundary: field,
+        itemAt: "bottom center",
+        targetAt: "top center",
+        targetOffset: { x: 0, y: -8, mirror: true },
+        flip: "both",
+        stick: "all",
+    });
+
+    function tick() {
+        state.x += state.vx;
+        state.y += state.vy;
+        const maxX = field.clientWidth - BALL_SIZE;
+        const maxY = field.clientHeight - BALL_SIZE;
+        if (state.x <= 0 || state.x >= maxX) {
+            state.x = state.x <= 0 ? 0 : maxX;
+            state.vx = -state.vx;
+            state.bounces++;
+        }
+        if (state.y <= 0 || state.y >= maxY) {
+            state.y = state.y <= 0 ? 0 : maxY;
+            state.vy = -state.vy;
+            state.bounces++;
+        }
+    }
+
+    function draw() {
+        ball.style.left = `${state.x}px`;
+        ball.style.top = `${state.y}px`;
+        bubble.textContent = `Bounces: ${state.bounces}`;
+        bubble.style.transform = ""; // calculate() starts from where the bubble is now
+        const { moveBy } = calculator.calculate();
+        bubble.style.transform = `translate(${moveBy.x}px, ${moveBy.y}px)`;
+    }
+
+    let frame = 0;
+    let last = 0;
+    let pending = 0;
+    function loop(now) {
+        pending += Math.min(now - last, 100);
+        last = now;
+        for (; pending >= TICK_MS; pending -= TICK_MS) {
+            tick();
+        }
+        draw();
+        frame = requestAnimationFrame(loop);
+    }
+
+    play.addEventListener("click", () => {
+        if (frame) {
+            cancelAnimationFrame(frame);
+            frame = 0;
+        } else {
+            last = performance.now();
+            frame = requestAnimationFrame(loop);
+        }
+        play.textContent = frame ? "Pause" : "Play";
+        step.disabled = Boolean(frame);
+    });
+    step.addEventListener("click", () => {
+        tick();
+        draw();
+    });
+
+    draw();
+</script>
+
+<style>
+    #stage {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        height: 284px; /* the frame is at least 300 high and has 8px space around the example */
+    }
+    #field {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        outline: 1px dashed gray;
+        outline-offset: -1px;
+    }
+    #ball {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #c0392b;
+    }
+    #bubble {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-sizing: border-box;
+        width: 96px;
+        height: 28px;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+        line-height: 28px;
+        text-align: center;
+        white-space: nowrap;
+    }
+    .bar {
+        display: flex;
+        gap: 8px;
+        padding-top: 8px;
+    }
+    .bar button {
+        min-width: 4.5rem;
+        height: 32px;
+    }
+</style>

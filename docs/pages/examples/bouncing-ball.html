@@ -1,0 +1,53 @@
+<h2 id="demo">Demo</h2>
+
+{{example:bouncing-ball}}
+
+<h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        The speech bubble is the <em>item</em>, the ball is the <em>target</em>, and the box is the <em>boundary</em>.
+        The ball moves, the bubble follows.
+    </li>
+    <li>
+        <code>itemAt: "bottom center"</code> and <code>targetAt: "top center"</code> put the bubble centered above the
+        ball. <code>targetOffset: { x: 0, y: -8, mirror: true }</code> leaves a gap of 8 px. With <code>mirror</code>,
+        the gap stays when the bubble flips below the ball.
+    </li>
+    <li>
+        <code>flip: "both"</code> handles the top edge: the bubble goes below the ball. At the left and right edge,
+        flipping does not help, because a centered bubble is centered after the flip as well.
+    </li>
+    <li>
+        <code>stick: "all"</code> handles that case. It pulls the bubble back inside the box, so it slides along the
+        wall while the ball touches the wall.
+    </li>
+    <li>
+        The loop calls <code>calculate()</code> after every move of the ball. It does not call <code>resize()</code>,
+        because the bubble keeps its size, and <code>calculate()</code> reads the current positions of the ball and the
+        box. The example removes the <code>transform</code> of the bubble first, because <code>calculate()</code>
+        starts from where the bubble is now.
+    </li>
+    <li>
+        The example starts paused, so a moving object does not start without a request. Play and Pause control the loop,
+        and Step moves the ball by one tick.
+    </li>
+</ol>
+
+<h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=bouncing-ball">playground</a>, set <code>stick</code> to
+        <code>"none"</code>: at the left and right edge the bubble leaves the box.
+    </li>
+    <li>
+        Set <code>itemAt</code> to <code>"bottom left"</code> and <code>targetAt</code> to <code>"top right"</code> for
+        a bubble above and to the right of the ball instead of centered above it.
+    </li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+    <li><a href="{{root}}examples/pointer.html">Speech bubble at the pointer</a></li>
+    <li><a href="{{root}}reference/constructor.html">Constructor and options</a></li>
+</ul>
