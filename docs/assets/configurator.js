@@ -254,18 +254,17 @@ function stickValue(edges) {
 }
 
 function placeDialog() {
-    // The dialog is placed by the library itself: right of the code block, level with the clicked value
-    const block = code.closest("pre");
-    const button = buttons[dialog.dataset.option];
+    // The dialog is placed by the library itself: under the clicked value, above it when there is no room below
     dialog.style.left = "0px";
     dialog.style.top = "0px";
     const { moveBy } = new PositionCalculator({
         item: dialog,
-        target: block,
+        target: buttons[dialog.dataset.option],
         boundary: "window",
         itemAt: "top left",
-        targetAt: "top right",
-        targetOffset: { x: 12, y: button.getBoundingClientRect().top - block.getBoundingClientRect().top },
+        targetAt: "bottom left",
+        targetOffset: { x: 0, y: 4, mirror: true },
+        flip: "both",
         stick: "all",
     }).calculate();
     dialog.style.left = moveBy.x + "px";

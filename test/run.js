@@ -592,6 +592,40 @@ async function runDocs(t, chrome) {
             assert.equal(outcome.percent["moveBy.y"], "0");
             assert.deepEqual(session.pageErrors, []);
         });
+
+        await t.test("configurator dialog opens next to the clicked value", async () => {
+            await session.goto(url("configurator.html"));
+            const outcome = await session.evaluate(`new Promise((resolve) => {
+                const configurator = document.querySelector(".configurator");
+                const dialog = configurator.querySelector(".cfg-dialog");
+                const poll = () => {
+                    if (configurator.dataset.state !== "ready") {
+                        setTimeout(poll, 50);
+                        return;
+                    }
+                    const rects = {};
+                    for (const option of ["itemAt", "flip"]) {
+                        const value = configurator.querySelector('.cfg-value[data-option="' + option + '"]');
+                        value.scrollIntoView({ block: "center" });
+                        value.click();
+                        const v = value.getBoundingClientRect();
+                        const d = dialog.getBoundingClientRect();
+                        rects[option] = {
+                            overlapsHorizontally: d.left < v.right && d.right > v.left,
+                            gap: d.top >= v.bottom ? d.top - v.bottom : v.top - d.bottom,
+                        };
+                    }
+                    resolve(rects);
+                };
+                poll();
+            })`);
+            for (const option of ["itemAt", "flip"]) {
+                // below the value, or above it when there is no room below, never covering it
+                assert.equal(outcome[option].overlapsHorizontally, true, option);
+                assert.ok(outcome[option].gap >= 0 && outcome[option].gap <= 8, option + " gap " + outcome[option].gap);
+            }
+            assert.deepEqual(session.pageErrors, []);
+        });
     } finally {
         session.close();
         await docsServer.close();
