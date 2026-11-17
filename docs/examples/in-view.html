@@ -1,0 +1,55 @@
+<div id="list" tabindex="0" aria-label="Boxes, scroll to see which are completely visible">
+    <div class="box">Box 1</div>
+    <div class="box">Box 2</div>
+    <div class="box">Box 3</div>
+    <div class="box">Box 4</div>
+    <div class="box">Box 5</div>
+    <div class="box">Box 6</div>
+    <div class="box">Box 7</div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const list = document.querySelector("#list");
+    const calculators = [...list.querySelectorAll(".box")].map((box) => ({
+        box,
+        // no target: the box stays where it is, and the result only reports the overflow
+        calculator: new PositionCalculator({ item: box, boundary: list }),
+    }));
+
+    function update() {
+        for (const { box, calculator } of calculators) {
+            const { overflow } = calculator.calculate().distance;
+            box.classList.toggle("inview", !overflow);
+        }
+    }
+
+    list.addEventListener("scroll", update);
+    update();
+</script>
+
+<style>
+    #list {
+        box-sizing: border-box;
+        height: 284px; /* the frame is at least 300 high and has 8px space around the example */
+        overflow: auto;
+        outline: 1px dashed gray;
+        outline-offset: -1px;
+    }
+    .box {
+        box-sizing: border-box;
+        height: 120px;
+        margin-bottom: 10px;
+        padding: 0 12px;
+        line-height: 120px;
+        background: #ddd;
+        color: #222;
+    }
+    .box.inview {
+        background: #ffe680;
+    }
+    .box.inview::after {
+        content: " is completely in view";
+    }
+</style>

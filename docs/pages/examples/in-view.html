@@ -1,9 +1,44 @@
-<p class="draft">Draft: the content of this page follows.</p>
-
 <h2 id="demo">Demo</h2>
 
+{{example:in-view}}
+
 <h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        Every box is an <em>item</em> with its own calculator, and the scrolling container is the <em>boundary</em>.
+        There is no <em>target</em>: the library only checks the box against the boundary.
+    </li>
+    <li>
+        <code>calculate()</code> returns <code>distance.overflow</code>, the list of edges the box overflows, or
+        <code>null</code> if it overflows none. A box without overflow is completely visible.
+    </li>
+    <li>
+        Without a target and without <code>stick</code>, nothing moves the box. The example ignores
+        <code>moveBy</code> and only reads <code>distance</code>.
+    </li>
+    <li>
+        The container's <code>scroll</code> event calls the update, because a calculation is not automatic: it runs when
+        you call <code>calculate()</code>. The call also reads the current positions, so scrolling needs no
+        <code>resize()</code>. The example calls it once at the start for the first state.
+    </li>
+    <li>The container has <code>tabindex="0"</code>, so keyboard users can scroll it with the arrow keys.</li>
+</ol>
 
 <h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=in-view">playground</a>, replace <code>!overflow</code> with
+        <code>!overflow?.includes("bottom")</code>: a box that is cut off only at the top then counts as in view.
+    </li>
+    <li>
+        Use the window as the boundary (<code>boundary: "window"</code>) to react to the scrolling of the whole page.
+        Then listen to the <code>scroll</code> event of <code>window</code>.
+    </li>
+</ul>
 
 <h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/result.html">Result object</a></li>
+    <li><a href="{{root}}reference/methods.html">Methods</a></li>
+    <li><a href="{{root}}examples/dropdown.html">Dropdown</a></li>
+</ul>

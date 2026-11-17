@@ -1,0 +1,138 @@
+<div id="stage">
+    <div class="bar">
+        <div class="dropdown">
+            <button class="toggle" id="btn-default" type="button" aria-expanded="false" aria-controls="menu-default">
+                Default
+            </button>
+            <ul class="menu" id="menu-default" hidden>
+                <li><button type="button">Action 1</button></li>
+                <li><button type="button">Action 2</button></li>
+                <li><button type="button">Action 3</button></li>
+                <li><button type="button">Action 4</button></li>
+            </ul>
+        </div>
+        <div class="dropdown">
+            <button class="toggle" id="btn-auto" type="button" aria-expanded="false" aria-controls="menu-auto">
+                Auto position
+            </button>
+            <ul class="menu" id="menu-auto" hidden>
+                <li><button type="button">Action 1</button></li>
+                <li><button type="button">Action 2</button></li>
+                <li><button type="button">Action 3</button></li>
+                <li><button type="button">Action 4</button></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const stage = document.querySelector("#stage");
+
+    function close(toggle) {
+        toggle.setAttribute("aria-expanded", "false");
+        document.getElementById(toggle.getAttribute("aria-controls")).hidden = true;
+    }
+
+    for (const toggle of stage.querySelectorAll(".toggle")) {
+        const menu = document.getElementById(toggle.getAttribute("aria-controls"));
+        // only the second dropdown asks the library, the first one keeps the plain CSS placement
+        const calculator =
+            toggle.id === "btn-auto"
+                ? new PositionCalculator({
+                      item: menu,
+                      target: toggle,
+                      boundary: stage,
+                      itemAt: "top left",
+                      targetAt: "bottom left",
+                      flip: "both",
+                      stick: "all",
+                  })
+                : null;
+
+        toggle.addEventListener("click", () => {
+            if (!menu.hidden) {
+                close(toggle);
+                return;
+            }
+            for (const other of stage.querySelectorAll(".toggle")) {
+                close(other);
+            }
+            menu.style.transform = "";
+            menu.hidden = false;
+            toggle.setAttribute("aria-expanded", "true");
+            if (calculator) {
+                calculator.resize(); // the menu has a size only while it is visible
+                const { moveBy } = calculator.calculate();
+                menu.style.transform = `translate(${moveBy.x}px, ${moveBy.y}px)`;
+            }
+        });
+        menu.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                close(toggle);
+                toggle.focus();
+            }
+        });
+    }
+</script>
+
+<style>
+    #stage {
+        position: relative;
+        box-sizing: border-box;
+        height: 284px; /* the frame is at least 300 high and has 8px space around the example */
+        overflow: hidden; /* a menu that leaves the box is cut off */
+        outline: 1px dashed gray;
+        outline-offset: -1px;
+    }
+    .bar {
+        position: absolute;
+        left: 12px;
+        top: 180px;
+        display: flex;
+        gap: 16px;
+    }
+    .dropdown {
+        position: relative;
+    }
+    .toggle {
+        display: block;
+        height: 32px;
+        padding: 0 12px;
+    }
+    .menu {
+        position: absolute;
+        left: 0;
+        top: 100%;
+        z-index: 1;
+        box-sizing: border-box;
+        width: 130px;
+        height: 120px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-radius: 4px;
+        background: white;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+    }
+    .menu[hidden] {
+        display: none;
+    }
+    .menu button {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        height: 30px;
+        padding: 0 12px;
+        border: 0;
+        background: transparent;
+        color: #222;
+        font: inherit;
+        text-align: left;
+    }
+    .menu button:hover,
+    .menu button:focus-visible {
+        background: #e8e8f0;
+    }
+</style>

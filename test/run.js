@@ -331,6 +331,9 @@ function measureScenario(session, widgetId, scenario) {
         for (const step of scenario.steps ?? []) {
             const element = frame.querySelector(step.on);
             const view = frame.defaultView;
+            if (step.scrollTop !== undefined) {
+                element.scrollTop = step.scrollTop;
+            }
             if (step.x === undefined) {
                 element.dispatchEvent(new view.Event(step.dispatch));
             } else {
@@ -341,9 +344,10 @@ function measureScenario(session, widgetId, scenario) {
             }
         }
         return (scenario.checks ?? []).map((check) => {
-            const box = frame.querySelector(check.element).getBoundingClientRect();
+            const element = frame.querySelector(check.element);
+            const box = element.getBoundingClientRect();
             const origin = check.relativeTo ? frame.querySelector(check.relativeTo).getBoundingClientRect() : { left: 0, top: 0 };
-            return { check, left: box.left - origin.left, top: box.top - origin.top };
+            return { check, left: box.left - origin.left, top: box.top - origin.top, hasClass: element.classList.contains(check.class) };
         });
     })()`);
 }
@@ -388,6 +392,14 @@ async function runDocs(t, chrome) {
                     }
                     for (const measured of await measureScenario(session, widget.example, scenario)) {
                         const { check } = measured;
+                        if (check.class !== undefined) {
+                            assert.equal(
+                                measured.hasClass,
+                                check.present,
+                                `${check.element} should ${check.present ? "have" : "not have"} the class ${check.class}`,
+                            );
+                            continue;
+                        }
                         const place = `${check.element}${check.relativeTo ? " relative to " + check.relativeTo : ""}`;
                         assert.ok(
                             Math.abs(measured.left - check.left) <= DOCS_TOLERANCE_PX &&

@@ -6,7 +6,8 @@
  *   docs/examples/<id>.html    example: markup, one <style> and one <script type="module">. The playground shows
  *                              them in three tabs (HTML, JavaScript, CSS). docs/examples/<id>.json holds its
  *                              metadata: title, order, hint (what to see and do), tweak (what to change in the
- *                              code), height, scenarios
+ *                              code), height, scenarios (steps: dispatch, on, x and y or scrollTop; checks: element
+ *                              with left and top, or with class and present)
  *   docs/layout.html           the layout of every page
  *   docs/assets/               copied as is
  *
@@ -176,11 +177,15 @@ for (const file of listFiles(path.join(docsDir, "examples"), ".html")) {
             ) {
                 fail(`${label}: "x" and "y" of a step are numbers and come together`);
             }
+            if (Object.hasOwn(step, "scrollTop") && !Number.isFinite(step.scrollTop)) {
+                fail(`${label}: "scrollTop" of a step is a number`);
+            }
         }
         for (const check of scenario.checks ?? []) {
-            const numbers = Number.isFinite(check.left) && Number.isFinite(check.top);
-            if (!isString(check.element) || !numbers) {
-                fail(`${label}: a check needs "element", "left" and "top"`);
+            const position = Number.isFinite(check.left) && Number.isFinite(check.top);
+            const state = isString(check.class) && typeof check.present === "boolean";
+            if (!isString(check.element) || !(position || state)) {
+                fail(`${label}: a check needs "element" and "left" and "top", or "class" and "present"`);
             }
         }
     }
