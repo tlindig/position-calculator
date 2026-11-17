@@ -33,6 +33,7 @@
     "test:consumer": "node scripts/check-consumer.js",
     "build": "node scripts/build.js",
     "docs:build": "node scripts/build-docs.js",
+    "docs:serve": "npm run build && npm run docs:build && node scripts/serve-docs.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

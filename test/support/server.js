@@ -10,10 +10,11 @@ const MIME = {
     ".css": "text/css",
 };
 
-// Serves `root` on a random local port. Browsers do not load ES modules from file: URLs.
-export function startServer(root) {
+// Serves `root` on a local port, a random one by default. Browsers do not load ES modules from file: URLs.
+export function startServer(root, port = 0) {
     const server = http.createServer((request, response) => {
-        const file = path.join(root, decodeURIComponent(new URL(request.url, "http://localhost").pathname));
+        const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
+        const file = path.join(root, pathname.endsWith("/") ? pathname + "index.html" : pathname);
         if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
             response.writeHead(404).end();
             return;
@@ -22,7 +23,7 @@ export function startServer(root) {
         fs.createReadStream(file).pipe(response);
     });
     return new Promise((resolve) =>
-        server.listen(0, "127.0.0.1", () =>
+        server.listen(port, "127.0.0.1", () =>
             resolve({
                 baseUrl: "http://127.0.0.1:" + server.address().port,
                 close: () =>
