@@ -23,6 +23,13 @@
   "engines": {
     "node": ">=24"
   },
+  "browserslist": [
+    "last 3 chrome major versions",
+    "last 3 edge major versions",
+    "last 3 firefox major versions",
+    "last 3 safari major versions",
+    "last 3 ios_saf major versions"
+  ],
   "scripts": {
     "test": "node test/run.js all --jquery=0",
     "test:dist": "node test/run.js all --impl=dist/position-calculator.js --jquery=0 && node test/run.js all --impl=dist/position-calculator.iife.min.js --format=iife --jquery=0 && node test/run.js dev --impl=dist/position-calculator.iife.min.js --format=iife --jquery=1",

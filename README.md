@@ -54,7 +54,7 @@ In the benchmark scene of this repository (Chrome 157, one machine, one target p
 
 ## Browser support
 
-The tests run in Chrome 157, Firefox 159 and WebKit 27.2 (state of 2026-11-11). Older versions are not tested.
+Position Calculator targets the current and the two previous major versions of Chrome, Edge, Firefox, Safari and Safari on iOS (see `browserslist` in `package.json`). The tests run in Chrome 158, Firefox 159 and WebKit 27.2 (state of 2026-11-18). Edge and Safari themselves are not tested, and older versions are not tested.
 
 ## Coming from 1.x
 
