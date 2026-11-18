@@ -8,7 +8,7 @@
  * A test without any assertion fails. Modules whose name starts with "[target]" hold behavior that is
  * decided but not implemented yet. run.js reports them as todo.
  */
-(function(root) {
+(function (root) {
     "use strict";
 
     var registry = [];
@@ -43,33 +43,36 @@
             return false;
         }
         var keys = Object.keys(a);
-        return keys.length === Object.keys(b).length && keys.every(function(key) {
-            return Object.prototype.hasOwnProperty.call(b, key) && equiv(a[key], b[key]);
-        });
+        return (
+            keys.length === Object.keys(b).length &&
+            keys.every(function (key) {
+                return Object.prototype.hasOwnProperty.call(b, key) && equiv(a[key], b[key]);
+            })
+        );
     }
 
-    root.module = function(name, env) {
+    root.module = function (name, env) {
         moduleName = name;
         moduleEnv = env || {};
     };
 
-    root.test = function(name, fn) {
+    root.test = function (name, fn) {
         registry.push({ module: moduleName, env: moduleEnv, name: name, fn: fn });
     };
 
-    root.ok = function(value, message) {
+    root.ok = function (value, message) {
         return record(!!value, message, value, true);
     };
 
-    root.strictEqual = function(actual, expected, message) {
+    root.strictEqual = function (actual, expected, message) {
         return record(actual === expected, message, actual, expected);
     };
 
-    root.deepEqual = function(actual, expected, message) {
+    root.deepEqual = function (actual, expected, message) {
         return record(equiv(actual, expected), message, actual, expected);
     };
 
-    root.throws = function(fn, message) {
+    root.throws = function (fn, message) {
         var thrown = false;
         try {
             fn();
@@ -80,22 +83,22 @@
     };
 
     root.Report = {
-        info: function(text) {
+        info: function (text) {
             out.info.push(String(text));
-        }
+        },
     };
 
     function guarded(fn, context, label) {
         try {
             fn.call(context);
         } catch (e) {
-            record(false, label + ": " + (e && e.stack || e));
+            record(false, label + ": " + ((e && e.stack) || e));
         }
     }
 
     function runAll() {
         var totals = { total: 0, passed: 0, failed: 0 };
-        registry.forEach(function(entry) {
+        registry.forEach(function (entry) {
             var context = {};
             running = { module: entry.module, name: entry.name, passed: 0, failed: 0, failures: [] };
             if (entry.env.setup) {
@@ -122,4 +125,4 @@
     }
 
     root.addEventListener("load", runAll);
-}(window));
+})(window);

@@ -1,0 +1,66 @@
+<h2 id="demo">Demo</h2>
+
+{{example:pointer}}
+
+<h2 id="how-it-works">How it works</h2>
+<ol>
+    <li>
+        The bubble is the <em>item</em>, the dashed box is the <em>boundary</em>, and the <em>target</em> is not an
+        element: it is the pointer event. The library takes the position of the pointer from it.
+    </li>
+    <li>
+        The example sets no <code>itemAt</code> and <code>targetAt</code>, so the top left corner of the bubble goes to
+        the pointer. <code>targetOffset</code> with <code>x: 16</code> and <code>y: 16</code> moves it away from the
+        pointer, so the bubble does not cover the pointer.
+    </li>
+    <li>
+        <code>flip: "both"</code> puts the bubble on the other side of the pointer when it would leave the box at the
+        right or bottom edge. <code>mirror: true</code> turns the offset around with it, so the gap stays 16 pixels.
+        <code>stick: "all"</code> pulls the bubble back inside when neither side fits completely.
+    </li>
+    <li>
+        <code>itemAt</code> in the result is the corner of the bubble that sits at the pointer after the flip. The
+        example writes it into <code>data-at</code>, and the CSS draws the tail at that corner.
+    </li>
+    <li>
+        The pointer event is an option of the constructor, so the example creates a new calculator for every event. This
+        also reads the current size of the bubble each time.
+    </li>
+</ol>
+
+<h2 id="touch">Touch screens</h2>
+<p>
+    The example listens to <code>pointerdown</code> and <code>pointermove</code> and passes the pointer event, as the
+    <a href="{{root}}reference/limits.html">limits</a> recommend. A <code>TouchEvent</code> would give
+    <code> NaN</code>. A tap shows the bubble at the finger, and a moving finger takes it along. The bubble disappears
+    when the finger is lifted.
+</p>
+<p>
+    There is one more thing for a finger: the browser scrolls the page on a swipe, and then it cancels the pointer after
+    the first move. The example has <code>touch-action: none</code> on the box, so the finger moves the bubble instead,
+    and a swipe that starts inside the box does not scroll the page. In Chrome with touch emulation, a tap in the
+    example at 100/60 and at 300/170 gave the same positions as the mouse (116/76 and 144/122), and a swipe moved the
+    bubble. With <code>touch-action: auto</code> the same swipe scrolled the page and cancelled the pointer after the
+    first move, and the bubble disappeared. Other browsers and real devices are not tested.
+</p>
+
+<h2 id="variations">Variations</h2>
+<ul>
+    <li>
+        In the <a href="{{root}}playground.html?example=pointer">playground</a>, remove <code>flip</code> and
+        <code>stick</code> and move to the right edge: the bubble leaves the box. <code>distance.overflow</code> in the
+        result says which edge.
+    </li>
+    <li>
+        Set <code>itemAt</code> to <code>"bottom center"</code> and <code>targetOffset</code> to
+        <code>{ x: 0, y: -24, mirror: true }</code> for a bubble that sits above the pointer and goes below it at the
+        top edge.
+    </li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/limits.html">Limits</a></li>
+    <li><a href="{{root}}reference/constructor.html">Constructor and options</a></li>
+    <li><a href="{{root}}examples/tooltip.html">Tooltip</a></li>
+</ul>

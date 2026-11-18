@@ -1,0 +1,18 @@
+{
+  "name": "position-calculator-bench",
+  "private": true,
+  "type": "module",
+  "description": "Repeatable benchmark of @tlindig/position-calculator against other positioning libraries. Not part of the published package.",
+  "scripts": {
+    "bench": "node bench.mjs",
+    "count": "node count.mjs",
+    "size": "node size.mjs",
+    "chart": "node chart.mjs"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "1.8.0",
+    "@popperjs/core": "2.11.8",
+    "tether": "3.0.2",
+    "tippy.js": "6.3.7"
+  }
+}

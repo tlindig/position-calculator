@@ -1,0 +1,118 @@
+{
+  "pages": [
+    {
+      "path": "index",
+      "title": "Position Calculator",
+      "navTitle": "Overview",
+      "summary": "Calculates where an element has to go relative to another element or a pointer event, and keeps it inside a boundary. You apply the result yourself."
+    },
+    {
+      "path": "guides/getting-started",
+      "section": "Guides",
+      "title": "Getting started",
+      "summary": "Install the package, import it and place your first element."
+    },
+    {
+      "path": "guides/placement-and-collisions",
+      "section": "Guides",
+      "title": "Placement and collisions",
+      "summary": "How reference points, offsets, flip and stick decide where the item ends up."
+    },
+    {
+      "path": "guides/how-it-works",
+      "section": "Guides",
+      "title": "How it works",
+      "summary": "The four steps of a calculation: place, check the boundary, flip, stick."
+    },
+    {
+      "path": "guides/alternatives",
+      "section": "Guides",
+      "title": "Alternatives and comparison",
+      "summary": "Native CSS anchor positioning, Floating UI, Popper and Tether compared with Position Calculator, with a benchmark you can repeat."
+    },
+    {
+      "path": "reference/constructor",
+      "section": "Reference",
+      "title": "Constructor and options",
+      "summary": "Create an instance and set its options."
+    },
+    {
+      "path": "reference/methods",
+      "section": "Reference",
+      "title": "Methods",
+      "summary": "Calculate a position, calculate one placement, or read the sizes again."
+    },
+    {
+      "path": "reference/result",
+      "section": "Reference",
+      "title": "Result object",
+      "summary": "The object that calculate() and calcVariant() return."
+    },
+    {
+      "path": "reference/types",
+      "section": "Reference",
+      "title": "TypeScript types",
+      "summary": "The type declarations of the package, as in types/index.d.ts."
+    },
+    {
+      "path": "reference/limits",
+      "section": "Reference",
+      "title": "Limits",
+      "summary": "What the library does not handle, and what to do instead."
+    },
+    {
+      "path": "examples/tooltip",
+      "section": "Examples",
+      "title": "Tooltip",
+      "summary": "A tooltip for the info button of a form field. It sits above the button and jumps below it when the top edge is in the way."
+    },
+    {
+      "path": "examples/pointer",
+      "section": "Examples",
+      "title": "Speech bubble at the pointer",
+      "summary": "A bubble that follows the pointer, jumps to the other side at an edge and points its tail at the pointer."
+    },
+    {
+      "path": "examples/in-view",
+      "section": "Examples",
+      "title": "In view",
+      "summary": "Find out which elements of a scrolling container are completely visible."
+    },
+    {
+      "path": "examples/dropdown",
+      "section": "Examples",
+      "title": "Dropdown",
+      "summary": "A small dropdown that opens upwards when there is no room below."
+    },
+    {
+      "path": "examples/popup",
+      "section": "Examples",
+      "title": "Popup",
+      "summary": "A popup that grows with its content and changes its side when it no longer fits."
+    },
+    {
+      "path": "examples/bouncing-ball",
+      "section": "Examples",
+      "title": "Bouncing ball",
+      "summary": "A speech bubble that follows a moving object and stays visible at the edges of its field."
+    },
+    {
+      "path": "examples/scroll-container",
+      "section": "Examples",
+      "title": "Scroll container",
+      "summary": "A note that stays inside a scrolling box, with a scroll handler that calculates again."
+    },
+    {
+      "path": "playground",
+      "section": "Tools",
+      "title": "Playground",
+      "summary": "Edit the code of an example and see the result."
+    },
+    {
+      "path": "configurator",
+      "section": "Tools",
+      "title": "Configurator",
+      "summary": "Click together the options, drag the target and copy the code."
+    }
+  ]
+}

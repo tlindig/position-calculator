@@ -1,0 +1,22 @@
+{
+  "title": "Tooltip",
+  "order": 1,
+  "hint": "Hover or tab to the i next to Username: it is close to the top edge, so the tooltip appears below. The i next to Password has room above, so the tooltip appears above. The Calculated values show which placement was used.",
+  "tweak": "In the JavaScript tab, set flip to \"none\" and the first tooltip leaves the box.",
+  "height": 150,
+  "scenarios": [
+    {
+      "name": "below the button when the top edge is in the way",
+      "steps": [{ "dispatch": "mouseenter", "on": "#info-name" }],
+      "checks": [{ "element": "#tip", "relativeTo": "#info-name", "left": -152, "top": 36 }]
+    },
+    {
+      "name": "above the button when there is room",
+      "steps": [
+        { "dispatch": "mouseleave", "on": "#info-name" },
+        { "dispatch": "mouseenter", "on": "#info-password" }
+      ],
+      "checks": [{ "element": "#tip", "relativeTo": "#info-password", "left": -152, "top": -40 }]
+    }
+  ]
+}

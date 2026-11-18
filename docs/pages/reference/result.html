@@ -1,0 +1,101 @@
+<p>
+    The result object is what <a href="{{root}}reference/methods.html#calculate"><code>calculate()</code></a> and
+    <a href="{{root}}reference/methods.html#calcvariant"><code>calcVariant()</code></a> return. It holds how far to move
+    the item, the distance to the boundary, and the reference points that were used.
+</p>
+
+<h2 id="syntax">Syntax</h2>
+<pre><code>{
+    moveBy: { y: number, x: number },
+    distance: { top: number, left: number, bottom: number, right: number, overflow: string[] | null } | null,
+    itemAt: string | null,
+    targetAt: string | null,
+}</code></pre>
+
+<h2 id="properties">Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>moveBy</code></td>
+            <td>
+                Pixels the item has to move from its current position, as <code>y</code> and <code>x</code>. It is
+                <code>{ y: 0, x: 0 }</code> when there is no target.
+            </td>
+        </tr>
+        <tr>
+            <td><code>distance</code></td>
+            <td>
+                Space between the item and the boundary, or <code>null</code> without a boundary. A positive
+                <code>top</code> or <code>left</code> means the item starts beyond that edge. A negative
+                <code>bottom</code> or <code>right</code> means the item extends beyond that edge.
+            </td>
+        </tr>
+        <tr>
+            <td><code>distance.overflow</code></td>
+            <td>
+                Array of the edges the item overflows, for example <code>["top", "left"]</code>, or <code>null</code>
+                if no edge overflows. It is never an empty array.
+            </td>
+        </tr>
+        <tr>
+            <td><code>itemAt</code></td>
+            <td>
+                Reference point used on the item, in the form <code>"vertical horizontal"</code>, for example
+                <code>"bottom center"</code>. <code>null</code> without a target.
+            </td>
+        </tr>
+        <tr>
+            <td><code>targetAt</code></td>
+            <td>Reference point used on the target, in the same form. <code>null</code> without a target.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="example">Example</h2>
+<pre><code>const tooltip = document.querySelector("#tooltip");
+const calculator = new PositionCalculator({
+    item: tooltip,
+    target: "#button",
+    boundary: "window",
+    itemAt: "bottom center",
+    targetAt: "top center",
+    flip: "both",
+});
+
+const result = calculator.calculate();
+const style = getComputedStyle(tooltip);
+tooltip.style.left = parseFloat(style.left) + result.moveBy.x + "px";
+tooltip.style.top = parseFloat(style.top) + result.moveBy.y + "px";
+
+if (result.distance?.overflow) {
+    console.log("still outside the window at:", result.distance.overflow);
+}</code></pre>
+
+<h2 id="notes">Notes</h2>
+<ul>
+    <li>
+        <code>moveBy</code> is relative to the current position. Read the position again before you add it, as the
+        example does, or the item moves further on each call.
+    </li>
+    <li>
+        <code>itemAt</code> and <code>targetAt</code> show the placement after a flip. <code>distance</code> shows the
+        position after a stick. <code>calcVariant()</code> applies neither.
+    </li>
+    <li>
+        A vertical or horizontal half that is missing or not a keyword falls back to <code>"top"</code> or
+        <code>"left"</code>. For example, <code>itemAt: "bottom"</code> gives <code>"bottom left"</code>.
+    </li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/constructor.html">Constructor</a></li>
+    <li><a href="{{root}}reference/methods.html">Methods</a></li>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+</ul>

@@ -1,46 +1,53 @@
 #!/usr/bin/env node
 /*
- * Builds dist/ from src/: a copy with banner and a minified copy with source map.
- * It does not bundle, so the UMD wrapper of src/position-calculator.js stays the entry point.
+ * Builds dist/ from src/:
+ *   position-calculator.js            ESM, a copy of the source with banner
+ *   position-calculator.iife.min.js   IIFE bundle of src/iife.js (global and jQuery alias), minified,
+ *                                     no source map (it was 44 KB for a 7.8 KB bundle)
  *
- *   node scripts/build.js [OUT_DIR]     default: dist
+ *   node scripts/build.js [OUT_DIR]     default: dist (emptied before the build; a given OUT_DIR is not)
  */
-"use strict";
+import fs from "node:fs";
+import path from "node:path";
+import esbuild from "esbuild";
 
-const fs = require("node:fs");
-const path = require("node:path");
-const esbuild = require("esbuild");
-const pkg = require("../package.json");
-
-const root = path.join(__dirname, "..");
+const root = path.join(import.meta.dirname, "..");
+const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const entry = path.join(root, "src", "position-calculator.js");
-const outDir = path.resolve(process.argv[2] || path.join(root, "dist"));
+const iifeEntry = path.join(root, "src", "iife.js");
+const defaultOutDir = path.join(root, "dist");
+const outDir = path.resolve(process.argv[2] || defaultOutDir);
 
 const banner = [
     "/*!",
-    " * jQuery.PositionCalculator",
+    " * PositionCalculator",
     ` * ${pkg.homepage}`,
     " *",
     ` * v${pkg.version}`,
     " *",
     ` * License: ${pkg.license}`,
     ` * Author: ${pkg.author}`,
-    " */"
+    " */",
 ].join("\n");
 
+// Only the default dist is cleaned, so a stale file is never packed. A given OUT_DIR is left alone.
+if (outDir === defaultOutDir) {
+    fs.rmSync(outDir, { recursive: true, force: true });
+}
 fs.mkdirSync(outDir, { recursive: true });
 
 const source = fs.readFileSync(entry, "utf8").replace(/\r\n/g, "\n");
 fs.writeFileSync(path.join(outDir, "position-calculator.js"), banner + "\n" + source);
 
 esbuild.buildSync({
-    entryPoints: [entry],
-    outfile: path.join(outDir, "position-calculator.min.js"),
+    entryPoints: [iifeEntry],
+    outfile: path.join(outDir, "position-calculator.iife.min.js"),
+    bundle: true,
+    format: "iife",
     minify: true,
-    sourcemap: true,
-    target: "es5",
+    target: "es2020",
     legalComments: "none",
-    banner: { js: banner }
+    banner: { js: banner },
 });
 
 console.log("built into " + outDir);

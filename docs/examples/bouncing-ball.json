@@ -1,0 +1,56 @@
+{
+  "title": "Bouncing ball",
+  "order": 6,
+  "hint": "Press Play. A speech bubble with the number of bounces follows the ball. At the top edge the bubble jumps below the ball, at the left and right edge it slides along the wall. Press Pause and use Step to move the ball one tick at a time.",
+  "tweak": "In the JavaScript tab, set stick to \"none\": at the left and right edge the bubble leaves the box.",
+  "height": 300,
+  "scenarios": [
+    {
+      "name": "the bubble is centered above the ball",
+      "steps": [],
+      "checks": [{ "element": "#bubble", "relativeTo": "#ball", "left": -38, "top": -36 }]
+    },
+    {
+      "name": "the bubble slides along the wall when the ball is at the left edge",
+      "steps": [
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" }
+      ],
+      "checks": [{ "element": "#bubble", "relativeTo": "#ball", "left": 0, "top": -36 }]
+    },
+    {
+      "name": "the bubble is below the ball when the ball is at the top edge",
+      "steps": [
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" },
+        { "dispatch": "click", "on": "#step" }
+      ],
+      "checks": [{ "element": "#bubble", "relativeTo": "#ball", "left": -38, "top": 28 }]
+    }
+  ]
+}

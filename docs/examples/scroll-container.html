@@ -1,0 +1,72 @@
+<div id="box" tabindex="0" role="region" aria-label="Scrolling area">
+    <div id="content">
+        <button id="anchor" type="button">Details</button>
+        <div id="note" role="status">The note stays inside the box</div>
+    </div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const box = document.querySelector("#box");
+    const note = document.querySelector("#note");
+
+    // the scrolling box is the boundary: the library does not look for a scroll container, you pass it
+    const calculator = new PositionCalculator({
+        item: note,
+        target: document.querySelector("#anchor"),
+        boundary: box,
+        itemAt: "bottom left",
+        targetAt: "top right",
+        flip: "both",
+    });
+
+    function update() {
+        note.style.transform = ""; // calculate() starts from where the note is now
+        const { moveBy } = calculator.calculate();
+        note.style.transform = `translate(${moveBy.x}px, ${moveBy.y}px)`;
+    }
+
+    // the calculation is not automatic: call it again when the box scrolls
+    box.addEventListener("scroll", update, { passive: true });
+    update();
+</script>
+
+<style>
+    #box {
+        position: relative;
+        box-sizing: border-box;
+        height: 284px; /* the frame is at least 300 high and has 8px space around the example */
+        overflow: auto;
+        outline: 1px dashed gray;
+        outline-offset: -1px;
+    }
+    #content {
+        position: relative;
+        height: 700px;
+        background: repeating-linear-gradient(to bottom, transparent 0 39px, rgb(128 128 128 / 0.25) 39px 40px);
+    }
+    #anchor {
+        position: absolute;
+        left: 12px;
+        top: 200px;
+        box-sizing: border-box;
+        width: 90px;
+        height: 28px;
+        padding: 0;
+    }
+    #note {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-sizing: border-box;
+        width: 150px;
+        height: 60px;
+        padding: 10px;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+        line-height: 20px;
+    }
+</style>

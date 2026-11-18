@@ -1,0 +1,54 @@
+{
+  "esbuild": "0.28.2",
+  "date": "2026-11-15T21:40:08.906Z",
+  "rows": [
+    {
+      "name": "fui-min",
+      "min": 10495,
+      "gzip": 4260,
+      "brotli": 3822
+    },
+    {
+      "name": "fui-typical",
+      "min": 16558,
+      "gzip": 6672,
+      "brotli": 6001
+    },
+    {
+      "name": "pc",
+      "min": 7458,
+      "gzip": 2740,
+      "brotli": 2474
+    },
+    {
+      "name": "popper-full",
+      "min": 20063,
+      "gzip": 7499,
+      "brotli": 6723
+    },
+    {
+      "name": "popper-lite",
+      "min": 10862,
+      "gzip": 4146,
+      "brotli": 3744
+    },
+    {
+      "name": "tether",
+      "min": 22191,
+      "gzip": 7269,
+      "brotli": 6580
+    },
+    {
+      "name": "tippy",
+      "min": 35875,
+      "gzip": 12696,
+      "brotli": 11476
+    },
+    {
+      "name": "pc-iife-as-shipped",
+      "min": 7695,
+      "gzip": 2869,
+      "brotli": 2591
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+<div id="stage">
+    <button class="control" id="add" type="button" aria-controls="popup">Add line</button>
+    <button class="control" id="remove" type="button" aria-controls="popup">Remove line</button>
+    <div id="popup" role="dialog" aria-label="Popup" hidden>
+        <div class="line"><b>Click me to close</b></div>
+        <div id="log"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const MAX_LINES = 8;
+    const stage = document.querySelector("#stage");
+    const popup = document.querySelector("#popup");
+    const log = document.querySelector("#log");
+
+    const calculator = new PositionCalculator({
+        item: popup,
+        target: document.querySelector("#add"),
+        boundary: stage,
+        itemAt: "bottom left",
+        targetAt: "top right",
+        flip: "both",
+        stick: "all",
+    });
+
+    function place() {
+        popup.style.transform = ""; // calculate() starts from where the popup is now
+        popup.hidden = false;
+        calculator.resize(); // the popup has a new size
+        const { moveBy } = calculator.calculate();
+        popup.style.transform = `translate(${moveBy.x}px, ${moveBy.y}px)`;
+    }
+
+    document.querySelector("#add").addEventListener("click", () => {
+        if (log.children.length < MAX_LINES) {
+            const line = document.createElement("div");
+            line.className = "line";
+            line.textContent = `Line ${log.children.length + 1}`;
+            log.append(line);
+        }
+        place();
+    });
+
+    document.querySelector("#remove").addEventListener("click", () => {
+        log.lastElementChild?.remove();
+        if (!popup.hidden) {
+            if (log.children.length) {
+                place();
+            } else {
+                popup.hidden = true;
+            }
+        }
+    });
+
+    popup.addEventListener("click", () => {
+        popup.hidden = true;
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            popup.hidden = true;
+        }
+    });
+</script>
+
+<style>
+    #stage {
+        position: relative;
+        box-sizing: border-box;
+        height: 284px; /* the frame is at least 300 high and has 8px space around the example */
+        overflow: hidden; /* a popup that leaves the box is cut off */
+        outline: 1px dashed gray;
+        outline-offset: -1px;
+    }
+    .control {
+        position: absolute;
+        left: 8px;
+        box-sizing: border-box;
+        width: 110px;
+        height: 28px;
+        padding: 0 8px;
+    }
+    #add {
+        top: 110px;
+    }
+    #remove {
+        top: 150px;
+    }
+    #popup {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-sizing: border-box;
+        width: 160px;
+        padding: 10px;
+        border-radius: 4px;
+        background: rgb(0 0 0 / 0.8);
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    #popup[hidden] {
+        display: none;
+    }
+    .line {
+        height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+    }
+</style>

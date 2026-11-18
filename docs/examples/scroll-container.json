@@ -1,0 +1,27 @@
+{
+  "title": "Scroll container",
+  "order": 7,
+  "hint": "Scroll the dashed box. The note belongs to the Details button and sits above it. When the button comes close to the top edge of the box, the note jumps below the button, and when you scroll back it returns above. The Calculated values follow every scroll.",
+  "tweak": "In the JavaScript tab, set boundary to null: the note does not know the box any more and is cut off at its top edge.",
+  "height": 300,
+  "scenarios": [
+    {
+      "name": "the note is above the button when there is room",
+      "steps": [],
+      "checks": [{ "element": "#note", "relativeTo": "#anchor", "left": 90, "top": -60 }]
+    },
+    {
+      "name": "the note is below the button after scrolling brings the button near the top edge",
+      "steps": [{ "dispatch": "scroll", "on": "#box", "scrollTop": 150 }],
+      "checks": [{ "element": "#note", "relativeTo": "#anchor", "left": 90, "top": 28 }]
+    },
+    {
+      "name": "the note is above the button again after scrolling back",
+      "steps": [
+        { "dispatch": "scroll", "on": "#box", "scrollTop": 150 },
+        { "dispatch": "scroll", "on": "#box", "scrollTop": 0 }
+      ],
+      "checks": [{ "element": "#note", "relativeTo": "#anchor", "left": 90, "top": -60 }]
+    }
+  ]
+}
