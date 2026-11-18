@@ -8,6 +8,7 @@ const MIME = {
     ".map": "application/json",
     ".json": "application/json",
     ".css": "text/css",
+    ".svg": "image/svg+xml",
 };
 
 // Serves `root` on a local port, a random one by default. Browsers do not load ES modules from file: URLs.
