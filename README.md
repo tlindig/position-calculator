@@ -42,7 +42,7 @@ Without a bundler, load the IIFE build from `node_modules/@tlindig/position-calc
 
 ## Documentation
 
-The documentation has a getting started guide, the reference, examples with a try-it area, a playground and a configurator: <http://tlindig.github.io/position-calculator/>
+The documentation has a getting started guide, the reference, examples with a try-it area, a playground and a configurator: <https://tlindig.github.io/position-calculator/>
 
 The sources of the pages are in the folder `docs/`. `npm run docs:build` writes them to `_site/`, and `npm run docs:serve` serves that folder on your machine.
 
@@ -50,7 +50,7 @@ The sources of the pages are in the folder `docs/`. `npm run docs:build` writes 
 
 Native CSS anchor positioning needs no JavaScript, but you get no position as a number. Floating UI, Popper and Tether do more than this library, for example updates on scroll and resize, and Popper and Tether apply the styles themselves. Position Calculator only calculates, and the result is synchronous.
 
-In the benchmark scene of this repository (Chrome 157, one machine, one target per item), 100 elements take 0.80 ms to calculate. That number says nothing about other browsers or pages. Scene, limits, the other tools and the sizes of the bundles are on the page [Alternatives and comparison](http://tlindig.github.io/position-calculator/guides/alternatives.html). The folder `bench/` holds the benchmark, and [bench/README.md](bench/README.md) tells you how to repeat it.
+In the benchmark scene of this repository (Chrome 157, one machine, one target per item), 100 elements take 0.80 ms to calculate. That number says nothing about other browsers or pages. Scene, limits, the other tools and the sizes of the bundles are on the page [Alternatives and comparison](https://tlindig.github.io/position-calculator/guides/alternatives.html). The folder `bench/` holds the benchmark, and [bench/README.md](bench/README.md) tells you how to repeat it.
 
 ## Browser support
 
@@ -65,7 +65,7 @@ Version 1 was a jQuery plugin. Version 2 is a standalone class and needs no jQue
 - If `window.jQuery` exists when the IIFE build loads, `jQuery.PositionCalculator` still works.
 - There is no AMD and no CommonJS build. The package is an ES module, and `require()` loads it in Node.js 24 or later.
 
-The full list is in the [CHANGELOG](CHANGELOG.md) and in the section "Coming from 1.x" of the [getting started guide](http://tlindig.github.io/position-calculator/guides/getting-started.html#coming-from-1x).
+The full list is in the [CHANGELOG](CHANGELOG.md) and in the section "Coming from 1.x" of the [getting started guide](https://tlindig.github.io/position-calculator/guides/getting-started.html#coming-from-1x).
 
 ## Bugs and feature requests
 
