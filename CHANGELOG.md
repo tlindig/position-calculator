@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-18
+
+Version 2 is a rewrite without jQuery. The options, the methods and the result object follow 1.x. The differences that can affect your code are marked **Breaking**.
+
+### Added
+
+- TypeScript declarations (`types/index.d.ts`). `target` takes a `MouseEvent`. `itemAt`, `targetAt` and `stick` accept only their keywords. `PositionCalculator.defaults` and the `options` of an instance are `Required`. An `Offset` without `mirror` means `mirror: false`.
+- ES module build `dist/position-calculator.js` (ES2020) and minified IIFE build `dist/position-calculator.iife.min.js`, also available as `@tlindig/position-calculator/iife`.
+- Documentation with guides, reference, examples, a playground and a comparison with other tools (`docs/`), and the benchmark in `bench/`.
+
+### Changed
+
+- **Breaking:** The package is `@tlindig/position-calculator` (1.x: `position-calculator`). The class and the global keep the name `PositionCalculator`.
+- **Breaking:** jQuery is not needed. A jQuery object or a `NodeList` as `item` or `target` uses its first element. If `window.jQuery` exists when the IIFE build loads, it sets `jQuery.PositionCalculator`.
+- **Breaking:** `require()` returns `{ PositionCalculator }`. In 1.x it returned a factory function that took jQuery.
+- **Breaking:** The package is an ES module and needs Node.js 24 or later (`engines`). There is no AMD and no CommonJS build. The browser file is `position-calculator.iife.min.js` (1.x: `position-calculator.min.js`) and has no source map.
+- Importing the package does not touch `window`, so it works in Node and on a server. The default `boundary` is read when it is first used.
+
+### Removed
+
+- `bower.json` and `position-calculator.jquery.json`.
+
+### Fixed
+
+- An `itemAt` or `targetAt` half that is not exactly a keyword falls back to `top` or `left`. In 1.1.3 `moveBy` was `NaN`.
+- An item or target inside an open shadow tree gets its real position. In 1.1.3 `moveBy` was `{ y: 0, x: 0 }`.
+
 ## [1.1.3] - 2026-11-02
 
 ### Fixed
@@ -54,7 +81,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Initial commit.
 
-[Unreleased]: https://github.com/tlindig/position-calculator/compare/1.1.3...HEAD
+[Unreleased]: https://github.com/tlindig/position-calculator/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/tlindig/position-calculator/compare/1.1.3...2.0.0
 [1.1.3]: https://github.com/tlindig/position-calculator/compare/1.1.2...1.1.3
 [1.1.2]: https://github.com/tlindig/position-calculator/compare/1.1.1...1.1.2
 [1.1.1]: https://github.com/tlindig/position-calculator/compare/1.1.0...1.1.1

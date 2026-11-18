@@ -58,7 +58,14 @@ Position Calculator targets the current and the two previous major versions of C
 
 ## Coming from 1.x
 
-Version 1 was a jQuery plugin. Version 2 is a standalone class and needs no jQuery. The list of differences is in the section "Coming from 1.x" of the [getting started guide](http://tlindig.github.io/position-calculator/guides/getting-started.html#coming-from-1x).
+Version 1 was a jQuery plugin. Version 2 is a standalone class and needs no jQuery. The main differences:
+
+- The package is `@tlindig/position-calculator` (1.x: `position-calculator`). The browser build is `position-calculator.iife.min.js` (1.x: `position-calculator.min.js`) and has no source map.
+- `require()` returns `{ PositionCalculator }`, not a factory function: `const { PositionCalculator } = require("@tlindig/position-calculator");`
+- If `window.jQuery` exists when the IIFE build loads, `jQuery.PositionCalculator` still works.
+- There is no AMD and no CommonJS build. The package is an ES module, and `require()` loads it in Node.js 24 or later.
+
+The full list is in the [CHANGELOG](CHANGELOG.md) and in the section "Coming from 1.x" of the [getting started guide](http://tlindig.github.io/position-calculator/guides/getting-started.html#coming-from-1x).
 
 ## Bugs and feature requests
 
