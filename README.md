@@ -38,7 +38,7 @@ tooltip.style.top = parseFloat(style.top) + moveBy.y + "px";
 
 The item has to be positioned, for example with `position: absolute`, so that you can apply `moveBy` to its `left` and `top`. You can also apply it as a `transform`, a tween or a canvas drawing.
 
-Without a bundler, load the IIFE build from `node_modules/@tlindig/position-calculator/dist/` with a script tag. The file is `position-calculator.iife.min.js`. It defines the global `PositionCalculator`.
+Without a bundler, load the IIFE build from `node_modules/@tlindig/position-calculator/dist/` with a script tag. The file is `position-calculator.iife.min.js`. It defines the global `PositionCalculator`. The same file is served by jsDelivr: `<script src="https://cdn.jsdelivr.net/npm/@tlindig/position-calculator@2/dist/position-calculator.iife.min.js"></script>`.
 
 ## Documentation
 
