@@ -1,0 +1,128 @@
+<p>
+    The constructor creates an instance that positions an item against a target. It reads the sizes of the elements
+    once, so call <a href="{{root}}reference/methods.html#resize"><code>resize()</code></a> when they change.
+</p>
+
+<h2 id="syntax">Syntax</h2>
+<pre><code>new PositionCalculator(options)</code></pre>
+<p>The call also works without <code>new</code>. It returns an instance in both cases.</p>
+
+<h2 id="parameters">Parameters</h2>
+<p><code>options</code> is an object. Every key is optional, but <code>item</code> is needed to position anything.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Accepts</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>item</code></td>
+            <td>element, selector string, or array-like collection (first element is used)</td>
+            <td><code>null</code></td>
+        </tr>
+        <tr>
+            <td><code>target</code></td>
+            <td>
+                element, selector string, <code>"window"</code>, <code>"document"</code>, or a mouse or pointer event
+            </td>
+            <td><code>null</code>, no target</td>
+        </tr>
+        <tr>
+            <td><code>boundary</code></td>
+            <td>element, selector string, <code>"window"</code>, <code>"document"</code>, or <code>null</code></td>
+            <td>the window. <code>null</code> means no boundary</td>
+        </tr>
+        <tr>
+            <td><code>itemAt</code></td>
+            <td>reference point string, for example <code>"bottom center"</code></td>
+            <td><code>"top left"</code></td>
+        </tr>
+        <tr>
+            <td><code>targetAt</code></td>
+            <td>reference point string</td>
+            <td><code>"top left"</code></td>
+        </tr>
+        <tr>
+            <td><code>itemOffset</code></td>
+            <td><code>{ y, x, mirror }</code>, pixels or percentage strings</td>
+            <td><code>{ y: 0, x: 0, mirror: true }</code></td>
+        </tr>
+        <tr>
+            <td><code>targetOffset</code></td>
+            <td><code>{ y, x, mirror }</code>, pixels or percentage strings</td>
+            <td><code>{ y: 0, x: 0, mirror: true }</code></td>
+        </tr>
+        <tr>
+            <td><code>flip</code></td>
+            <td>
+                <code>"none"</code>, <code>"item"</code>, <code>"target"</code>, <code>"both"</code>, or a boolean
+                (<code>true</code> means <code>"both"</code>)
+            </td>
+            <td><code>"none"</code></td>
+        </tr>
+        <tr>
+            <td><code>stick</code></td>
+            <td><code>"none"</code>, <code>"all"</code>, a boolean, or one to four edges separated by spaces</td>
+            <td><code>"none"</code></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    The reference points, offsets, flip and stick are explained in the
+    <a href="{{root}}guides/placement-and-collisions.html">placement and collisions guide</a>. Options you leave out
+    keep their defaults. The instance keeps the merged options in its <code>options</code> property.
+</p>
+
+<h2 id="return-value">Return value</h2>
+<p>
+    A <a href="{{root}}reference/methods.html">PositionCalculator instance</a>. Its methods are described on the methods
+    page.
+</p>
+
+<h2 id="exceptions">Exceptions</h2>
+<p>
+    A missing item does not throw. The instance is created, and <code>calculate()</code> returns <code>null</code>. This
+    happens for a selector that matches nothing, and for <code>item: null</code>.
+</p>
+<p>
+    A value of the wrong type throws a <code>TypeError</code> while the instance is created. The number
+    <code>42</code> as <code>item</code> or <code>target</code>, and a number as <code>itemAt</code>, are examples. The
+    message is not part of the API.
+</p>
+
+<h2 id="example">Example</h2>
+<pre><code>const calculator = new PositionCalculator({
+    item: "#tooltip",
+    target: "#button",
+    itemAt: "bottom center",
+    targetAt: "top center",
+    itemOffset: { y: -8, x: 0, mirror: true },
+});
+
+const { moveBy } = calculator.calculate();</code></pre>
+<p>
+    The item and the target are looked up once, when the instance is created. If you replace them in the DOM, create a
+    new instance.
+</p>
+
+<h2 id="notes">Notes</h2>
+<ul>
+    <li>
+        A <code>boundary</code> of <code>"window"</code> or <code>"document"</code> measures the page viewport, not the
+        visible area of an iframe. The limits are listed on the <a href="{{root}}reference/limits.html">limits page</a>.
+    </li>
+    <li>
+        Without a boundary, <code>distance</code> in the result is <code>null</code>, and no flip or stick takes place.
+    </li>
+</ul>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/methods.html">Methods</a></li>
+    <li><a href="{{root}}reference/result.html">Result object</a></li>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+    <li><a href="{{root}}reference/limits.html">Limits</a></li>
+</ul>

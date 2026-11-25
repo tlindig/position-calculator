@@ -1,0 +1,49 @@
+{
+  "title": "Popup",
+  "order": 5,
+  "hint": "Click Add line: the popup opens above and to the right of the button. Add more lines: when the popup no longer fits above the button it opens below, and when it fits nowhere it is pushed back into the box. Click Remove line: the popup shrinks and goes back above the button. Click the popup or press Escape to close it.",
+  "tweak": "In the JavaScript tab, set stick to \"none\" and add eight lines: the popup leaves the box at the bottom.",
+  "height": 300,
+  "scenarios": [
+    {
+      "name": "above and to the right of the button when there is room",
+      "steps": [{ "dispatch": "click", "on": "#add" }],
+      "checks": [{ "element": "#popup", "relativeTo": "#add", "left": 110, "top": -60 }]
+    },
+    {
+      "name": "below the button once the popup has grown too tall for the room above",
+      "steps": [
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" }
+      ],
+      "checks": [{ "element": "#popup", "relativeTo": "#add", "left": 110, "top": 28 }]
+    },
+    {
+      "name": "above the button again after a line is removed",
+      "steps": [
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#remove" }
+      ],
+      "checks": [{ "element": "#popup", "relativeTo": "#add", "left": 110, "top": -100 }]
+    },
+    {
+      "name": "pushed back into the box when it fits neither above nor below",
+      "steps": [
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" },
+        { "dispatch": "click", "on": "#add" }
+      ],
+      "checks": [{ "element": "#popup", "relativeTo": "#add", "left": 110, "top": -26 }]
+    }
+  ]
+}

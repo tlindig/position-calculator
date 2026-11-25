@@ -1,0 +1,57 @@
+<p>
+    A calculation runs in four steps. The library reads the sizes and positions, places the item, checks the boundary
+    and, if needed, changes the placement. It never moves the element itself.
+</p>
+
+<figure>
+    <svg viewBox="0 0 480 260" role="img" aria-labelledby="how-svg-title how-svg-desc">
+        <title id="how-svg-title">Item, target and boundary</title>
+        <desc id="how-svg-desc">
+            A boundary rectangle with a dashed edge. An item sits above a target and crosses the top edge of the
+            boundary.
+        </desc>
+        <rect x="10" y="50" width="460" height="200" fill="none" stroke="currentColor" stroke-dasharray="6 4" />
+        <text x="460" y="72" font-size="14" text-anchor="end" fill="currentColor">boundary</text>
+        <rect x="60" y="24" width="120" height="36" fill="none" stroke="currentColor" stroke-width="2" />
+        <text x="120" y="47" font-size="14" text-anchor="middle" fill="currentColor">item</text>
+        <rect x="60" y="150" width="120" height="50" fill="none" stroke="currentColor" stroke-width="2" />
+        <text x="120" y="180" font-size="14" text-anchor="middle" fill="currentColor">target</text>
+    </svg>
+    <figcaption>The item is placed above the target. Its top edge crosses the boundary, so flip is needed.</figcaption>
+</figure>
+
+<h2 id="steps">The four steps</h2>
+<ol>
+    <li>
+        <strong>Place.</strong> Each element has a reference point, set with <code>itemAt</code> and
+        <code>targetAt</code>. The library moves the item so that both points meet, including the offsets. The result is
+        <code>moveBy</code>.
+    </li>
+    <li>
+        <strong>Check the boundary.</strong> The library measures the distance from the new position to each edge of the
+        boundary. An edge that the item crosses is listed in <code>distance.overflow</code>.
+    </li>
+    <li>
+        <strong>Flip.</strong> If an edge overflows and <code>flip</code> is set, the library calculates the flipped
+        placement. If it has no overflow, the library uses it. Otherwise it chooses, per axis, the placement with less
+        overflow. Flip needs a target.
+    </li>
+    <li>
+        <strong>Stick.</strong> If <code>stick</code> is set, the library moves the item along the edges you chose so
+        that it stays inside the boundary.
+    </li>
+</ol>
+
+<p>
+    The result of <a href="{{root}}reference/methods.html#calculate"><code>calculate()</code></a> reflects all four
+    steps. <a href="{{root}}reference/methods.html#calcvariant"><code>calcVariant()</code></a> stops after step 2 and
+    tests one placement only.
+</p>
+
+<h2 id="limits-of-the-model">What the model does not cover</h2>
+<p>
+    The steps use the sizes and positions the library read last. They do not follow later changes by themselves. Call
+    <code>calculate()</code> again after a scroll or a resize. See
+    <a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a> for the rules of each step and
+    <a href="{{root}}reference/limits.html">Limits</a> for what is not handled.
+</p>

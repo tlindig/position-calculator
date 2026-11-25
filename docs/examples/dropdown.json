@@ -1,0 +1,19 @@
+{
+  "title": "Dropdown",
+  "order": 3,
+  "hint": "The two buttons sit in the lower part of the dashed box. Open Default: the menu runs out of the box and is cut off. Open Auto position: the menu opens upwards and stays complete.",
+  "tweak": "In the JavaScript tab, set flip to \"none\" and stick to \"none\": the second menu is cut off like the first one.",
+  "height": 300,
+  "scenarios": [
+    {
+      "name": "without the library the menu opens below the button",
+      "steps": [{ "dispatch": "click", "on": "#btn-default" }],
+      "checks": [{ "element": "#menu-default", "relativeTo": "#btn-default", "left": 0, "top": 32 }]
+    },
+    {
+      "name": "with the library the menu opens above the button when there is no room below",
+      "steps": [{ "dispatch": "click", "on": "#btn-auto" }],
+      "checks": [{ "element": "#menu-auto", "relativeTo": "#btn-auto", "left": 0, "top": -120 }]
+    }
+  ]
+}

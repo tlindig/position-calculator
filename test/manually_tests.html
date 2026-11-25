@@ -1,301 +1,310 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>PositionCalculator manually Tests</title>
+    <head>
+        <meta charset="utf-8" />
+        <title>PositionCalculator manually Tests</title>
 
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
 
-  <!-- Load local jQuery. -->
-  <script src="reference/jquery.js"></script>
+        <!-- Load local jQuery. -->
+        <script src="reference/jquery.js"></script>
 
-  <!-- Load local lib -->
-  <script src="../src/position-calculator.js"></script>
+        <!-- Load the IIFE build, run `npm run build` first. It sets $.PositionCalculator because jQuery is loaded. -->
+        <script src="../dist/position-calculator.iife.min.js"></script>
 
-  <style type="text/css">
-    .tl-green-box {
-      padding: 10px;
-      background-color: #44EE99;
-      margin-left: 100px;
-      margin-top: 20px;
-      width: 220px;
-    }
-    .tl-item {
-      padding: 20px;
-      background-color: #FFFF00;
-      height: 100px;
-      width: 100px;
-    }
+        <style type="text/css">
+            .tl-green-box {
+                padding: 10px;
+                background-color: #44ee99;
+                margin-left: 100px;
+                margin-top: 20px;
+                width: 220px;
+            }
+            .tl-item {
+                padding: 20px;
+                background-color: #ffff00;
+                height: 100px;
+                width: 100px;
+            }
 
-    /* colored triangle corner */
-    .tl-marker {
-      position: relative;
-    }
-    .tl-marker:after {
-      content: "";
-      position: absolute;;
-      height: 0;
-      width: 0;
-    }
-    .right.top.tl-marker:after {
-      border-left: 15px solid rgba(0, 0, 0, 0);
-      border-top: 15px solid #0000FF;
-      top: 0;
-      right: 0;
-    }
-    .left.top.tl-marker:after {
-      border-right: 15px solid rgba(0, 0, 0, 0);
-      border-top: 15px solid #0000FF;
-      top: 0;
-      left: 0;
-    }
-    .tl-item.top.tl-marker:after {
-      border-top-color: #F00;
-    }
-    .right.bottom.tl-marker:after {
-      border-left: 15px solid rgba(0, 0, 0, 0);
-      border-bottom: 15px solid #0000FF;
-      bottom: 0;
-      right: 0;
-    }
-    .left.bottom.tl-marker:after {
-      border-right: 15px solid rgba(0, 0, 0, 0);
-      border-bottom: 15px solid #0000FF;
-      bottom: 0;
-      left: 0;
-    }
-    .tl-item.bottom.tl-marker:after {
-      border-bottom-color: #F00;
-    }
+            /* colored triangle corner */
+            .tl-marker {
+                position: relative;
+            }
+            .tl-marker:after {
+                content: "";
+                position: absolute;
+                height: 0;
+                width: 0;
+            }
+            .right.top.tl-marker:after {
+                border-left: 15px solid rgba(0, 0, 0, 0);
+                border-top: 15px solid #0000ff;
+                top: 0;
+                right: 0;
+            }
+            .left.top.tl-marker:after {
+                border-right: 15px solid rgba(0, 0, 0, 0);
+                border-top: 15px solid #0000ff;
+                top: 0;
+                left: 0;
+            }
+            .tl-item.top.tl-marker:after {
+                border-top-color: #f00;
+            }
+            .right.bottom.tl-marker:after {
+                border-left: 15px solid rgba(0, 0, 0, 0);
+                border-bottom: 15px solid #0000ff;
+                bottom: 0;
+                right: 0;
+            }
+            .left.bottom.tl-marker:after {
+                border-right: 15px solid rgba(0, 0, 0, 0);
+                border-bottom: 15px solid #0000ff;
+                bottom: 0;
+                left: 0;
+            }
+            .tl-item.bottom.tl-marker:after {
+                border-bottom-color: #f00;
+            }
 
-    .form-inline {
-      margin-bottom: 10px;
-    }
-    .tl-label {
-      font-weight: bold;
-    }
-    .tl-label.sub {
-      margin-left: 20px;
-    }
-    .tl-value {
-      display: inline-block;
-      white-space: nowrap;
-      width: 50%;
-      float: right;
-    }
-    .tl-draggable {
-      cursor: move;
-      position: absolute;
-      z-index: 5;
-    }
+            .form-inline {
+                margin-bottom: 10px;
+            }
+            .tl-label {
+                font-weight: bold;
+            }
+            .tl-label.sub {
+                margin-left: 20px;
+            }
+            .tl-value {
+                display: inline-block;
+                white-space: nowrap;
+                width: 50%;
+                float: right;
+            }
+            .tl-draggable {
+                cursor: move;
+                position: absolute;
+                z-index: 5;
+            }
 
-    input, select {
-      text-align: right;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>PositionCalculator Testing</h1>
-    <p class="lead">Manually testing of PositionCalculator</p>
+            input,
+            select {
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>PositionCalculator Testing</h1>
+            <p class="lead">Manually testing of PositionCalculator</p>
 
-    <div class="section">
-      <h2>Live Demo</h2>
-      <p class="lead">
-        Try out all the options check the result.
-      </p>
+            <div class="section">
+                <h2>Live Demo</h2>
+                <p class="lead">Try out all the options check the result.</p>
 
-      <h3>Configuration</h3>
-      <div class="row" id="options1">
-        <div class="col-sm-4">
-          <h4>Elements</h4>
-          <div class="form-inline clearfix">
-            <span class="tl-label">idem:</span>
-            <span class="tl-value">
-              yellow box (100x100)
-            </span>
-          </div>
-          <div class="form-inline clearfix">
-            <span class="tl-label">target:</span>
-            <span class="tl-value">
-              <select id="sel_target" title="uncheck checkbox 'item follow me' to enable.">
-                <option value="#container1 > .tl-green-box" selected>green box</option>
-                <option value="#container1">container</option>
-                <option value="window">window</option>
-                <option value="document">document (=html)</option>
-                <option value="body">body</option>
-                <option value="">none</option>
-              </select>
-            </span>
-          </div>
-          <div class="form-inline clearfix">
-            <span class="tl-label">boundary:</span>
-            <span class="tl-value">
-              <select id="sel_boundary">
-                <option value="#container1" selected>container</option>
-                <option value="window">window</option>
-                <option value="document">document (=html)</option>
-                <option value="body">body</option>
-                <option value="">none</option>
-              </select>
-            </span>
-          </div>
-        </div><!-- /col-sm-4 -->
+                <h3>Configuration</h3>
+                <div class="row" id="options1">
+                    <div class="col-sm-4">
+                        <h4>Elements</h4>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">idem:</span>
+                            <span class="tl-value"> yellow box (100x100) </span>
+                        </div>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">target:</span>
+                            <span class="tl-value">
+                                <select id="sel_target" title="uncheck checkbox 'item follow me' to enable.">
+                                    <option value="#container1 > .tl-green-box" selected>green box</option>
+                                    <option value="#container1">container</option>
+                                    <option value="window">window</option>
+                                    <option value="document">document (=html)</option>
+                                    <option value="body">body</option>
+                                    <option value="">none</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">boundary:</span>
+                            <span class="tl-value">
+                                <select id="sel_boundary">
+                                    <option value="#container1" selected>container</option>
+                                    <option value="window">window</option>
+                                    <option value="document">document (=html)</option>
+                                    <option value="body">body</option>
+                                    <option value="">none</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- /col-sm-4 -->
 
-        <div class="col-sm-4">
-          <h4>Placement</h4>
-          <p>
-            Initial placement of reference point.<br>
-            The colored triangle shows your decision.
-          </p>
-          <div class="form-inline clearfix">
-            <span class="tl-label">itemAt (-> red):</span>
-            <span class="tl-value">
-              <select id="sel_item_at_y">
-                <option value="top">top</option>
-                <option value="middle">middle</option>
-                <option value="bottom" selected>bottom</option>
-              </select>
-              <select id="sel_item_at_x">
-                <option value="left">left</option>
-                <option value="center">center</option>
-                <option value="right" selected>right</option>
-              </select>
-            </span>
-          </div>
-          <div class="form-inline clearfix">
-            <span class="tl-label">itemOffset (px|%):</span>
-            <span class="tl-value">
-              <input type="text" id="tx_itemAt_offset_y" size="4" value="0"/>
-              <input type="text" id="tx_itemAt_offset_x" size="4" value="0"/>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="cb_itemAt_offset_m"/> mirror
-                </label>
-              </div>
-            </span>
-          </div>
+                    <div class="col-sm-4">
+                        <h4>Placement</h4>
+                        <p>
+                            Initial placement of reference point.<br />
+                            The colored triangle shows your decision.
+                        </p>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">itemAt (-> red):</span>
+                            <span class="tl-value">
+                                <select id="sel_item_at_y">
+                                    <option value="top">top</option>
+                                    <option value="middle">middle</option>
+                                    <option value="bottom" selected>bottom</option>
+                                </select>
+                                <select id="sel_item_at_x">
+                                    <option value="left">left</option>
+                                    <option value="center">center</option>
+                                    <option value="right" selected>right</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">itemOffset (px|%):</span>
+                            <span class="tl-value">
+                                <input type="text" id="tx_itemAt_offset_y" size="4" value="0" />
+                                <input type="text" id="tx_itemAt_offset_x" size="4" value="0" />
+                                <div class="checkbox">
+                                    <label> <input type="checkbox" id="cb_itemAt_offset_m" /> mirror </label>
+                                </div>
+                            </span>
+                        </div>
 
-          <div class="form-inline clearfix">
-            <span class="tl-label">targetAt (-> blue):</span>
-            <span class="tl-value">
-              <select id="sel_tar_at_y">
-                <option value="top" selected>top</option>
-                <option value="middle">middle</option>
-                <option value="bottom">bottom</option>
-              </select>
-              <select id="sel_tar_at_x">
-                <option value="left" selected>left</option>
-                <option value="center">center</option>
-                <option value="right">right</option>
-              </select>
-            </span>
-          </div>
-          <div class="form-inline clearfix">
-            <span class="tl-label">targetOffset (px|%):</span>
-            <span class="tl-value">
-              <input type="text" id="tx_tarAt_offset_y" size="4" value="0"/>
-              <input type="text" id="tx_tarAt_offset_x" size="4" value="0"/>
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" id="cb_tarAt_offset_m" checked/> mirror
-                </label>
-              </div>
-            </span>
-          </div>
-        </div><!-- /col-sm-4 -->
-        <div class="col-sm-4">
-          <h4>Behavior</h4>
-          <div class="form-inline clearfix">
-            <span class="tl-label">stick:</span>
-            <span class="tl-value">
-              <select id="sel_stick">
-                <option value="none">none</option>
-                <option value="all" selected>all</option>
-                <option value="top">top</option>
-                <option value="right">right</option>
-                <option value="bottom">bottom</option>
-                <option value="left">left</option>
-                <option value="top left">top left</option>
-                <option value="top bottom">top bottom</option>
-                <option value="top left bottom">top left bottom</option>
-              </select>
-            </span>
-          </div>
-          <div class="form-inline clearfix">
-            <span class="tl-label">flip:</span>
-            <span class="tl-value">
-              <select id="sel_flip">
-                <option value="none">none</option>
-                <option value="item">item</option>
-                <option value="target">target</option>
-                <option value="both" selected>both</option>
-              </select>
-            </span>
-          </div>
-        </div><!-- /col-sm-4 -->
-      </div><!-- /row -->
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">targetAt (-> blue):</span>
+                            <span class="tl-value">
+                                <select id="sel_tar_at_y">
+                                    <option value="top" selected>top</option>
+                                    <option value="middle">middle</option>
+                                    <option value="bottom">bottom</option>
+                                </select>
+                                <select id="sel_tar_at_x">
+                                    <option value="left" selected>left</option>
+                                    <option value="center">center</option>
+                                    <option value="right">right</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">targetOffset (px|%):</span>
+                            <span class="tl-value">
+                                <input type="text" id="tx_tarAt_offset_y" size="4" value="0" />
+                                <input type="text" id="tx_tarAt_offset_x" size="4" value="0" />
+                                <div class="checkbox">
+                                    <label> <input type="checkbox" id="cb_tarAt_offset_m" checked /> mirror </label>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- /col-sm-4 -->
+                    <div class="col-sm-4">
+                        <h4>Behavior</h4>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">stick:</span>
+                            <span class="tl-value">
+                                <select id="sel_stick">
+                                    <option value="none">none</option>
+                                    <option value="all" selected>all</option>
+                                    <option value="top">top</option>
+                                    <option value="right">right</option>
+                                    <option value="bottom">bottom</option>
+                                    <option value="left">left</option>
+                                    <option value="top left">top left</option>
+                                    <option value="top bottom">top bottom</option>
+                                    <option value="top left bottom">top left bottom</option>
+                                </select>
+                            </span>
+                        </div>
+                        <div class="form-inline clearfix">
+                            <span class="tl-label">flip:</span>
+                            <span class="tl-value">
+                                <select id="sel_flip">
+                                    <option value="none">none</option>
+                                    <option value="item">item</option>
+                                    <option value="target">target</option>
+                                    <option value="both" selected>both</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- /col-sm-4 -->
+                </div>
+                <!-- /row -->
 
-      <div class="row">
-        <div class="col-sm-6">
-          <h3>Showcase</h3>
-          <div class="panel panel-default">
-            <div class="panel-heading">Container</div>
-            <div id="container1" class="panel-body" style="height:290px;">
-              <label><input id="cb_addScrollbar" type="checkbox"/> add scrollbars</label><br>
-              <label><input id="cb_addScrollhandler" type="checkbox"/> add handler for scroll event</label>
-              <div class="tl-item tl-marker">
-                <b>item</b><br>
-                being positioned
-              </div>
-              <div class="tl-green-box tl-marker">
-                <b>target, drag me!</b><br>
-                <input type="checkbox" id="cb_follow_green"/> item follow me<br>
-                (option 'target' -> "green box")
-              </div>
-              <div id="tolarge" style="display:none;height:500px;width:500px;">
-                <!-- this div is only to require scrollbars on container -->
-              </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>Showcase</h3>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Container</div>
+                            <div id="container1" class="panel-body" style="height: 290px">
+                                <label><input id="cb_addScrollbar" type="checkbox" /> add scrollbars</label><br />
+                                <label
+                                    ><input id="cb_addScrollhandler" type="checkbox" /> add handler for scroll
+                                    event</label
+                                >
+                                <div class="tl-item tl-marker">
+                                    <b>item</b><br />
+                                    being positioned
+                                </div>
+                                <div class="tl-green-box tl-marker">
+                                    <b>target, drag me!</b><br />
+                                    <input type="checkbox" id="cb_follow_green" /> item follow me<br />
+                                    (option 'target' -> "green box")
+                                </div>
+                                <div id="tolarge" style="display: none; height: 500px; width: 500px">
+                                    <!-- this div is only to require scrollbars on container -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /col-sm-6 -->
+
+                    <div class="col-sm-6">
+                        <h3>Live Results</h3>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                Return value of <code>.calculate()</code>:
+                                <pre id="preRsesult"></pre>
+                            </div>
+                            <!-- /col-sm-6 -->
+                            <div class="col-sm-6">
+                                Properties, read form DOM:
+                                <div class="line">
+                                    <span class="tl-label">item top: </span><span class="tl-value" id="itemTop"></span>
+                                </div>
+                                <div class="line">
+                                    <span class="tl-label">target top: </span
+                                    ><span class="tl-value" id="targetTop"></span>
+                                </div>
+                                <div class="line">
+                                    <span class="tl-label">difference y: </span><span class="tl-value" id="difY"></span>
+                                </div>
+                                <div class="line">
+                                    <span class="tl-label">item left: </span
+                                    ><span class="tl-value" id="itemLeft"></span>
+                                </div>
+                                <div class="line">
+                                    <span class="tl-label">target left: </span
+                                    ><span class="tl-value" id="targetLeft"></span>
+                                </div>
+                                <div class="line">
+                                    <span class="tl-label">difference x: </span><span class="tl-value" id="difX"></span>
+                                </div>
+                            </div>
+                            <!-- /col-sm-6 -->
+                        </div>
+                        <!-- /row -->
+                    </div>
+                    <!-- /col-sm-6 -->
+                </div>
+                <!-- /row -->
             </div>
-          </div>
-        </div><!-- /col-sm-6 -->
+            <!-- /section -->
+        </div>
+        <!-- /container -->
 
-        <div class="col-sm-6">
-          <h3>Live Results</h3>
-          <div class="row">
-            <div class="col-sm-6">
-              Return value of <code>.calculate()</code>:
-              <pre id="preRsesult"></pre>
-            </div><!-- /col-sm-6 -->
-            <div class="col-sm-6">
-              Properties, read form DOM:
-              <div class="line">
-                <span class="tl-label">item top: </span><span class="tl-value" id="itemTop"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">target top: </span><span class="tl-value" id="targetTop"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">difference y: </span><span class="tl-value" id="difY"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">item left: </span><span class="tl-value" id="itemLeft"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">target left: </span><span class="tl-value" id="targetLeft"></span>
-              </div>
-              <div class="line">
-                <span class="tl-label">difference x: </span><span class="tl-value" id="difX"></span>
-              </div>
-            </div><!-- /col-sm-6 -->
-          </div><!-- /row -->
-        </div><!-- /col-sm-6 -->
-      </div><!-- /row -->
-    </div> <!-- /section -->
-
-  </div><!-- /container -->
-
-
-  <script type="text/javascript" src="manually_tests.js"></script>
-</body>
+        <script type="text/javascript" src="manually_tests.js"></script>
+    </body>
 </html>

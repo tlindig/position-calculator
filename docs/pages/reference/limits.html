@@ -1,0 +1,123 @@
+<p>
+    These are the known limits of version 2.0. Each row says what causes it and what to do instead. Behavior that was
+    wrong before 2.0 and is fixed is not listed here.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Limit</th>
+            <th>Cause</th>
+            <th>What to do instead</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Touch input does not work as target</td>
+            <td>
+                A touch event has no position, so the result is <code>NaN</code>. A touch point is not an event, and
+                passing it throws a <code>TypeError</code>.
+            </td>
+            <td>
+                Use pointer events: listen to <code>pointerdown</code> and <code>pointermove</code> and pass the pointer
+                event as <code>target</code>. Pointer events work.
+            </td>
+        </tr>
+        <tr>
+            <td>Only mouse and pointer events work as target</td>
+            <td>The position is read from <code>clientX</code> and <code>clientY</code> of the event.</td>
+            <td>Pass a mouse or pointer event, or an element or selector.</td>
+        </tr>
+        <tr>
+            <td>
+                A boundary of an iframe's <code>window</code> or <code>document</code> measures the page's own viewport
+            </td>
+            <td>The library reads the viewport of the frame it runs in.</td>
+            <td>Pass an element inside the frame, for example its container, as <code>boundary</code>.</td>
+        </tr>
+        <tr>
+            <td>Wrong input types throw</td>
+            <td>
+                A number or other unexpected value as <code>item</code>, <code>target</code>, or an
+                <code>at</code> option throws a <code>TypeError</code> while the instance is created. The message is not
+                part of the API.
+            </td>
+            <td>Pass an element, a selector string, or the documented keywords.</td>
+        </tr>
+        <tr>
+            <td>A missing item gives <code>null</code>, not an error</td>
+            <td>
+                A selector that matches nothing leaves the item empty, and <code>calculate()</code> returns
+                <code>null</code>.
+            </td>
+            <td>Check the result for <code>null</code> before you read <code>moveBy</code>.</td>
+        </tr>
+        <tr>
+            <td>Calling <code>resize()</code> after a failed setup throws</td>
+            <td>The instance has no item, so there are no sizes to read.</td>
+            <td>Create the instance with a valid item first.</td>
+        </tr>
+        <tr>
+            <td>Without a doctype (quirks mode), the <code>window</code> boundary is the whole document</td>
+            <td>The browser uses quirks layout, so the document box differs from the viewport.</td>
+            <td>Add <code>&lt;!doctype html&gt;</code>, or pass an element as <code>boundary</code>.</td>
+        </tr>
+        <tr>
+            <td>Measuring a hidden item writes inline styles and loses an inline <code>!important</code></td>
+            <td>
+                The library writes inline styles while it measures a hidden item, and an inline
+                <code>!important</code> is lost.
+            </td>
+            <td>Show the item before you create the instance or call <code>resize()</code>.</td>
+        </tr>
+        <tr>
+            <td>Transforms: size and position come from different boxes</td>
+            <td>Sizes come from the layout box and positions from the transformed box.</td>
+            <td>Avoid <code>transform</code> on the item, the target, and the boundary when you position with them.</td>
+        </tr>
+        <tr>
+            <td>Sizes are whole pixels</td>
+            <td>Sizes come from <code>offsetWidth</code> and <code>offsetHeight</code>, which are integers.</td>
+            <td>Expect sizes rounded to whole pixels.</td>
+        </tr>
+        <tr>
+            <td>An offset without <code>mirror</code> means <code>mirror: false</code></td>
+            <td>
+                The default offsets have <code>mirror: true</code>, but an offset object you pass does not inherit it.
+            </td>
+            <td>Set <code>mirror: true</code> explicitly when the offset should follow a flip.</td>
+        </tr>
+        <tr>
+            <td>A partial offset gives <code>NaN</code></td>
+            <td>An offset with only <code>y</code> or only <code>x</code> has no value for the other axis.</td>
+            <td>Give both <code>y</code> and <code>x</code>, for example <code>{ y: 8, x: 0 }</code>.</td>
+        </tr>
+        <tr>
+            <td><code>stick</code> is matched as text</td>
+            <td>The library checks the string with <code>indexOf</code>, not against a list of names.</td>
+            <td>
+                Use only the edge names <code>top</code>, <code>right</code>, <code>bottom</code>, and
+                <code>left</code>, separated by spaces.
+            </td>
+        </tr>
+        <tr>
+            <td>The IIFE build needs <code>window</code></td>
+            <td>The IIFE build uses <code>window</code> and has no type declarations.</td>
+            <td>Import the ES module on the server, and load the IIFE only in the browser.</td>
+        </tr>
+        <tr>
+            <td>The IIFE build has no source map</td>
+            <td>The build does not ship a source map for the IIFE file.</td>
+            <td>Debug with the ES module build, the file without <code>.iife</code>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="not-included">Not included</h2>
+<p>The library does not offer these. Each one needs your own code:</p>
+<ul>
+    <li>a scroll container as boundary (only the window, the document, or an element you pass)</li>
+    <li>automatic updates: call <code>calculate()</code> again on scroll and resize</li>
+    <li>a virtual element, for example a point that is not in the DOM</li>
+    <li>logical placement for right-to-left text, such as <code>start</code> and <code>end</code></li>
+</ul>

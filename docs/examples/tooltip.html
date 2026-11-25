@@ -1,0 +1,90 @@
+<div id="stage">
+    <div class="row">
+        <label for="name">Username</label>
+        <input id="name" type="text" />
+        <button class="info" id="info-name" type="button" aria-label="About the username">i</button>
+    </div>
+    <div class="row">
+        <label for="password">Password</label>
+        <input id="password" type="password" />
+        <button class="info" id="info-password" type="button" aria-label="About the password">i</button>
+    </div>
+    <div id="tip" role="tooltip" hidden></div>
+</div>
+
+<script type="module">
+    import { PositionCalculator } from "@tlindig/position-calculator";
+
+    const stage = document.querySelector("#stage");
+    const tip = document.querySelector("#tip");
+    const texts = { "info-name": "Shown on your profile", "info-password": "At least 12 characters" };
+
+    for (const button of stage.querySelectorAll(".info")) {
+        const calculator = new PositionCalculator({
+            item: tip,
+            target: button,
+            boundary: stage,
+            itemAt: "bottom right",
+            targetAt: "top right",
+            targetOffset: { y: -8, x: 0, mirror: true },
+            flip: "both",
+        });
+
+        const show = () => {
+            tip.textContent = texts[button.id];
+            tip.hidden = false;
+            calculator.resize(); // the tooltip has a size only while it is visible
+            const { moveBy } = calculator.calculate();
+            tip.style.left = parseFloat(getComputedStyle(tip).left) + moveBy.x + "px";
+            tip.style.top = parseFloat(getComputedStyle(tip).top) + moveBy.y + "px";
+        };
+        const hide = () => {
+            tip.hidden = true;
+        };
+
+        button.addEventListener("mouseenter", show);
+        button.addEventListener("focus", show);
+        button.addEventListener("mouseleave", hide);
+        button.addEventListener("blur", hide);
+    }
+</script>
+
+<style>
+    #stage {
+        position: relative;
+        box-sizing: border-box;
+        width: 360px;
+        height: 110px;
+        padding: 12px;
+        outline: 1px dashed gray;
+    }
+    .row {
+        display: grid;
+        grid-template-columns: 5.5rem minmax(0, 1fr) 28px;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .info {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 50%;
+        font-style: italic;
+        font-weight: 700;
+    }
+    #tip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 180px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        white-space: nowrap;
+        border-radius: 4px;
+        background: #222;
+        color: white;
+        font-size: 14px;
+    }
+</style>

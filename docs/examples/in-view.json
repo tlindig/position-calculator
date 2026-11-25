@@ -1,0 +1,28 @@
+{
+  "title": "In view",
+  "order": 4,
+  "hint": "Scroll the box, or click it and use the arrow keys. A grey box that is completely visible turns yellow and says so. A box that is cut off at the top or bottom edge stays grey.",
+  "tweak": "In the JavaScript tab, replace !overflow with !overflow?.includes(\"bottom\"): a box that is cut off only at the top edge then counts as in view.",
+  "height": 300,
+  "scenarios": [
+    {
+      "name": "at the start the boxes that fit completely are marked",
+      "steps": [{ "dispatch": "scroll", "on": "#list", "scrollTop": 0 }],
+      "checks": [
+        { "element": ".box:nth-child(1)", "class": "inview", "present": true },
+        { "element": ".box:nth-child(2)", "class": "inview", "present": true },
+        { "element": ".box:nth-child(3)", "class": "inview", "present": false }
+      ]
+    },
+    {
+      "name": "after scrolling the boxes that are cut off at an edge are not marked",
+      "steps": [{ "dispatch": "scroll", "on": "#list", "scrollTop": 100 }],
+      "checks": [
+        { "element": ".box:nth-child(1)", "class": "inview", "present": false },
+        { "element": ".box:nth-child(2)", "class": "inview", "present": true },
+        { "element": ".box:nth-child(3)", "class": "inview", "present": true },
+        { "element": ".box:nth-child(4)", "class": "inview", "present": false }
+      ]
+    }
+  ]
+}

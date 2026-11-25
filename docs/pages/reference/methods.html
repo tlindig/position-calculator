@@ -1,0 +1,177 @@
+<p>
+    An instance has three methods. <code>resize()</code> returns the instance, so calls can be chained.
+    <code>calculate()</code> and <code>calcVariant()</code> return a
+    <a href="{{root}}reference/result.html">result object</a>. No method moves the item: you apply
+    <code>moveBy</code> yourself.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Returns</th>
+            <th>Use it to</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <a href="#calculate"><code>calculate()</code></a>
+            </td>
+            <td>result object or <code>null</code></td>
+            <td>get the final position, with flip and stick applied</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="#calcvariant"><code>calcVariant()</code></a>
+            </td>
+            <td>result object</td>
+            <td>test one placement, for example whether it overflows</td>
+        </tr>
+        <tr>
+            <td>
+                <a href="#resize"><code>resize()</code></a>
+            </td>
+            <td>the instance</td>
+            <td>read sizes again after the item, target or boundary changed size</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="calculate"><code>calculate()</code></h2>
+<p>
+    Calculates how far the item has to move so that its reference point meets the reference point of the target. If the
+    item then overflows the boundary, it applies <code>flip</code> and then <code>stick</code>.
+</p>
+
+<h3 id="calculate-syntax">Syntax</h3>
+<pre><code>calculate(): CalculationResult | null</code></pre>
+
+<h3 id="calculate-parameters">Parameters</h3>
+<p>None.</p>
+
+<h3 id="calculate-return">Return value</h3>
+<p>
+    A <a href="{{root}}reference/result.html">result object</a>, or <code>null</code> if the item was not found when the
+    instance was created.
+</p>
+
+<h3 id="calculate-description">Description</h3>
+<ul>
+    <li>
+        It reads the current position and scroll offset of the item, the target and the boundary. It does not read their
+        size again. After a size change, call <a href="#resize"><code>resize()</code></a> first.
+    </li>
+    <li>
+        <code>moveBy</code> is the distance from where the item is now. To apply it, add it to the current position of
+        the item. The example below does this for an item with <code>position: absolute</code>.
+    </li>
+    <li>
+        <code>flip</code> needs a target. <code>stick</code> works without one: it moves the item into the boundary.
+    </li>
+    <li>
+        Without a target and without <code>stick</code>, <code>moveBy</code> is <code>{ y: 0, x: 0 }</code> and
+        <code>distance</code> tells how much the item overflows where it is.
+    </li>
+</ul>
+
+<h3 id="calculate-example">Example</h3>
+<pre><code>const tooltip = document.querySelector("#tooltip");
+const calculator = new PositionCalculator({
+    item: tooltip,
+    target: "#button",
+    itemAt: "bottom center",
+    targetAt: "top center",
+    flip: "both",
+});
+
+const result = calculator.calculate();
+if (result) {
+    const style = getComputedStyle(tooltip);
+    tooltip.style.left = parseFloat(style.left) + result.moveBy.x + "px";
+    tooltip.style.top = parseFloat(style.top) + result.moveBy.y + "px";
+}</code></pre>
+
+<h2 id="calcvariant"><code>calcVariant()</code></h2>
+<p>
+    Calculates the position for one given placement. It does not apply <code>flip</code> or <code>stick</code>.
+    <code>calculate()</code> uses it internally.
+</p>
+
+<h3 id="calcvariant-syntax">Syntax</h3>
+<pre><code>calcVariant(
+    itemAt: { x: Horizontal; y: Vertical } | null,
+    targetAt: { x: Horizontal; y: Vertical } | null,
+): CalculationResult</code></pre>
+
+<h3 id="calcvariant-parameters">Parameters</h3>
+<dl>
+    <dt><code>itemAt</code></dt>
+    <dd>
+        Reference point on the item: an object with <code>x</code> (<code>"left"</code>, <code>"center"</code> or
+        <code>"right"</code>) and <code>y</code> (<code>"top"</code>, <code>"middle"</code> or <code>"bottom"</code>).
+    </dd>
+    <dt><code>targetAt</code></dt>
+    <dd>The same for the target.</dd>
+</dl>
+
+<h3 id="calcvariant-return">Return value</h3>
+<p>
+    A <a href="{{root}}reference/result.html">result object</a> for exactly this placement. If one argument is
+    <code>null</code> or the instance has no target, <code>moveBy</code> is <code>{ y: 0, x: 0 }</code>,
+    <code>itemAt</code> and <code>targetAt</code> are <code>null</code>, and <code>distance</code> describes the item
+    where it is.
+</p>
+
+<h3 id="calcvariant-description">Description</h3>
+<ul>
+    <li>
+        It does not read the DOM. It uses the positions and sizes stored when the instance was created, by
+        <a href="#resize"><code>resize()</code></a> or by the last <code>calculate()</code>. After the target moved,
+        call <code>calculate()</code> or <code>resize()</code> first, otherwise you get the old result.
+    </li>
+    <li>
+        Pass exactly the keywords above. Other values give <code>NaN</code> in <code>moveBy</code> and
+        <code>distance</code>.
+    </li>
+</ul>
+
+<h3 id="calcvariant-example">Example</h3>
+<pre><code>calculator.resize();
+const below = calculator.calcVariant({ x: "left", y: "top" }, { x: "left", y: "bottom" });
+const fitsBelow = below.distance?.overflow === null;</code></pre>
+
+<h2 id="resize"><code>resize()</code></h2>
+<p>Reads the position and size of the item, the target and the boundary again.</p>
+
+<h3 id="resize-syntax">Syntax</h3>
+<pre><code>resize(): this</code></pre>
+
+<h3 id="resize-parameters">Parameters</h3>
+<p>None.</p>
+
+<h3 id="resize-return">Return value</h3>
+<p>The instance, so you can write <code>calculator.resize().calculate()</code>.</p>
+
+<h3 id="resize-exceptions">Exceptions</h3>
+<p>
+    A <code>TypeError</code> if the item was not found when the instance was created. In that case
+    <code>calculate()</code> returns <code>null</code>.
+</p>
+
+<h3 id="resize-description">Description</h3>
+<p>
+    Call it when the size of the item, the target or the boundary changed, for example after you set a new text in a
+    tooltip. <code>calculate()</code> only refreshes positions.
+</p>
+
+<h3 id="resize-example">Example</h3>
+<pre><code>tooltip.textContent = "A longer text";
+const result = calculator.resize().calculate();</code></pre>
+
+<h2 id="see-also">See also</h2>
+<ul>
+    <li><a href="{{root}}reference/constructor.html">Constructor and options</a></li>
+    <li><a href="{{root}}reference/result.html">Result object</a></li>
+    <li><a href="{{root}}guides/placement-and-collisions.html">Placement and collisions</a></li>
+</ul>
